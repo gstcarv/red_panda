@@ -4,18 +4,21 @@ import { Dashboard } from './pages/dashboard';
 import { Schedule } from './pages/schedule';
 import { ExploreCourses } from './pages/explore-courses';
 import './App.css';
+import { QueryClientProvider } from './lib/react-query';
 
 function App() {
   return (
-    <BrowserRouter>
-      <BaseLayout>
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/schedule" element={<Schedule />} />
-          <Route path="/courses" element={<ExploreCourses />} />
-        </Routes>
-      </BaseLayout>
-    </BrowserRouter>
+    <QueryClientProvider>
+      <BrowserRouter>
+        <BaseLayout>
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/schedule" element={<Schedule />} />
+            <Route path="/courses" element={<ExploreCourses />} />
+          </Routes>
+        </BaseLayout>
+      </BrowserRouter>
+    </QueryClientProvider>
   );
 }
 

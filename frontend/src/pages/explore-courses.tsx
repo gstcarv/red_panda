@@ -1,54 +1,25 @@
-import { useMemo, useState, useCallback } from 'react';
-import { PageTitle } from '@/components/ui/page-title';
 import {
   CoursesFilter,
   CoursesList,
   type CoursesFilterValues,
 } from '@/components/courses';
+import { PageTitle } from '@/components/ui/page-title';
+import { useCourses } from '@/hooks/courses/use-courses';
 import type { Course } from '@/types/course.type';
-
-const courses: Course[] = [];
+import { useCallback, useState } from 'react';
 
 const DEFAULT_FILTER: CoursesFilterValues = {
   search: '',
   onlyEligible: false,
 };
 
-function filterCourses(
-  courses: Course[],
-  filter: CoursesFilterValues,
-  getEligible: (course: Course) => boolean,
-): Course[] {
-  let result = courses;
-  const searchLower = filter.search.trim().toLowerCase();
-  if (searchLower) {
-    result = result.filter(
-      (c) =>
-        c.name.toLowerCase().includes(searchLower) ||
-        c.code.toLowerCase().includes(searchLower),
-    );
-  }
-  if (filter.onlyEligible) {
-    result = result.filter((c) => getEligible(c));
-  }
-  return result;
-}
-
 export function ExploreCourses() {
   const [filter, setFilter] = useState<CoursesFilterValues>(DEFAULT_FILTER);
-  const [enrollingId, setEnrollingId] = useState<number | null>(null);
 
-  const getEligible = useCallback(() => false, []);
+  const { data, isLoading, isError, refetch } = useCourses();
 
-  const filteredCourses = useMemo(
-    () => filterCourses(courses, filter, getEligible),
-    [filter, getEligible],
-  );
-
-  const handleEnroll = useCallback((courseId: number) => {
-    setEnrollingId(courseId);
-    setTimeout(() => setEnrollingId(null), 800);
-  }, []);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- placeholder until eligibility from API
+  const getEligible = useCallback((_course: Course) => false, []);
 
   return (
     <div className="flex flex-col gap-6 sm:gap-8">
@@ -59,12 +30,14 @@ export function ExploreCourses() {
       <section aria-label="Filter courses">
         <CoursesFilter value={filter} onChange={setFilter} />
       </section>
+
       <section aria-label="Courses list">
         <CoursesList
-          courses={filteredCourses}
+          courses={data?.data.courses ?? []}
           getEligible={getEligible}
-          onEnroll={handleEnroll}
-          enrollingId={enrollingId}
+          isLoading={isLoading}
+          isError={isError}
+          onRetry={() => refetch()}
         />
       </section>
     </div>
