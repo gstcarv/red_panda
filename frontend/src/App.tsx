@@ -2,7 +2,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { BaseLayout } from './components/layout/base-layout';
 import { Dashboard } from './pages/dashboard';
 import { Schedule } from './pages/schedule';
-import { Courses } from './pages/courses';
+import { ExploreCourses } from './pages/explore-courses';
 import './App.css';
 
 function App() {
@@ -12,7 +12,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/schedule" element={<Schedule />} />
-          <Route path="/courses" element={<Courses />} />
+          <Route path="/courses" element={<ExploreCourses />} />
         </Routes>
       </BaseLayout>
     </BrowserRouter>
