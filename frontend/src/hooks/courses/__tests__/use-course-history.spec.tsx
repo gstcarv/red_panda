@@ -39,7 +39,12 @@ describe("useCourseHistory", () => {
             id: 1,
             courseId: 2,
             courseName: "Introduction to Programming",
-            semesterId: 1,
+            semester: {
+              id: 1,
+              name: "Fall",
+              year: 2024,
+              order_in_year: 1,
+            },
             status: "passed",
           },
         ],

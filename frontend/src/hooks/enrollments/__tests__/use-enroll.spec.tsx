@@ -53,6 +53,12 @@ describe('useEnroll', () => {
       capacity: 30,
       enrolledCount: 10,
     },
+    semester: {
+      id: 2,
+      name: 'Spring',
+      year: 2025,
+      order_in_year: 2,
+    },
   };
 
   it('sends enrollment payload with selected course id', async () => {
@@ -149,11 +155,23 @@ describe('useEnroll', () => {
         ...section,
         id: 111,
       },
+      semester: {
+        id: 2,
+        name: 'Spring',
+        year: 2025,
+        order_in_year: 2,
+      },
     };
     const returnedEnrollment: Enrollment = {
       id: 'e-2',
       course,
       courseSection: section,
+      semester: {
+        id: 2,
+        name: 'Spring',
+        year: 2025,
+        order_in_year: 2,
+      },
     };
 
     queryClient.setQueryData(buildEnrollmentsQueryKey(), {

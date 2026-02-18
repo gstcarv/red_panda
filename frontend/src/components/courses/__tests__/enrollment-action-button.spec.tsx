@@ -51,7 +51,12 @@ describe('EnrollmentActionButton', () => {
               id: 1,
               courseId: 1,
               courseName: 'Course 1',
-              semesterId: 1,
+              semester: {
+                id: 1,
+                name: 'Fall',
+                year: 2024,
+                order_in_year: 1,
+              },
               status: 'passed',
             },
           ],

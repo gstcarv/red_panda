@@ -1,7 +1,9 @@
+import type { Semester } from './semester.type';
+
 export interface CourseHistory {
   id: number;
   courseId: number;
   courseName: string;
-  semesterId: number;
+  semester: Semester;
   status: 'passed' | 'failed';
 }

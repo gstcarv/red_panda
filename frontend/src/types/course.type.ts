@@ -1,3 +1,5 @@
+import type { Semester } from './semester.type';
+
 export interface CoursePrerequisite {
   id: number;
   code: string;
@@ -18,6 +20,7 @@ export interface Course {
   prerequisite?: CoursePrerequisite;
   gradeLevel: CourseGradeLevel;
   availableSections: CourseSection[];
+  semester?: Semester;
 }
 
 export interface CourseSection {

@@ -37,7 +37,12 @@ export interface CourseHistory {
   id: number;
   courseId: number;
   courseName: string;
-  semesterId: number;
+  semester: {
+    id: number;
+    name: string;
+    year: number;
+    order_in_year: number;
+  };
   status: 'passed' | 'failed';
 }
 

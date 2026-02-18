@@ -108,11 +108,23 @@ describe('useUnenroll', () => {
         ...section,
         id: 111,
       },
+      semester: {
+        id: 2,
+        name: 'Spring',
+        year: 2025,
+        order_in_year: 2,
+      },
     };
     const enrollmentTwo: Enrollment = {
       id: 'e-2',
       course,
       courseSection: section,
+      semester: {
+        id: 2,
+        name: 'Spring',
+        year: 2025,
+        order_in_year: 2,
+      },
     };
 
     queryClient.setQueryData(buildEnrollmentsQueryKey(), {

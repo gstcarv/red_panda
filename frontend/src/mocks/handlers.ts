@@ -593,11 +593,23 @@ const mockEnrollments: Enrollment[] = [
     id: "1",
     course: courses[0],
     courseSection: mockSectionsByCourseId[1][0],
+    semester: {
+      id: 2,
+      name: "Spring",
+      year: 2025,
+      order_in_year: 2,
+    },
   },
   {
     id: "2",
     course: courses[1],
     courseSection: mockSectionsByCourseId[2][0],
+    semester: {
+      id: 2,
+      name: "Spring",
+      year: 2025,
+      order_in_year: 2,
+    },
   },
 ];
 let nextEnrollmentId = mockEnrollments.length + 1;
@@ -607,21 +619,48 @@ const mockCourseHistory: CourseHistory[] = [
     id: 1,
     courseId: 1,
     courseName: "Algebra I",
-    semesterId: 1,
+    semester: {
+      id: 1,
+      name: "Fall",
+      year: 2024,
+      order_in_year: 1,
+    },
     status: "passed",
   },
   {
     id: 2,
     courseId: 2,
     courseName: "Introduction to Programming",
-    semesterId: 1,
+    semester: {
+      id: 1,
+      name: "Fall",
+      year: 2024,
+      order_in_year: 1,
+    },
     status: "passed",
   },
   {
     id: 3,
     courseId: 3,
     courseName: "Data Structures",
-    semesterId: 2,
+    semester: {
+      id: 2,
+      name: "Spring",
+      year: 2025,
+      order_in_year: 2,
+    },
+    status: "failed",
+  },
+  {
+    id: 4,
+    courseId: 3,
+    courseName: "Data Structures",
+    semester: {
+      id: 1,
+      name: "Fall",
+      year: 2024,
+      order_in_year: 1,
+    },
     status: "failed",
   },
 ];
@@ -725,6 +764,12 @@ export const handlers = [
       id: String(nextEnrollmentId++),
       course,
       courseSection,
+      semester: {
+        id: 2,
+        name: "Spring",
+        year: 2025,
+        order_in_year: 2,
+      },
     };
 
     mockEnrollments.push(enrollment);

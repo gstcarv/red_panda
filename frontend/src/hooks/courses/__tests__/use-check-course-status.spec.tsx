@@ -47,6 +47,12 @@ describe('useCheckCourseStatus', () => {
               id: 'e-1',
               course: createCourse({ id: 1 }),
               courseSection: section,
+              semester: {
+                id: 1,
+                name: 'Fall',
+                year: 2024,
+                order_in_year: 1,
+              },
             },
           ],
         },
@@ -63,7 +69,12 @@ describe('useCheckCourseStatus', () => {
               id: 1,
               courseId: 1,
               courseName: 'Intro to Programming',
-              semesterId: 1,
+              semester: {
+                id: 1,
+                name: 'Fall',
+                year: 2024,
+                order_in_year: 1,
+              },
               status: 'passed',
             },
           ],
@@ -98,14 +109,24 @@ describe('useCheckCourseStatus', () => {
               id: 10,
               courseId: 99,
               courseName: 'Other course',
-              semesterId: 1,
+              semester: {
+                id: 1,
+                name: 'Fall',
+                year: 2024,
+                order_in_year: 1,
+              },
               status: 'failed',
             },
             {
               id: 11,
               courseId: 1,
               courseName: 'Intro to Programming',
-              semesterId: 2,
+              semester: {
+                id: 2,
+                name: 'Spring',
+                year: 2025,
+                order_in_year: 2,
+              },
               status: 'passed',
             },
           ],
@@ -146,6 +167,57 @@ describe('useCheckCourseStatus', () => {
 
     expect(result.current.status).toBeUndefined();
     expect(result.current.enrolledSections).toEqual([]);
+  });
+
+  it('ignores history from different semester when course has semester context', () => {
+    mockedUseEnrollments.mockReturnValue({
+      data: {
+        data: {
+          enrollments: [],
+        },
+      },
+      isLoading: false,
+      isError: false,
+    } as never);
+
+    mockedUseCourseHistory.mockReturnValue({
+      data: {
+        data: {
+          courseHistory: [
+            {
+              id: 20,
+              courseId: 1,
+              courseName: 'Intro to Programming',
+              semester: {
+                id: 2,
+                name: 'Spring',
+                year: 2025,
+                order_in_year: 2,
+              },
+              status: 'passed',
+            },
+          ],
+        },
+      },
+      isLoading: false,
+      isError: false,
+    } as never);
+
+    const { result } = renderHook(() =>
+      useCheckCourseStatus(
+        createCourse({
+          id: 1,
+          semester: {
+            id: 1,
+            name: 'Fall',
+            year: 2024,
+            order_in_year: 1,
+          },
+        }),
+      ),
+    );
+
+    expect(result.current.status).toBeUndefined();
   });
 });
 
