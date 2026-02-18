@@ -1,6 +1,7 @@
 import { act, render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { ScheduleCalendar } from '@/components/schedule/schedule-calendar';
+import { useAvailableCoursesBySlot } from '@/hooks/courses/use-available-courses-by-slot';
 
 const schedulerSpy = vi.fn();
 const findCourseModalSpy = vi.fn();
@@ -40,11 +41,39 @@ vi.mock('@/components/courses/course-section-modal', () => ({
   },
 }));
 
+vi.mock('@/hooks/courses/use-available-courses-by-slot', () => ({
+  useAvailableCoursesBySlot: vi.fn(),
+}));
+
+const mockedUseAvailableCoursesBySlot = vi.mocked(useAvailableCoursesBySlot);
+
 describe('ScheduleCalendar', () => {
+  function setupAvailableSlots() {
+    mockedUseAvailableCoursesBySlot.mockReturnValue({
+      coursesBySlot: new Map([
+        [
+          'monday|11:00',
+          [
+            {
+              id: 99,
+              code: 'BIO101',
+              name: 'Biology',
+              credits: 3,
+              hoursPerWeek: 4,
+              gradeLevel: { min: 9, max: 12 },
+              availableSections: [],
+            },
+          ],
+        ],
+      ]),
+    } as never);
+  }
+
   it('renders scheduler UI component with mapped props', () => {
     schedulerSpy.mockClear();
     findCourseModalSpy.mockClear();
     courseSectionModalSpy.mockClear();
+    setupAvailableSlots();
 
     render(
       <ScheduleCalendar
@@ -61,7 +90,6 @@ describe('ScheduleCalendar', () => {
       />,
     );
 
-    expect(screen.getByTestId('schedule-calendar')).toBeInTheDocument();
     expect(screen.getByTestId('schedule-calendar')).toBeInTheDocument();
 
     expect(schedulerSpy).toHaveBeenCalledWith(
@@ -89,20 +117,68 @@ describe('ScheduleCalendar', () => {
 
     expect(schedulerSpy).toHaveBeenCalledWith(
       expect.objectContaining({
-      events: expect.arrayContaining([
-        expect.objectContaining({
-          id: 'enroll-1-101-1-09:00',
-          title: 'MATH101 - Algebra I',
-        }),
-      ]),
+        events: expect.arrayContaining([
+          expect.objectContaining({
+            id: 'slot-hint-1-11:00',
+            title: '1 course available',
+          }),
+          expect.objectContaining({
+            id: 'enroll-1-101-1-09:00',
+            title: 'MATH101 - Algebra I',
+          }),
+        ]),
       }),
     );
+  });
+
+  it('does not create hint event for occupied slots', () => {
+    schedulerSpy.mockClear();
+    findCourseModalSpy.mockClear();
+    courseSectionModalSpy.mockClear();
+
+    mockedUseAvailableCoursesBySlot.mockReturnValue({
+      coursesBySlot: new Map([
+        [
+          'monday|09:00',
+          [
+            {
+              id: 99,
+              code: 'BIO101',
+              name: 'Biology',
+              credits: 3,
+              hoursPerWeek: 4,
+              gradeLevel: { min: 9, max: 12 },
+              availableSections: [],
+            },
+          ],
+        ],
+      ]),
+    } as never);
+
+    render(
+      <ScheduleCalendar
+        events={[
+          {
+            id: 'enroll-1-101-1-09:00',
+            courseId: 1,
+            title: 'MATH101 - Algebra I',
+            daysOfWeek: [1],
+            startTime: '09:00',
+            endTime: '10:00',
+          },
+        ]}
+      />,
+    );
+
+    const renderedEvents = schedulerSpy.mock.calls[0][0].events as Array<{ id: string }>;
+    expect(renderedEvents.some((event) => event.id === 'slot-hint-1-09:00')).toBe(false);
   });
 
   it('opens find-course modal with selected slot on calendar click', async () => {
     schedulerSpy.mockClear();
     findCourseModalSpy.mockClear();
     courseSectionModalSpy.mockClear();
+    setupAvailableSlots();
 
     render(<ScheduleCalendar events={[]} />);
 
@@ -132,6 +208,7 @@ describe('ScheduleCalendar', () => {
     schedulerSpy.mockClear();
     findCourseModalSpy.mockClear();
     courseSectionModalSpy.mockClear();
+    setupAvailableSlots();
 
     render(<ScheduleCalendar events={[]} />);
 
@@ -149,6 +226,32 @@ describe('ScheduleCalendar', () => {
       expect.objectContaining({
         courseId: 12,
         open: true,
+      }),
+    );
+  });
+
+  it('ignores event click when course id is invalid', () => {
+    schedulerSpy.mockClear();
+    findCourseModalSpy.mockClear();
+    courseSectionModalSpy.mockClear();
+    setupAvailableSlots();
+
+    render(<ScheduleCalendar events={[]} />);
+
+    const onEventClick = schedulerSpy.mock.calls[0][0].onEventClick as (arg: {
+      event: { extendedProps: { courseId: number } };
+    }) => void;
+
+    act(() => {
+      onEventClick({
+        event: { extendedProps: { courseId: 0 } },
+      });
+    });
+
+    expect(courseSectionModalSpy).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        courseId: null,
+        open: false,
       }),
     );
   });

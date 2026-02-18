@@ -26,7 +26,12 @@ function createSection(overrides: Partial<CourseSection> = {}): CourseSection {
 
 const enrollmentActionButtonSpy = vi.fn();
 const useCheckCourseEligibilitySpy = mockFn<
-  () => { eligible: boolean; validation?: Array<{ message: string; type: 'conflict' | 'grade_level' | 'max_courses' | 'prerequisite' | 'other' }> }
+  () => {
+    evaluate: () => {
+      eligible: boolean;
+      validation?: Array<{ message: string; type: 'conflict' | 'grade_level' | 'max_courses' | 'prerequisite' | 'other' }>;
+    };
+  }
 >();
 
 vi.mock('@formkit/auto-animate/react', () => ({
@@ -67,8 +72,10 @@ function createCourse(overrides: Partial<Course> = {}): Course {
 describe('CourseSectionList', () => {
   it('renders section schedule and enrollment status', () => {
     useCheckCourseEligibilitySpy.mockReturnValue({
-      eligible: true,
-      validation: [],
+      evaluate: () => ({
+        eligible: true,
+        validation: [],
+      }),
     });
 
     render(
@@ -86,8 +93,10 @@ describe('CourseSectionList', () => {
 
   it('shows an empty state when no sections are available', () => {
     useCheckCourseEligibilitySpy.mockReturnValue({
-      eligible: true,
-      validation: [],
+      evaluate: () => ({
+        eligible: true,
+        validation: [],
+      }),
     });
 
     render(
@@ -102,8 +111,10 @@ describe('CourseSectionList', () => {
   it('passes course/section identifiers to EnrollmentActionButton', () => {
     enrollmentActionButtonSpy.mockClear();
     useCheckCourseEligibilitySpy.mockReturnValue({
-      eligible: true,
-      validation: [],
+      evaluate: () => ({
+        eligible: true,
+        validation: [],
+      }),
     });
 
     render(
@@ -125,8 +136,10 @@ describe('CourseSectionList', () => {
   it('marks full sections in action props and badge', () => {
     enrollmentActionButtonSpy.mockClear();
     useCheckCourseEligibilitySpy.mockReturnValue({
-      eligible: true,
-      validation: [],
+      evaluate: () => ({
+        eligible: true,
+        validation: [],
+      }),
     });
 
     render(

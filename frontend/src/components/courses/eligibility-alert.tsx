@@ -10,7 +10,8 @@ interface EligibilityAlertProps {
 }
 
 export function EligibilityAlert({ course }: EligibilityAlertProps) {
-  const { eligible, validation } = useCheckCourseEligibility(course);
+  const { evaluate } = useCheckCourseEligibility();
+  const { eligible, validation } = evaluate(course);
   const { status } = useCheckCourseStatus(course);
 
   // Don't show alert if already enrolled, eligible, or no validation errors

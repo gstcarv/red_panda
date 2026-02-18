@@ -28,21 +28,4 @@ describe('courses api module', () => {
     expect(getMock).toHaveBeenCalledWith('/courses/42');
   });
 
-  it('requests available courses by slot', async () => {
-    const getMock = mockFn<typeof api.get>();
-    getMock.mockResolvedValue({ data: { courses: [] } } as never);
-    vi.spyOn(api, 'get').mockImplementation(getMock);
-
-    await coursesApi.getAvailableCoursesBySlot({
-      startTime: '11:00',
-      weekDay: 'monday',
-    });
-
-    expect(getMock).toHaveBeenCalledWith('/courses/available', {
-      params: {
-        startTime: '11:00',
-        weekDay: 'monday',
-      },
-    });
-  });
 });

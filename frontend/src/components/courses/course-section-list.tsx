@@ -46,7 +46,8 @@ export function CourseSectionList({
   enrolledSections = [],
   onEnrollSuccess,
 }: CourseSectionListProps) {
-  const { eligible, validation } = useCheckCourseEligibility(course);
+  const { evaluate } = useCheckCourseEligibility();
+  const { eligible, validation } = evaluate(course);
   const enrolledSectionIds = new Set(enrolledSections.map((s) => s.id));
   const [containerRef] = useAutoAnimate({ duration: 300 });
 
@@ -71,7 +72,7 @@ export function CourseSectionList({
             className={cn(
               'flex items-center justify-between gap-3 rounded-lg border p-3 transition-colors',
               isEnrolled
-                ? 'border-green-500 dark:border-green-600'
+                ? 'border-purple-500 dark:border-purple-600'
                 : 'border-border',
               'hover:bg-muted/50',
             )}

@@ -108,7 +108,7 @@ export function CourseSectionModal({
                 <p className="text-sm text-muted-foreground font-mono">
                   {course.code}
                 </p>
-                <EligibilityAlert course={course} />
+                {!isPassed && <EligibilityAlert course={course} />}
               </div>
               <div className="flex items-center gap-2">
                 <CourseStudentStatusTag course={course} />
@@ -160,7 +160,7 @@ export function CourseSectionModal({
                   <h3
                     className={cn(
                       'text-sm font-semibold',
-                      isEnrolled && 'text-green-600 dark:text-green-500',
+                      isEnrolled && 'text-purple-600 dark:text-purple-500',
                     )}
                   >
                     {isEnrolled ? 'Enrolled Section' : 'Available Sections'}

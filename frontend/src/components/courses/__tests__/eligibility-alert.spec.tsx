@@ -6,8 +6,10 @@ import type { Course } from '@/types/course.type';
 
 const useCheckCourseEligibilitySpy = mockFn<
   () => {
-    eligible: boolean;
-    validation?: Array<{ type: 'conflict' | 'grade_level' | 'max_courses' | 'prerequisite' | 'other'; message: string; prerequisite?: unknown }>;
+    evaluate: () => {
+      eligible: boolean;
+      validation?: Array<{ type: 'conflict' | 'grade_level' | 'max_courses' | 'prerequisite' | 'other'; message: string; prerequisite?: unknown }>;
+    };
   }
 >();
 
@@ -50,8 +52,10 @@ describe('EligibilityAlert', () => {
       isError: false,
     });
     useCheckCourseEligibilitySpy.mockReturnValue({
-      eligible: false,
-      validation: [{ type: 'conflict', message: 'Schedule conflict' }],
+      evaluate: () => ({
+        eligible: false,
+        validation: [{ type: 'conflict', message: 'Schedule conflict' }],
+      }),
     });
 
     render(<EligibilityAlert course={createCourse()} />);
@@ -69,8 +73,10 @@ describe('EligibilityAlert', () => {
       isError: false,
     });
     useCheckCourseEligibilitySpy.mockReturnValue({
-      eligible: false,
-      validation: [{ type: 'conflict', message: 'This course conflicts with your current schedule' }],
+      evaluate: () => ({
+        eligible: false,
+        validation: [{ type: 'conflict', message: 'This course conflicts with your current schedule' }],
+      }),
     });
 
     render(<EligibilityAlert course={createCourse()} />);
@@ -92,17 +98,19 @@ describe('EligibilityAlert', () => {
       isError: false,
     });
     useCheckCourseEligibilitySpy.mockReturnValue({
-      eligible: false,
-      validation: [
-        {
-          type: 'max_courses',
-          message: 'You have reached the maximum limit of 5 enrollments',
-        },
-        {
-          type: 'conflict',
-          message: 'This course conflicts with your current schedule',
-        },
-      ],
+      evaluate: () => ({
+        eligible: false,
+        validation: [
+          {
+            type: 'max_courses',
+            message: 'You have reached the maximum limit of 5 enrollments',
+          },
+          {
+            type: 'conflict',
+            message: 'This course conflicts with your current schedule',
+          },
+        ],
+      }),
     });
 
     render(<EligibilityAlert course={createCourse()} />);

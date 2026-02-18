@@ -111,10 +111,11 @@ describe("useCheckCourseEligibility", () => {
       isError: false,
     } as never);
 
-    const { result } = renderHook(() => useCheckCourseEligibility(createCourse()));
+    const { result } = renderHook(() => useCheckCourseEligibility());
+    const eligibility = result.current.evaluate(createCourse());
 
-    expect(result.current.eligible).toBe(false);
-    expect(result.current.validation).toEqual([
+    expect(eligibility.eligible).toBe(false);
+    expect(eligibility.validation).toEqual([
       expect.objectContaining({
         type: "max_courses",
       }),
@@ -158,12 +159,13 @@ describe("useCheckCourseEligibility", () => {
       isError: false,
     } as never);
 
-    const { result } = renderHook(() =>
-      useCheckCourseEligibility(createCourse({ prerequisite: undefined })),
+    const { result } = renderHook(() => useCheckCourseEligibility());
+    const eligibility = result.current.evaluate(
+      createCourse({ prerequisite: undefined }),
     );
 
-    expect(result.current.eligible).toBe(false);
-    expect(result.current.validation).toEqual([
+    expect(eligibility.eligible).toBe(false);
+    expect(eligibility.validation).toEqual([
       expect.objectContaining({
         type: "grade_level",
       }),
@@ -207,10 +209,11 @@ describe("useCheckCourseEligibility", () => {
       isError: false,
     } as never);
 
-    const { result } = renderHook(() => useCheckCourseEligibility(createCourse()));
+    const { result } = renderHook(() => useCheckCourseEligibility());
+    const eligibility = result.current.evaluate(createCourse());
 
-    expect(result.current.eligible).toBe(false);
-    expect(result.current.validation).toEqual([
+    expect(eligibility.eligible).toBe(false);
+    expect(eligibility.validation).toEqual([
       expect.objectContaining({
         type: "prerequisite",
       }),
@@ -262,10 +265,11 @@ describe("useCheckCourseEligibility", () => {
       isError: false,
     } as never);
 
-    const { result } = renderHook(() => useCheckCourseEligibility(createCourse()));
+    const { result } = renderHook(() => useCheckCourseEligibility());
+    const eligibility = result.current.evaluate(createCourse());
 
-    expect(result.current.eligible).toBe(true);
-    expect(result.current.validation).toBeUndefined();
+    expect(eligibility.eligible).toBe(true);
+    expect(eligibility.validation).toBeUndefined();
   });
 
   it("returns conflict error when section time overlaps enrolled course", () => {
@@ -331,10 +335,11 @@ describe("useCheckCourseEligibility", () => {
       isError: false,
     } as never);
 
-    const { result } = renderHook(() => useCheckCourseEligibility(createCourse()));
+    const { result } = renderHook(() => useCheckCourseEligibility());
+    const eligibility = result.current.evaluate(createCourse());
 
-    expect(result.current.eligible).toBe(false);
-    expect(result.current.validation).toEqual([
+    expect(eligibility.eligible).toBe(false);
+    expect(eligibility.validation).toEqual([
       expect.objectContaining({
         type: "conflict",
       }),
@@ -394,10 +399,11 @@ describe("useCheckCourseEligibility", () => {
       isError: false,
     } as never);
 
-    const { result } = renderHook(() => useCheckCourseEligibility(createCourse()));
+    const { result } = renderHook(() => useCheckCourseEligibility());
+    const eligibility = result.current.evaluate(createCourse());
 
-    expect(result.current.eligible).toBe(false);
-    expect(result.current.validation).toHaveLength(1);
-    expect(result.current.validation?.[0].type).toBe("max_courses");
+    expect(eligibility.eligible).toBe(false);
+    expect(eligibility.validation).toHaveLength(1);
+    expect(eligibility.validation?.[0].type).toBe("max_courses");
   });
 });

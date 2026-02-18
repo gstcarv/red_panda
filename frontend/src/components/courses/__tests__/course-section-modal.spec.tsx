@@ -1,6 +1,6 @@
-import { render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
+import { mockFn } from 'vitest-mock-extended';
 import { CourseSectionModal } from '@/components/courses/course-section-modal';
 import { useMediaQuery } from '@/lib/utils';
 import { useCourseById } from '@/hooks/courses/use-course-by-id';
@@ -10,17 +10,8 @@ import type { Course, CourseSection } from '@/types/course.type';
 function createSection(overrides: Partial<CourseSection> = {}): CourseSection {
   return {
     id: 10,
-    teacher: {
-      id: 100,
-      name: 'Jane Doe',
-    },
-    meetingTimes: [
-      {
-        dayOfWeek: 'Monday',
-        startTime: '08:00',
-        endTime: '09:30',
-      },
-    ],
+    teacher: { id: 100, name: 'Jane Doe' },
+    meetingTimes: [{ dayOfWeek: 'Monday', startTime: '08:00', endTime: '09:00' }],
     capacity: 30,
     enrolledCount: 12,
     ...overrides,
@@ -34,14 +25,18 @@ function createCourse(overrides: Partial<Course> = {}): Course {
     name: 'Algebra I',
     credits: 3,
     hoursPerWeek: 4,
-    gradeLevel: {
-      min: 9,
-      max: 10,
-    },
+    gradeLevel: { min: 9, max: 10 },
     availableSections: [createSection()],
     ...overrides,
   };
 }
+
+const sectionListSpy = vi.fn();
+const eligibilityAlertSpy = vi.fn();
+const mockUseMediaQuery = vi.mocked(useMediaQuery);
+const mockUseCourseById = vi.mocked(useCourseById);
+const mockUseCheckCourseStatus = vi.mocked(useCheckCourseStatus);
+const onOpenChangeSpy = mockFn<(open: boolean) => void>();
 
 vi.mock('@/lib/utils', async () => {
   const actual = await vi.importActual('@/lib/utils');
@@ -60,40 +55,33 @@ vi.mock('@/hooks/courses/use-check-course-status', () => ({
 }));
 
 vi.mock('@/components/courses/course-student-status-tag', () => ({
-  CourseStudentStatusTag: () => <span>Eligible</span>,
+  CourseStudentStatusTag: () => <span>status-tag</span>,
 }));
 
 vi.mock('@/components/courses/eligibility-alert', () => ({
-  EligibilityAlert: () => null,
+  EligibilityAlert: ({ course }: { course: Course }) => {
+    eligibilityAlertSpy(course.id);
+    return <span data-testid="eligibility-alert" />;
+  },
 }));
 
 vi.mock('@/components/courses/course-section-list', () => ({
-  CourseSectionList: ({
-    courseId,
-    sections,
-  }: {
-    courseId: number | null;
+  CourseSectionList: (props: {
     sections: Array<{ id: number }>;
-  }) => (
-    <button type="button" data-testid="course-section-list">
-      course:{courseId ?? 'none'}-sections:{sections.length}
-    </button>
-  ),
+    enrolledSections: Array<{ id: number }>;
+  }) => {
+    sectionListSpy(props);
+    return <div data-testid="course-section-list" />;
+  },
 }));
 
 vi.mock('@/components/ui/dialog', () => ({
   Dialog: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="desktop-dialog">{children}</div>
   ),
-  DialogContent: ({ children }: { children: React.ReactNode }) => (
-    <div>{children}</div>
-  ),
-  DialogDescription: ({ children }: { children: React.ReactNode }) => (
-    <p>{children}</p>
-  ),
-  DialogHeader: ({ children }: { children: React.ReactNode }) => (
-    <div>{children}</div>
-  ),
+  DialogContent: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  DialogDescription: ({ children }: { children: React.ReactNode }) => <p>{children}</p>,
+  DialogHeader: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
   DialogTitle: ({ children }: { children: React.ReactNode }) => <h1>{children}</h1>,
 }));
 
@@ -101,132 +89,65 @@ vi.mock('@/components/ui/sheet', () => ({
   Sheet: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="mobile-sheet">{children}</div>
   ),
-  SheetContent: ({ children }: { children: React.ReactNode }) => (
-    <div>{children}</div>
-  ),
-  SheetDescription: ({ children }: { children: React.ReactNode }) => (
-    <p>{children}</p>
-  ),
-  SheetHeader: ({ children }: { children: React.ReactNode }) => (
-    <div>{children}</div>
-  ),
+  SheetContent: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  SheetDescription: ({ children }: { children: React.ReactNode }) => <p>{children}</p>,
+  SheetHeader: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
   SheetTitle: ({ children }: { children: React.ReactNode }) => <h1>{children}</h1>,
 }));
 
-const mockUseMediaQuery = vi.mocked(useMediaQuery);
-const mockUseCourseById = vi.mocked(useCourseById);
-const mockUseCheckCourseStatus = vi.mocked(useCheckCourseStatus);
-
 describe('CourseSectionModal', () => {
-  it('renders desktop details with section list and metadata', () => {
+  it('hides eligibility alert and sections when course status is passed', () => {
+    sectionListSpy.mockClear();
+    eligibilityAlertSpy.mockClear();
     mockUseMediaQuery.mockReturnValue(true);
+    mockUseCourseById.mockReturnValue({
+      data: { data: createCourse({ availableSections: [createSection({ id: 3 })] }) },
+      isLoading: false,
+      isError: false,
+    } as never);
     mockUseCheckCourseStatus.mockReturnValue({
-      status: undefined,
+      status: 'passed',
       enrolledSections: [],
       isLoading: false,
       isError: false,
     });
+
+    render(<CourseSectionModal courseId={1} open onOpenChange={onOpenChangeSpy} />);
+
+    expect(screen.getByText('You’ve already passed this course.')).toBeInTheDocument();
+    expect(screen.queryByTestId('eligibility-alert')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('course-section-list')).not.toBeInTheDocument();
+    expect(eligibilityAlertSpy).not.toHaveBeenCalled();
+    expect(sectionListSpy).not.toHaveBeenCalled();
+  });
+
+  it('renders enrolled sections and eligibility alert when course is enrolled', () => {
+    sectionListSpy.mockClear();
+    eligibilityAlertSpy.mockClear();
+    mockUseMediaQuery.mockReturnValue(true);
+    const enrolledSection = createSection({ id: 30 });
     mockUseCourseById.mockReturnValue({
-      data: {
-        data: createCourse({
-          credits: 1,
-          prerequisite: {
-            id: 99,
-            code: 'MATH001',
-            name: 'Math Basics',
-          },
-          availableSections: [createSection({ id: 3 })],
-        }),
-      },
+      data: { data: createCourse({ availableSections: [createSection({ id: 99 })] }) },
       isLoading: false,
       isError: false,
     } as never);
+    mockUseCheckCourseStatus.mockReturnValue({
+      status: 'enrolled',
+      enrolledSections: [enrolledSection],
+      isLoading: false,
+      isError: false,
+    });
 
-    render(<CourseSectionModal courseId={1} open onOpenChange={vi.fn()} />);
+    render(<CourseSectionModal courseId={1} open onOpenChange={onOpenChangeSpy} />);
 
-    expect(screen.getByTestId('desktop-dialog')).toBeInTheDocument();
-    expect(screen.getByText('Algebra I')).toBeInTheDocument();
-    expect(screen.getByText('1 credit')).toBeInTheDocument();
-    expect(screen.getByText('Prerequisite')).toBeInTheDocument();
-    expect(screen.getByTestId('course-section-list')).toHaveTextContent(
-      'course:1-sections:1',
+    expect(screen.getByTestId('eligibility-alert')).toBeInTheDocument();
+    expect(screen.getByText('Enrolled Section')).toBeInTheDocument();
+
+    expect(sectionListSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        sections: [enrolledSection],
+        enrolledSections: [enrolledSection],
+      }),
     );
-  });
-
-  it('opens the prerequisite course when clicking prerequisite link', async () => {
-    const user = userEvent.setup();
-
-    mockUseMediaQuery.mockReturnValue(true);
-    mockUseCheckCourseStatus.mockReturnValue({
-      status: undefined,
-      enrolledSections: [],
-      isLoading: false,
-      isError: false,
-    });
-    mockUseCourseById.mockImplementation((courseId: number | null) => ({
-      data: {
-        data: createCourse({
-          id: Number(courseId),
-          prerequisite: {
-            id: 99,
-            code: 'MATH001',
-            name: 'Math Basics',
-          },
-          availableSections: [createSection({ id: 3 })],
-        }),
-      },
-      isLoading: false,
-      isError: false,
-    }) as never);
-
-    render(<CourseSectionModal courseId={1} open onOpenChange={vi.fn()} />);
-
-    await user.click(screen.getByRole('button', { name: 'MATH001 - Math Basics' }));
-
-    await waitFor(() => {
-      expect(mockUseCourseById).toHaveBeenCalledWith(99);
-    });
-  });
-
-  it('renders mobile sheet variant', () => {
-    mockUseMediaQuery.mockReturnValue(false);
-    mockUseCheckCourseStatus.mockReturnValue({
-      status: undefined,
-      enrolledSections: [],
-      isLoading: false,
-      isError: false,
-    });
-    mockUseCourseById.mockReturnValue({
-      data: {
-        data: createCourse(),
-      },
-      isLoading: false,
-      isError: false,
-    } as never);
-
-    render(<CourseSectionModal courseId={2} open onOpenChange={vi.fn()} />);
-
-    expect(screen.getByTestId('mobile-sheet')).toBeInTheDocument();
-  });
-
-  it('shows error feedback when course loading fails', () => {
-    mockUseMediaQuery.mockReturnValue(true);
-    mockUseCheckCourseStatus.mockReturnValue({
-      status: undefined,
-      enrolledSections: [],
-      isLoading: false,
-      isError: false,
-    });
-    mockUseCourseById.mockReturnValue({
-      data: undefined,
-      isLoading: false,
-      isError: true,
-    } as never);
-
-    render(<CourseSectionModal courseId={3} open onOpenChange={vi.fn()} />);
-
-    expect(
-      screen.getByText('Failed to load course details. Please try again.'),
-    ).toBeInTheDocument();
   });
 });

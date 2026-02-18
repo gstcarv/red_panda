@@ -111,6 +111,29 @@
   filter: opacity(0.1);
 }
 
+.ui-scheduler .fc .fc-event.ui-scheduler-slot-hint-event,
+.ui-scheduler .fc .fc-timegrid-event.ui-scheduler-slot-hint-event {
+  border: none;
+  background: transparent;
+  box-shadow: none;
+  color: rgba(107, 114, 128, 0.95);
+  pointer-events: none;
+}
+
+.ui-scheduler .fc .fc-timegrid-event.ui-scheduler-slot-hint-event .fc-event-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.2rem 0.4rem;
+}
+
+.ui-scheduler .fc .fc-timegrid-event.ui-scheduler-slot-hint-event .fc-event-title {
+  font-size: 0.64rem;
+  font-weight: 500;
+  text-align: center;
+  color: rgba(107, 114, 128, 0.95);
+}
+
 .ui-scheduler .fc .fc-timegrid-event .fc-event-main {
   padding: 0.38rem 0.56rem;
   line-height: 1.15;
@@ -148,4 +171,3 @@
   width: 0;
   height: 0;
 }
-

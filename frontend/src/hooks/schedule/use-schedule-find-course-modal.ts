@@ -1,24 +1,20 @@
 import { useMemo, useState } from 'react';
-import { useAvailableCoursesBySlot } from '@/hooks/courses/use-available-courses-by-slot';
+import {
+  buildSlotKey,
+  useAvailableCoursesBySlot,
+} from '@/hooks/courses/use-available-courses-by-slot';
 import { useEnrollments } from '@/hooks/enrollments/use-enrollments';
 import type { Course } from '@/types/course.type';
 import type { SchedulerSlotSelection } from '@/types/scheduler.type';
 
 type CourseWithEligibility = {
   course: Course;
-  eligible: boolean;
   isEnrolled: boolean;
 };
 
 export function useScheduleFindCourseModal(slot: SchedulerSlotSelection | null) {
   const [selectedCourseId, setSelectedCourseId] = useState<number | null>(null);
-  const queryParams = slot
-    ? {
-      weekDay: slot.weekDay,
-      startTime: slot.startTime,
-    }
-    : null;
-  const { data, isLoading, isError } = useAvailableCoursesBySlot(queryParams);
+  const { coursesBySlot, isLoading, isError } = useAvailableCoursesBySlot();
   const { data: enrollmentsResponse } = useEnrollments();
 
   const enrolledCourseIds = useMemo(() => {
@@ -27,16 +23,18 @@ export function useScheduleFindCourseModal(slot: SchedulerSlotSelection | null) 
   }, [enrollmentsResponse]);
 
   const coursesWithEligibility = useMemo<CourseWithEligibility[]>(() => {
-    const availableCourses = data?.data.courses ?? [];
+    if (!slot) {
+      return [];
+    }
+
+    const availableCourses =
+      coursesBySlot.get(buildSlotKey(slot.weekDay, slot.startTime)) ?? [];
 
     return availableCourses.map((course) => ({
       course,
       isEnrolled: enrolledCourseIds.has(course.id),
-      eligible: course.prerequisite
-        ? enrolledCourseIds.has(course.prerequisite.id)
-        : true,
     }));
-  }, [data, enrolledCourseIds]);
+  }, [coursesBySlot, enrolledCourseIds, slot]);
 
   const handleCourseDetailsOpenChange = (isOpen: boolean) => {
     if (!isOpen) {

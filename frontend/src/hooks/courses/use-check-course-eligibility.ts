@@ -5,25 +5,33 @@ import type { Student } from "@/types/student.type";
 import { useEnrollments } from "../enrollments/use-enrollments";
 import { useCourseHistory } from "./use-course-history";
 import { useStudent } from "../students/use-student";
+import { useCallback } from "react";
 
 type CheckEligiblityReturn = {
     eligible: boolean
     validation?: CourseAvailabilityError[]
 }
 
-export function useCheckCourseEligibility(course: Course): CheckEligiblityReturn {
-    const { data: enrollmentsResponse } = useEnrollments();
-    const { data: courseHistoryResponse, isLoading: isCourseHistoryLoading } =
-        useCourseHistory();
-    const { data: studentResponse } = useStudent();
+type UseCheckCourseEligibilityReturn = {
+    evaluate: (course: Course) => CheckEligiblityReturn;
+}
 
-    const enrollments = enrollmentsResponse?.data.enrollments ?? [];
-    const courseHistory = courseHistoryResponse?.data.courseHistory ?? [];
-    const student = studentResponse?.data.student;
-
+export function evaluateCourseEligibility({
+    course,
+    enrollments,
+    courseHistory,
+    student,
+    isCourseHistoryLoading,
+}: {
+    course: Course;
+    enrollments: Enrollment[];
+    courseHistory: CourseHistory[];
+    student?: Student;
+    isCourseHistoryLoading: boolean;
+}): CheckEligiblityReturn {
     // Check in priority order: max_courses -> grade_level -> prereq -> time -> others
     // Return only the first error found (highest priority)
-    
+
     // 1. max_courses
     const enrollmentLimitError = checkEnrollmentLimit(enrollments);
     if (enrollmentLimitError) {
@@ -72,6 +80,31 @@ export function useCheckCourseEligibility(course: Course): CheckEligiblityReturn
 
     return {
         eligible: true
+    };
+}
+
+export function useCheckCourseEligibility(): UseCheckCourseEligibilityReturn {
+    const { data: enrollmentsResponse } = useEnrollments();
+    const { data: courseHistoryResponse, isLoading: isCourseHistoryLoading } =
+        useCourseHistory();
+    const { data: studentResponse } = useStudent();
+
+    const enrollments = enrollmentsResponse?.data.enrollments ?? [];
+    const courseHistory = courseHistoryResponse?.data.courseHistory ?? [];
+    const student = studentResponse?.data.student;
+
+    const evaluate = useCallback((course: Course) => {
+        return evaluateCourseEligibility({
+            course,
+            enrollments,
+            courseHistory,
+            student,
+            isCourseHistoryLoading,
+        });
+    }, [courseHistory, enrollments, isCourseHistoryLoading, student]);
+
+    return {
+        evaluate,
     };
 }
 

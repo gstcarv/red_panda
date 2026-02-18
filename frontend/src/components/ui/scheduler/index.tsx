@@ -58,6 +58,10 @@ export function Scheduler({
         dateClick={onDateClick}
         eventClick={onEventClick}
         eventClassNames={(arg) => {
+          if (arg.event.extendedProps.isSlotHint) {
+            return ['ui-scheduler-slot-hint-event'];
+          }
+
           if (activeCourseId === null) {
             return [];
           }

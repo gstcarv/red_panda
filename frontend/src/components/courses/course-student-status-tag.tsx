@@ -43,7 +43,8 @@ function getStatusBadgeProps(status: CourseStudentStatus) {
 }
 
 export function CourseStudentStatusTag({ course }: CourseStudentStatusTagProps) {
-  const { eligible, validation } = useCheckCourseEligibility(course);
+  const { evaluate } = useCheckCourseEligibility();
+  const { eligible, validation } = evaluate(course);
   const { status } = useCheckCourseStatus(course);
 
   if (status) {

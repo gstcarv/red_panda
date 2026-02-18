@@ -4,7 +4,6 @@ import type { CourseHistory } from "@/types/course-history.type";
 import type { Enrollment } from "@/types/enrollments.type";
 import type { Student } from "@/types/student.type";
 import type {
-  AvailableCoursesBySlotResponse,
   CoursesResponse,
 } from "@/api/courses-api";
 import type {
@@ -637,62 +636,10 @@ const mockStudent: Student = {
   creditsEarned: 30,
 };
 
-function normalizeDayOfWeek(dayOfWeek: string): string {
-  return dayOfWeek.trim().toLowerCase();
-}
-
-function isSlotWithinMeetingTime(
-  meetingTime: { dayOfWeek: string; startTime: string; endTime: string },
-  weekDay: string,
-  startTime: string,
-) {
-  return (
-    normalizeDayOfWeek(meetingTime.dayOfWeek) === weekDay &&
-    startTime >= meetingTime.startTime &&
-    startTime < meetingTime.endTime
-  );
-}
-
 export const handlers = [
   http.get("/courses", () => {
     return HttpResponse.json<CoursesResponse>({
       courses: courses.map(toCourseWithSections),
-    });
-  }),
-
-  http.get("/courses/available", ({ request }) => {
-    const { searchParams } = new URL(request.url);
-    const weekDayParam = searchParams.get("weekDay");
-    const startTime = searchParams.get("startTime");
-
-    if (!weekDayParam || !startTime) {
-      return HttpResponse.json<AvailableCoursesBySlotResponse>({ courses: [] });
-    }
-
-    const weekDay = normalizeDayOfWeek(weekDayParam);
-
-    const availableCourses = courses.flatMap((course) => {
-      const availableSections = (mockSectionsByCourseId[course.id] ?? []).filter(
-        (section) =>
-          section.meetingTimes.some((meetingTime) =>
-            isSlotWithinMeetingTime(meetingTime, weekDay, startTime),
-          ),
-      );
-
-      if (availableSections.length === 0) {
-        return [];
-      }
-
-      return [
-        {
-          ...course,
-          availableSections,
-        },
-      ];
-    });
-
-    return HttpResponse.json<AvailableCoursesBySlotResponse>({
-      courses: availableCourses,
     });
   }),
 

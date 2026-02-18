@@ -10,6 +10,8 @@ vi.mock('@/hooks/enrollments/use-enrollments', () => ({
 
 vi.mock('@/hooks/courses/use-available-courses-by-slot', () => ({
   useAvailableCoursesBySlot: vi.fn(),
+  buildSlotKey: (weekDay: string, startTime: string) =>
+    `${weekDay.trim().toLowerCase()}|${startTime}`,
 }));
 
 const courseSectionModalSpy = vi.fn();
@@ -45,6 +47,7 @@ vi.mock('@/components/ui/dialog', () => ({
 
 const mockedUseAvailableCoursesBySlot = vi.mocked(useAvailableCoursesBySlot);
 const mockedUseEnrollments = vi.mocked(useEnrollments);
+const MONDAY_11 = 'monday|11:00';
 
 describe('ScheduleFindCourseModal', () => {
   function setupEnrollmentsMock(courseIds: number[] = []) {
@@ -78,7 +81,7 @@ describe('ScheduleFindCourseModal', () => {
     courseSectionModalSpy.mockClear();
     setupEnrollmentsMock();
     mockedUseAvailableCoursesBySlot.mockReturnValue({
-      data: undefined,
+      coursesBySlot: new Map(),
       isLoading: true,
       isError: false,
     } as never);
@@ -102,11 +105,7 @@ describe('ScheduleFindCourseModal', () => {
     courseSectionModalSpy.mockClear();
     setupEnrollmentsMock();
     mockedUseAvailableCoursesBySlot.mockReturnValue({
-      data: {
-        data: {
-          courses: [],
-        },
-      },
+      coursesBySlot: new Map([[MONDAY_11, []]]),
       isLoading: false,
       isError: false,
     } as never);
@@ -132,9 +131,10 @@ describe('ScheduleFindCourseModal', () => {
     courseSectionModalSpy.mockClear();
     setupEnrollmentsMock();
     mockedUseAvailableCoursesBySlot.mockReturnValue({
-      data: {
-        data: {
-          courses: [
+      coursesBySlot: new Map([
+        [
+          MONDAY_11,
+          [
             {
               id: 1,
               code: 'MATH101',
@@ -153,8 +153,8 @@ describe('ScheduleFindCourseModal', () => {
               ],
             },
           ],
-        },
-      },
+        ],
+      ]),
       isLoading: false,
       isError: false,
     } as never);
@@ -181,9 +181,10 @@ describe('ScheduleFindCourseModal', () => {
     courseSectionModalSpy.mockClear();
     setupEnrollmentsMock();
     mockedUseAvailableCoursesBySlot.mockReturnValue({
-      data: {
-        data: {
-          courses: [
+      coursesBySlot: new Map([
+        [
+          MONDAY_11,
+          [
             {
               id: 1,
               code: 'MATH101',
@@ -202,8 +203,8 @@ describe('ScheduleFindCourseModal', () => {
               ],
             },
           ],
-        },
-      },
+        ],
+      ]),
       isLoading: false,
       isError: false,
     } as never);
@@ -233,9 +234,10 @@ describe('ScheduleFindCourseModal', () => {
     courseSectionModalSpy.mockClear();
     setupEnrollmentsMock([]);
     mockedUseAvailableCoursesBySlot.mockReturnValue({
-      data: {
-        data: {
-          courses: [
+      coursesBySlot: new Map([
+        [
+          MONDAY_11,
+          [
             {
               id: 3,
               code: 'CS201',
@@ -251,8 +253,8 @@ describe('ScheduleFindCourseModal', () => {
               availableSections: [],
             },
           ],
-        },
-      },
+        ],
+      ]),
       isLoading: false,
       isError: false,
     } as never);
