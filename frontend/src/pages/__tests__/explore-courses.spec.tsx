@@ -5,14 +5,14 @@ import { mockFn } from 'vitest-mock-extended';
 import { ExploreCourses } from '@/pages/explore-courses';
 import { useCourses } from '@/hooks/courses/use-courses';
 import { useCourseById } from '@/hooks/courses/use-course-by-id';
-import { useEnroll } from '@/hooks/enrollments/use-enroll';
+import { useEnrollmentFlow } from '@/hooks/enrollments/use-enrollment-flow';
 
 vi.mock('@/hooks/courses/use-courses', () => ({
   useCourses: vi.fn(),
 }));
 
-vi.mock('@/hooks/enrollments/use-enroll', () => ({
-  useEnroll: vi.fn(),
+vi.mock('@/hooks/enrollments/use-enrollment-flow', () => ({
+  useEnrollmentFlow: vi.fn(),
 }));
 
 vi.mock('@/hooks/courses/use-course-by-id', () => ({
@@ -47,7 +47,7 @@ vi.mock('@/components/courses', () => ({
 
 const mockUseCourses = vi.mocked(useCourses);
 const mockUseCourseById = vi.mocked(useCourseById);
-const mockUseEnroll = vi.mocked(useEnroll);
+const mockUseEnrollmentFlow = vi.mocked(useEnrollmentFlow);
 
 describe('ExploreCourses', () => {
   it('renders page title and passes fetched list state', () => {
@@ -60,9 +60,11 @@ describe('ExploreCourses', () => {
     mockUseCourseById.mockReturnValue({
       data: undefined,
     } as never);
-    mockUseEnroll.mockReturnValue({
-      mutate: mockFn<(sectionId: number) => void>(),
-      isPending: false,
+    mockUseEnrollmentFlow.mockReturnValue({
+      enrollInSection: mockFn<(sectionId: number) => void>(),
+      enrollingSectionId: null,
+      isSectionEnrolled: mockFn<(sectionId: number) => boolean>(),
+      isEnrollmentsLoading: false,
     } as never);
 
     render(<ExploreCourses />);
@@ -87,9 +89,11 @@ describe('ExploreCourses', () => {
     mockUseCourseById.mockReturnValue({
       data: undefined,
     } as never);
-    mockUseEnroll.mockReturnValue({
-      mutate: mockFn<(sectionId: number) => void>(),
-      isPending: false,
+    mockUseEnrollmentFlow.mockReturnValue({
+      enrollInSection: mockFn<(sectionId: number) => void>(),
+      enrollingSectionId: null,
+      isSectionEnrolled: mockFn<(sectionId: number) => boolean>(),
+      isEnrollmentsLoading: false,
     } as never);
 
     render(<ExploreCourses />);

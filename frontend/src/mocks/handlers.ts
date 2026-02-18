@@ -1,7 +1,12 @@
 import { http, HttpResponse } from "msw";
 import type { Course, CourseDetails, CourseSection } from "@/types/course.type";
+import type { Enrollment } from "@/types/enrollments.type";
 import type { CoursesResponse } from "@/api/courses-api";
-import type { EnrollParams } from "@/api/enrollments-api";
+import type {
+  EnrollParams,
+  EnrollResponse,
+  GetEnrollmentsResponse,
+} from "@/api/enrollments-api";
 
 const courses: Course[] = [
   {
@@ -120,6 +125,20 @@ const mockSectionsByCourseId: Record<number, CourseSection[]> = {
   ],
 };
 
+const mockEnrollments: Enrollment[] = [
+  {
+    id: "1",
+    course: courses[0],
+    courseSection: mockSectionsByCourseId[1][0],
+  },
+  {
+    id: "2",
+    course: courses[1],
+    courseSection: mockSectionsByCourseId[2][0],
+  },
+];
+let nextEnrollmentId = mockEnrollments.length + 1;
+
 export const handlers = [
   http.get("/courses", () => {
     return HttpResponse.json<CoursesResponse>({ courses });
@@ -139,8 +158,14 @@ export const handlers = [
     return HttpResponse.json<CourseDetails>(details);
   }),
 
+  http.get("/enrollments", () => {
+    return HttpResponse.json<GetEnrollmentsResponse>({
+      enrollments: mockEnrollments,
+    });
+  }),
+
   http.post("/enrollments", async ({ request }) => {
-    const body = await request.json() as EnrollParams;
+    const body = (await request.json()) as EnrollParams;
 
     // Simulate error scenarios for testing
     // Uncomment to test error handling:
@@ -151,6 +176,36 @@ export const handlers = [
     //   );
     // }
 
-    return HttpResponse.json<CoursesResponse>({ courses });
+    const course = courses.find((value) => value.id === body.courseId);
+    const courseSection = mockSectionsByCourseId[body.courseId]?.find(
+      (value) => value.id === body.sectionId,
+    );
+
+    if (!course || !courseSection) {
+      return HttpResponse.json(
+        { error: "Course or section not found" },
+        { status: 404 },
+      );
+    }
+
+    const alreadyEnrolled = mockEnrollments.some(
+      (enrollment) => enrollment.courseSection.id === body.sectionId,
+    );
+    if (alreadyEnrolled) {
+      return HttpResponse.json(
+        { error: "Already enrolled in this section" },
+        { status: 409 },
+      );
+    }
+
+    const enrollment: Enrollment = {
+      id: String(nextEnrollmentId++),
+      course,
+      courseSection,
+    };
+
+    mockEnrollments.push(enrollment);
+
+    return HttpResponse.json<EnrollResponse>({ enrollment });
   }),
 ];

@@ -18,6 +18,7 @@ export interface CoursesListProps {
   getEligible?: (course: Course) => boolean;
   onEnrollSection?: (sectionId: number) => void;
   enrollingSectionId?: number | null;
+  isSectionEnrolled?: (sectionId: number) => boolean;
   emptyMessage?: string;
   className?: string;
   /** When true, shows skeleton placeholders instead of the list */
@@ -63,6 +64,7 @@ export function CoursesList({
   getEligible,
   onEnrollSection,
   enrollingSectionId = null,
+  isSectionEnrolled,
   emptyMessage = 'No courses match your filters.',
   className,
   isLoading = false,
@@ -180,6 +182,7 @@ export function CoursesList({
         onOpenChange={handleModalClose}
         onEnrollSection={onEnrollSection}
         enrollingSectionId={enrollingSectionId}
+        isSectionEnrolled={isSectionEnrolled}
       />
     </div>
   );

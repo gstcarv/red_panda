@@ -9,7 +9,7 @@ import type { Course } from '@/types/course.type';
 import { useCallback, useState } from 'react';
 import { FeedbackDialog } from '@/components/ui/feedback-dialog';
 import { useCourseById } from '@/hooks/courses/use-course-by-id';
-import { useEnroll } from '@/hooks/enrollments/use-enroll';
+import { useEnrollmentFlow } from '@/hooks/enrollments/use-enrollment-flow';
 import { useErrorHandler } from '@/hooks/use-error-handler';
 import { toast } from 'sonner';
 
@@ -20,9 +20,6 @@ const DEFAULT_FILTER: CoursesFilterValues = {
 
 export function ExploreCourses() {
   const [filter, setFilter] = useState<CoursesFilterValues>(DEFAULT_FILTER);
-  const [enrollingSectionId, setEnrollingSectionId] = useState<number | null>(
-    null,
-  );
   const [selectedCourseId, setSelectedCourseId] = useState<number | null>(null);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
   const [enrolledCourseName, setEnrolledCourseName] = useState('');
@@ -31,23 +28,17 @@ export function ExploreCourses() {
   const { data: courseData } = useCourseById(selectedCourseId);
   const { notifyError } = useErrorHandler();
 
-  const enrollMutation = useEnroll(selectedCourseId, {
-    onMutate: (sectionId) => {
-      setEnrollingSectionId(sectionId);
-    },
-    onSuccess: () => {
-      setEnrolledCourseName(courseData?.data.name ?? 'the course');
-      setShowSuccessDialog(true);
-      setSelectedCourseId(null);
-      refetch();
-    },
-    onError: (error) => {
-      notifyError(error, 'Failed to enroll. Please try again.');
-    },
-    onSettled: () => {
-      setEnrollingSectionId(null);
-    },
-  });
+  const { enrollInSection, enrollingSectionId, isSectionEnrolled } =
+    useEnrollmentFlow(selectedCourseId, {
+      onSuccess: () => {
+        setEnrolledCourseName(courseData?.data.name ?? 'the course');
+        setShowSuccessDialog(true);
+        setSelectedCourseId(null);
+      },
+      onError: (error) => {
+        notifyError(error, 'Failed to enroll. Please try again.');
+      },
+    });
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars -- placeholder until eligibility from API
   const getEligible = useCallback((_course: Course) => false, []);
@@ -59,9 +50,9 @@ export function ExploreCourses() {
         return;
       }
 
-      enrollMutation.mutate(sectionId);
+      enrollInSection(sectionId);
     },
-    [enrollMutation, selectedCourseId],
+    [enrollInSection, selectedCourseId],
   );
 
   const handleCourseSelect = useCallback((courseId: number) => {
@@ -93,6 +84,7 @@ export function ExploreCourses() {
           onRetry={() => refetch()}
           onEnrollSection={handleEnrollSection}
           enrollingSectionId={enrollingSectionId}
+          isSectionEnrolled={isSectionEnrolled}
           selectedCourseId={selectedCourseId}
           onCourseSelect={handleCourseSelect}
           onModalClose={handleModalClose}

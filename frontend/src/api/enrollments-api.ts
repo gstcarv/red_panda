@@ -1,8 +1,8 @@
 import { api } from "@/config/api";
-import type { Course } from "@/types/course.type";
+import type { Enrollment } from "@/types/enrollments.type";
 
-export type CoursesResponse = {
-    courses: Course[];
+export type GetEnrollmentsResponse = {
+    enrollments: Enrollment[];
 };
 
 export type EnrollParams = {
@@ -11,8 +11,16 @@ export type EnrollParams = {
     sectionId: number;
 };
 
+export type EnrollResponse = {
+    enrollment: Enrollment;
+};
+
 function enroll(params: EnrollParams) {
-    return api.post<CoursesResponse>("/enrollments", params);
+    return api.post<EnrollResponse>("/enrollments", params);
 }
 
-export { enroll };
+function getEnrollments() {
+    return api.get<GetEnrollmentsResponse>("/enrollments");
+}
+
+export { enroll, getEnrollments };

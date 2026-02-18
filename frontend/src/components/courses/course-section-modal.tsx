@@ -28,6 +28,7 @@ export interface CourseSectionModalProps {
   onOpenChange: (open: boolean) => void;
   onEnrollSection?: (sectionId: number) => void;
   enrollingSectionId?: number | null;
+  isSectionEnrolled?: (sectionId: number) => boolean;
 }
 
 export function CourseSectionModal({
@@ -36,6 +37,7 @@ export function CourseSectionModal({
   onOpenChange,
   onEnrollSection,
   enrollingSectionId = null,
+  isSectionEnrolled,
 }: CourseSectionModalProps) {
   const isDesktop = useMediaQuery('(min-width: 768px)');
   const [cachedCourse, setCachedCourse] = useState<CourseDetails | null>(null);
@@ -149,6 +151,7 @@ export function CourseSectionModal({
                 sections={course.availableSections}
                 onEnroll={onEnrollSection}
                 enrollingSectionId={enrollingSectionId}
+                isSectionEnrolled={isSectionEnrolled}
               />
             </div>
           </div>

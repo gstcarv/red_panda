@@ -8,6 +8,7 @@ export interface CourseSectionListProps {
   sections: CourseSection[];
   onEnroll?: (sectionId: number) => void;
   enrollingSectionId?: number | null;
+  isSectionEnrolled?: (sectionId: number) => boolean;
 }
 
 const dayAbbreviations: Record<string, string> = {
@@ -32,6 +33,7 @@ export function CourseSectionList({
   sections,
   onEnroll,
   enrollingSectionId = null,
+  isSectionEnrolled,
 }: CourseSectionListProps) {
   if (sections.length === 0) {
     return (
@@ -46,6 +48,7 @@ export function CourseSectionList({
       {sections.map((section) => {
         const isEnrolling = enrollingSectionId === section.id;
         const isFull = section.enrolledCount >= section.capacity;
+        const alreadyEnrolled = isSectionEnrolled?.(section.id) ?? false;
         const spotsAvailable = section.capacity - section.enrolledCount;
 
         return (
@@ -103,10 +106,16 @@ export function CourseSectionList({
                   size="sm"
                   className="h-8 px-3 text-xs"
                   onClick={() => onEnroll(section.id)}
-                  disabled={isFull || isEnrolling}
+                  disabled={isFull || isEnrolling || alreadyEnrolled}
                 >
                   <Plus className="h-3.5 w-3.5 mr-1.5" />
-                  {isEnrolling ? 'Enrolling...' : isFull ? 'Full' : 'Enroll'}
+                  {isEnrolling
+                    ? 'Enrolling...'
+                    : alreadyEnrolled
+                      ? 'Enrolled'
+                      : isFull
+                        ? 'Full'
+                        : 'Enroll'}
                 </Button>
               )}
             </div>
