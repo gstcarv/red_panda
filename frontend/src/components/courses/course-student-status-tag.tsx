@@ -7,33 +7,57 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { useCheckCourseEligibility } from '@/hooks/courses/use-check-course-eligibility';
-import { useCheckCourseEnrolled } from '@/hooks/courses/use-check-course-enrolled';
+import {
+  useCheckCourseStatus,
+  type CourseStudentStatus,
+} from '@/hooks/courses/use-check-course-status';
 import { cn } from '@/lib/utils';
 import type { Course } from '@/types/course.type';
 import { EligibilityErrorMessage } from './eligibility-error-message';
 
-interface EligibilityTagProps {
+interface CourseStudentStatusTagProps {
   course: Course;
 }
 
-export function EligibilityTag({ course }: EligibilityTagProps) {
-  const { eligible, validation } = useCheckCourseEligibility(course);
-  const { isEnrolled } = useCheckCourseEnrolled(course);
+function getStatusBadgeProps(status: CourseStudentStatus) {
+  switch (status) {
+    case 'enrolled':
+      return {
+        className: 'bg-purple-600 hover:bg-purple-700 text-white',
+        icon: CheckCircle,
+        label: 'Enrolled',
+      } as const;
+    case 'passed':
+      return {
+        className: 'bg-green-600 hover:bg-green-700 text-white',
+        icon: CheckCircle2,
+        label: 'Passed',
+      } as const;
+    case 'failed':
+      return {
+        className: 'bg-red-600 hover:bg-red-700 text-white',
+        icon: XCircle,
+        label: 'Failed',
+      } as const;
+  }
+}
 
-  // Show "Enrolled" badge if user is already enrolled
-  if (isEnrolled) {
-    const enrolledBadge = (
+export function CourseStudentStatusTag({ course }: CourseStudentStatusTagProps) {
+  const { eligible, validation } = useCheckCourseEligibility(course);
+  const { status } = useCheckCourseStatus(course);
+
+  if (status) {
+    const { className, icon: Icon, label } = getStatusBadgeProps(status);
+    return (
       <Badge
         variant="default"
-        className="shrink-0 gap-1 bg-green-600 hover:bg-green-700 text-white"
-        aria-label="Enrolled"
+        className={cn('shrink-0 gap-1', className)}
+        aria-label={label}
       >
-        <CheckCircle className="size-3" aria-hidden />
-        Enrolled
+        <Icon className="size-3" aria-hidden />
+        {label}
       </Badge>
     );
-
-    return enrolledBadge;
   }
 
   const badge = (
@@ -75,3 +99,4 @@ export function EligibilityTag({ course }: EligibilityTagProps) {
 
   return badge;
 }
+

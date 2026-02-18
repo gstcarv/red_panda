@@ -15,10 +15,10 @@ import {
   SheetTitle,
 } from '@/components/ui/sheet';
 import { CourseSectionList } from './course-section-list';
-import { EligibilityTag } from './eligibility-tag';
+import { CourseStudentStatusTag } from './course-student-status-tag';
 import { EligibilityAlert } from './eligibility-alert';
 import { useCourseById } from '@/hooks/courses/use-course-by-id';
-import { useCheckCourseEnrolled } from '@/hooks/courses/use-check-course-enrolled';
+import { useCheckCourseStatus } from '@/hooks/courses/use-check-course-status';
 import { Skeleton } from '@/components/ui/skeleton';
 import { AlertCircle, BookOpen, Clock, GraduationCap } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -66,7 +66,9 @@ export function CourseSectionModal({
   const course = cachedCourse || courseData;
   // Use a dummy course with invalid ID when course is not loaded yet
   const courseForHook = course ?? ({ id: -1 } as Course);
-  const { isEnrolled, enrolledSections } = useCheckCourseEnrolled(courseForHook);
+  const { status, enrolledSections } = useCheckCourseStatus(courseForHook);
+  const isEnrolled = status === 'enrolled';
+  const isPassed = status === 'passed';
 
   // Show enrolled sections if enrolled, otherwise show all available sections
   const displayedSections = isEnrolled && course
@@ -109,7 +111,7 @@ export function CourseSectionModal({
                 <EligibilityAlert course={course} />
               </div>
               <div className="flex items-center gap-2">
-                <EligibilityTag course={course} />
+                <CourseStudentStatusTag course={course} />
                 <Badge variant="secondary" className="text-xs">
                   {course.credits} {course.credits === 1 ? 'credit' : 'credits'}
                 </Badge>
@@ -148,31 +150,37 @@ export function CourseSectionModal({
             </div>
 
             {/* Sections */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <h3
-                  className={cn(
-                    'text-sm font-semibold',
-                    isEnrolled && 'text-green-600 dark:text-green-500',
-                  )}
-                >
-                  {isEnrolled ? 'Enrolled Section' : 'Available Sections'}
-                </h3>
-                <Badge variant="outline" className="text-xs">
-                  {displayedSections.length} section
-                  {displayedSections.length !== 1 ? 's' : ''}
-                </Badge>
+            {isPassed ? (
+              <div className="rounded-lg border border-dashed px-4 py-6 text-sm text-muted-foreground">
+                You’ve already passed this course.
               </div>
-              <CourseSectionList
-                courseId={courseId}
-                course={course}
-                sections={displayedSections}
-                enrolledSections={isEnrolled ? enrolledSections : []}
-                onEnrollSuccess={() => {
-                  onOpenChange(false);
-                }}
-              />
-            </div>
+            ) : (
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <h3
+                    className={cn(
+                      'text-sm font-semibold',
+                      isEnrolled && 'text-green-600 dark:text-green-500',
+                    )}
+                  >
+                    {isEnrolled ? 'Enrolled Section' : 'Available Sections'}
+                  </h3>
+                  <Badge variant="outline" className="text-xs">
+                    {displayedSections.length} section
+                    {displayedSections.length !== 1 ? 's' : ''}
+                  </Badge>
+                </div>
+                <CourseSectionList
+                  courseId={courseId}
+                  course={course}
+                  sections={displayedSections}
+                  enrolledSections={isEnrolled ? enrolledSections : []}
+                  onEnrollSuccess={() => {
+                    onOpenChange(false);
+                  }}
+                />
+              </div>
+            )}
           </div>
         </>
       ) : null}

@@ -3,8 +3,8 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { SchedulerList } from '@/components/schedule/scheduler-list';
 import { useEnrollments } from '@/hooks/enrollments/use-enrollments';
 
-vi.mock('@/components/courses/eligibility-tag', () => ({
-  EligibilityTag: () => null,
+vi.mock('@/components/courses/course-student-status-tag', () => ({
+  CourseStudentStatusTag: () => null,
 }));
 
 vi.mock('@/hooks/enrollments/use-enrollments', () => ({

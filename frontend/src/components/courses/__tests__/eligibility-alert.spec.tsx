@@ -11,16 +11,21 @@ const useCheckCourseEligibilitySpy = mockFn<
   }
 >();
 
-const useCheckCourseEnrolledSpy = mockFn<
-  () => { isEnrolled: boolean; enrolledSections: unknown[]; isLoading: boolean; isError: boolean }
+const useCheckCourseStatusSpy = mockFn<
+  () => {
+    status?: 'enrolled' | 'passed' | 'failed';
+    enrolledSections: unknown[];
+    isLoading: boolean;
+    isError: boolean;
+  }
 >();
 
 vi.mock('@/hooks/courses/use-check-course-eligibility', () => ({
   useCheckCourseEligibility: () => useCheckCourseEligibilitySpy(),
 }));
 
-vi.mock('@/hooks/courses/use-check-course-enrolled', () => ({
-  useCheckCourseEnrolled: () => useCheckCourseEnrolledSpy(),
+vi.mock('@/hooks/courses/use-check-course-status', () => ({
+  useCheckCourseStatus: () => useCheckCourseStatusSpy(),
 }));
 
 function createCourse(overrides: Partial<Course> = {}): Course {
@@ -38,8 +43,8 @@ function createCourse(overrides: Partial<Course> = {}): Course {
 
 describe('EligibilityAlert', () => {
   it('does not render when course is already enrolled', () => {
-    useCheckCourseEnrolledSpy.mockReturnValue({
-      isEnrolled: true,
+    useCheckCourseStatusSpy.mockReturnValue({
+      status: 'enrolled',
       enrolledSections: [],
       isLoading: false,
       isError: false,
@@ -57,8 +62,8 @@ describe('EligibilityAlert', () => {
   });
 
   it('shows warning and reasons when course cannot be enrolled', () => {
-    useCheckCourseEnrolledSpy.mockReturnValue({
-      isEnrolled: false,
+    useCheckCourseStatusSpy.mockReturnValue({
+      status: undefined,
       enrolledSections: [],
       isLoading: false,
       isError: false,

@@ -25,8 +25,8 @@ vi.mock('@/components/courses/course-section-modal', () => ({
   },
 }));
 
-vi.mock('@/components/courses/eligibility-tag', () => ({
-  EligibilityTag: ({ course }: { course: { prerequisite?: unknown } }) => (
+vi.mock('@/components/courses/course-student-status-tag', () => ({
+  CourseStudentStatusTag: ({ course }: { course: { prerequisite?: unknown } }) => (
     <span>{course.prerequisite ? 'Not eligible' : 'Eligible'}</span>
   ),
 }));

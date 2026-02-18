@@ -5,8 +5,8 @@ import { mockFn } from 'vitest-mock-extended';
 import { CourseCard } from '@/components/courses/course-card';
 import type { Course } from '@/types/course.type';
 
-vi.mock('@/components/courses/eligibility-tag', () => ({
-  EligibilityTag: () => <span aria-label="Eligible">Eligible</span>,
+vi.mock('@/components/courses/course-student-status-tag', () => ({
+  CourseStudentStatusTag: () => <span aria-label="Eligible">Eligible</span>,
 }));
 
 function createCourse(overrides: Partial<Course> = {}): Course {

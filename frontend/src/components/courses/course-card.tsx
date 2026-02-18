@@ -7,7 +7,7 @@ import {
   CardHeader,
 } from '@/components/ui/card';
 import type { Course } from '@/types/course.type';
-import { EligibilityTag } from './eligibility-tag';
+import { CourseStudentStatusTag } from './course-student-status-tag';
 import { PrerequisiteLink } from './prerequisite-link';
 
 export interface CourseCardProps {
@@ -59,7 +59,7 @@ export function CourseCard({
               </span>
             </div>
           </div>
-          <EligibilityTag course={course} />
+          <CourseStudentStatusTag course={course} />
         </CardHeader>
 
         <CardContent className="flex-1 min-h-0 pb-4">

@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { LogOut, Plus, XCircle } from 'lucide-react';
+import { CheckCircle2, LogOut, Plus, XCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useEnroll } from '@/hooks/enrollments/use-enroll';
 import { useEnrollments } from '@/hooks/enrollments/use-enrollments';
 import { useUnenroll } from '@/hooks/enrollments/use-unenroll';
+import { useCourseHistory } from '@/hooks/courses/use-course-history';
 import { useErrorHandler } from '@/hooks/use-error-handler';
 import { FeedbackDialog } from '@/components/ui/feedback-dialog';
 import { ConfirmationDialog } from '@/components/ui/confirmation-dialog';
@@ -49,6 +50,7 @@ export function EnrollmentActionButton({
 }: EnrollmentActionButtonProps) {
   const { notifyError } = useErrorHandler();
   const { data: enrollmentsResponse } = useEnrollments();
+  const { data: courseHistoryResponse } = useCourseHistory();
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [successFeedback, setSuccessFeedback] = useState<{
     open: boolean;
@@ -64,6 +66,14 @@ export function EnrollmentActionButton({
     (value) => value.courseSection.id === sectionId,
   );
   const isEnrolled = Boolean(enrollment);
+  const courseHistory = courseHistoryResponse?.data.courseHistory ?? [];
+  const isPassed =
+    courseId != null &&
+    Boolean(
+      courseHistory.find(
+        (h) => h.courseId === courseId && h.status === 'passed',
+      ),
+    );
 
   const enrollMutation = useEnroll(courseId, {
     onSuccess: () => {
@@ -98,6 +108,21 @@ export function EnrollmentActionButton({
   });
 
   const isPending = enrollMutation.isPending || unenrollMutation.isPending;
+
+  if (isPassed) {
+    return (
+      <Button
+        type="button"
+        variant="outline"
+        size={size}
+        className={className}
+        disabled
+      >
+        <CheckCircle2 className="h-3.5 w-3.5 mr-1.5 text-green-600" />
+        Passed
+      </Button>
+    );
+  }
 
   if (isEnrolled) {
     if (!enrollment) {

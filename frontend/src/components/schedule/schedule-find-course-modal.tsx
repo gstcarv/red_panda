@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/dialog';
 import { Skeleton } from '@/components/ui/skeleton';
 import { CourseSectionModal } from '@/components/courses/course-section-modal';
-import { EligibilityTag } from '@/components/courses/eligibility-tag';
+import { CourseStudentStatusTag } from '@/components/courses/course-student-status-tag';
 import { useScheduleFindCourseModal } from '@/hooks/schedule/use-schedule-find-course-modal';
 import type { SchedulerSlotSelection } from '@/types/scheduler.type';
 
@@ -86,7 +86,7 @@ export function ScheduleFindCourseModal({
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
-                    <EligibilityTag course={course} />
+                    <CourseStudentStatusTag course={course} />
                     <Badge variant="outline">
                       {course.availableSections.length} section
                       {course.availableSections.length !== 1 ? 's' : ''}
