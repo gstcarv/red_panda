@@ -42,23 +42,19 @@ describe('CourseSectionList', () => {
     expect(screen.getByText('18 spots')).toBeInTheDocument();
   });
 
-  it('supports selecting and enrolling for available sections', async () => {
+  it('calls onEnroll for available sections', async () => {
     const user = userEvent.setup();
-    const onSelect = mockFn<(sectionId: number) => void>();
     const onEnroll = mockFn<(sectionId: number) => void>();
 
     render(
       <CourseSectionList
         sections={[createSection({ id: 9 })]}
-        onSelect={onSelect}
         onEnroll={onEnroll}
       />,
     );
 
-    await user.click(screen.getByRole('button', { name: 'Select' }));
     await user.click(screen.getByRole('button', { name: 'Enroll' }));
 
-    expect(onSelect).toHaveBeenCalledWith(9);
     expect(onEnroll).toHaveBeenCalledWith(9);
   });
 
@@ -66,13 +62,23 @@ describe('CourseSectionList', () => {
     render(
       <CourseSectionList
         sections={[createSection({ capacity: 20, enrolledCount: 20 })]}
-        onSelect={mockFn<(sectionId: number) => void>()}
         onEnroll={mockFn<(sectionId: number) => void>()}
       />,
     );
 
     expect(screen.getAllByText('Full')).toHaveLength(2);
-    expect(screen.getByRole('button', { name: 'Select' })).toBeDisabled();
     expect(screen.getByRole('button', { name: 'Full' })).toBeDisabled();
+  });
+
+  it('shows enrolling label and disables button for the enrolling section', () => {
+    render(
+      <CourseSectionList
+        sections={[createSection({ id: 12 })]}
+        onEnroll={mockFn<(sectionId: number) => void>()}
+        enrollingSectionId={12}
+      />,
+    );
+
+    expect(screen.getByRole('button', { name: 'Enrolling...' })).toBeDisabled();
   });
 });

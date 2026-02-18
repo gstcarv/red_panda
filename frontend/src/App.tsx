@@ -5,6 +5,7 @@ import { Schedule } from './pages/schedule';
 import { ExploreCourses } from './pages/explore-courses';
 import './App.css';
 import { QueryClientProvider } from './lib/react-query';
+import { Toaster } from 'sonner';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           </Routes>
         </BaseLayout>
       </BrowserRouter>
+      <Toaster />
     </QueryClientProvider>
   );
 }

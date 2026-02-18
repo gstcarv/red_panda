@@ -4,9 +4,19 @@ import { describe, expect, it, vi } from 'vitest';
 import { mockFn } from 'vitest-mock-extended';
 import { ExploreCourses } from '@/pages/explore-courses';
 import { useCourses } from '@/hooks/courses/use-courses';
+import { useCourseById } from '@/hooks/courses/use-course-by-id';
+import { useEnroll } from '@/hooks/enrollments/use-enroll';
 
 vi.mock('@/hooks/courses/use-courses', () => ({
   useCourses: vi.fn(),
+}));
+
+vi.mock('@/hooks/enrollments/use-enroll', () => ({
+  useEnroll: vi.fn(),
+}));
+
+vi.mock('@/hooks/courses/use-course-by-id', () => ({
+  useCourseById: vi.fn(),
 }));
 
 vi.mock('@/components/courses', () => ({
@@ -36,6 +46,8 @@ vi.mock('@/components/courses', () => ({
 }));
 
 const mockUseCourses = vi.mocked(useCourses);
+const mockUseCourseById = vi.mocked(useCourseById);
+const mockUseEnroll = vi.mocked(useEnroll);
 
 describe('ExploreCourses', () => {
   it('renders page title and passes fetched list state', () => {
@@ -44,6 +56,13 @@ describe('ExploreCourses', () => {
       isLoading: false,
       isError: false,
       refetch: mockFn<() => Promise<unknown>>(),
+    } as never);
+    mockUseCourseById.mockReturnValue({
+      data: undefined,
+    } as never);
+    mockUseEnroll.mockReturnValue({
+      mutate: mockFn<(sectionId: number) => void>(),
+      isPending: false,
     } as never);
 
     render(<ExploreCourses />);
@@ -64,6 +83,13 @@ describe('ExploreCourses', () => {
       isLoading: false,
       isError: true,
       refetch,
+    } as never);
+    mockUseCourseById.mockReturnValue({
+      data: undefined,
+    } as never);
+    mockUseEnroll.mockReturnValue({
+      mutate: mockFn<(sectionId: number) => void>(),
+      isPending: false,
     } as never);
 
     render(<ExploreCourses />);

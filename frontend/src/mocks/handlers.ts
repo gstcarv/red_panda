@@ -1,6 +1,7 @@
 import { http, HttpResponse } from "msw";
 import type { Course, CourseDetails, CourseSection } from "@/types/course.type";
 import type { CoursesResponse } from "@/api/courses-api";
+import type { EnrollParams } from "@/api/enrollments-api";
 
 const courses: Course[] = [
   {
@@ -127,11 +128,29 @@ export const handlers = [
   http.get("/courses/:id", ({ params }) => {
     const id = Number(params.id);
     const course = courses.find((c) => c.id === id);
+
     if (!course) return new HttpResponse(null, { status: 404 });
+
     const details: CourseDetails = {
       ...course,
       availableSections: mockSectionsByCourseId[id] ?? [],
     };
+
     return HttpResponse.json<CourseDetails>(details);
+  }),
+
+  http.post("/enrollments", async ({ request }) => {
+    const body = await request.json() as EnrollParams;
+
+    // Simulate error scenarios for testing
+    // Uncomment to test error handling:
+    // if (body.sectionId === 102) {
+    //   return HttpResponse.json(
+    //     { error: "Section is full" },
+    //     { status: 400 }
+    //   );
+    // }
+
+    return HttpResponse.json<CoursesResponse>({ courses });
   }),
 ];

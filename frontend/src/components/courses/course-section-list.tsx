@@ -1,4 +1,4 @@
-import { Clock, Users, User } from 'lucide-react';
+import { Clock, Users, User, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import type { CourseSection } from '@/types/course.type';
@@ -8,8 +8,6 @@ export interface CourseSectionListProps {
   sections: CourseSection[];
   onEnroll?: (sectionId: number) => void;
   enrollingSectionId?: number | null;
-  selectedSectionId?: number | null;
-  onSelect?: (sectionId: number) => void;
 }
 
 const dayAbbreviations: Record<string, string> = {
@@ -34,8 +32,6 @@ export function CourseSectionList({
   sections,
   onEnroll,
   enrollingSectionId = null,
-  selectedSectionId = null,
-  onSelect,
 }: CourseSectionListProps) {
   if (sections.length === 0) {
     return (
@@ -48,7 +44,6 @@ export function CourseSectionList({
   return (
     <div className="space-y-2">
       {sections.map((section) => {
-        const isSelected = selectedSectionId === section.id;
         const isEnrolling = enrollingSectionId === section.id;
         const isFull = section.enrolledCount >= section.capacity;
         const spotsAvailable = section.capacity - section.enrolledCount;
@@ -58,8 +53,7 @@ export function CourseSectionList({
             key={section.id}
             className={cn(
               'flex items-center justify-between gap-3 rounded-lg border p-3 transition-colors',
-              isSelected && 'border-primary bg-primary/5',
-              !isSelected && 'hover:bg-muted/50',
+              'hover:bg-muted/50',
             )}
           >
             <div className="flex-1 min-w-0 space-y-1">
@@ -103,24 +97,15 @@ export function CourseSectionList({
               </div>
             </div>
             <div className="flex items-center gap-2 shrink-0">
-              {onSelect && (
-                <Button
-                  variant={isSelected ? 'default' : 'outline'}
-                  size="sm"
-                  className="h-8 px-3 text-xs"
-                  onClick={() => onSelect(section.id)}
-                  disabled={isFull}
-                >
-                  {isSelected ? 'Selected' : 'Select'}
-                </Button>
-              )}
               {onEnroll && (
                 <Button
+                  variant="default"
                   size="sm"
                   className="h-8 px-3 text-xs"
                   onClick={() => onEnroll(section.id)}
                   disabled={isFull || isEnrolling}
                 >
+                  <Plus className="h-3.5 w-3.5 mr-1.5" />
                   {isEnrolling ? 'Enrolling...' : isFull ? 'Full' : 'Enroll'}
                 </Button>
               )}

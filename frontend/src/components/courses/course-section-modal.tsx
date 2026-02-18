@@ -38,9 +38,6 @@ export function CourseSectionModal({
   enrollingSectionId = null,
 }: CourseSectionModalProps) {
   const isDesktop = useMediaQuery('(min-width: 768px)');
-  const [selectedSectionId, setSelectedSectionId] = useState<number | null>(
-    null,
-  );
   const [cachedCourse, setCachedCourse] = useState<CourseDetails | null>(null);
   const { data, isLoading, isError } = useCourseById(courseId);
 
@@ -58,7 +55,6 @@ export function CourseSectionModal({
     if (!open) {
       const timer = setTimeout(() => {
         setCachedCourse(null);
-        setSelectedSectionId(null);
       }, 350); // Slightly longer than animation duration
       return () => clearTimeout(timer);
     }
@@ -153,8 +149,6 @@ export function CourseSectionModal({
                 sections={course.availableSections}
                 onEnroll={onEnrollSection}
                 enrollingSectionId={enrollingSectionId}
-                selectedSectionId={selectedSectionId}
-                onSelect={setSelectedSectionId}
               />
             </div>
           </div>

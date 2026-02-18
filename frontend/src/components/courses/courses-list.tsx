@@ -25,6 +25,12 @@ export interface CoursesListProps {
   /** When true, shows an error state with optional retry */
   isError?: boolean;
   onRetry?: () => void;
+  /** Optional: controlled selected course ID */
+  selectedCourseId?: number | null;
+  /** Optional: callback when a course is selected */
+  onCourseSelect?: (courseId: number) => void;
+  /** Optional: callback when modal closes */
+  onModalClose?: (open: boolean) => void;
 }
 
 function CourseCardSkeleton() {
@@ -62,9 +68,34 @@ export function CoursesList({
   isLoading = false,
   isError = false,
   onRetry,
+  selectedCourseId: controlledSelectedCourseId,
+  onCourseSelect,
+  onModalClose,
 }: CoursesListProps) {
-  const [selectedCourseId, setSelectedCourseId] = useState<number | null>(null);
+  const [internalSelectedCourseId, setInternalSelectedCourseId] = useState<
+    number | null
+  >(null);
+  const selectedCourseId =
+    controlledSelectedCourseId !== undefined
+      ? controlledSelectedCourseId
+      : internalSelectedCourseId;
   const modalOpen = selectedCourseId !== null;
+
+  const handleCourseSelect = (courseId: number) => {
+    if (onCourseSelect) {
+      onCourseSelect(courseId);
+    } else {
+      setInternalSelectedCourseId(courseId);
+    }
+  };
+
+  const handleModalClose = (open: boolean) => {
+    if (onModalClose) {
+      onModalClose(open);
+    } else if (!open) {
+      setInternalSelectedCourseId(null);
+    }
+  };
   if (isLoading) {
     return (
       <div className={className ?? ''}>
@@ -138,7 +169,7 @@ export function CoursesList({
             <CourseCard
               course={course}
               eligible={getEligible?.(course) ?? false}
-              onClick={(id) => setSelectedCourseId(id)}
+              onClick={handleCourseSelect}
             />
           </li>
         ))}
@@ -146,7 +177,7 @@ export function CoursesList({
       <CourseSectionModal
         courseId={selectedCourseId}
         open={modalOpen}
-        onOpenChange={(open) => !open && setSelectedCourseId(null)}
+        onOpenChange={handleModalClose}
         onEnrollSection={onEnrollSection}
         enrollingSectionId={enrollingSectionId}
       />
