@@ -20,7 +20,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { AlertCircle, BookOpen, Clock, GraduationCap } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import type { CourseDetails } from '@/types/course.type';
+import type { Course } from '@/types/course.type';
 
 export interface CourseSectionModalProps {
   courseId: number | null;
@@ -34,7 +34,7 @@ export function CourseSectionModal({
   onOpenChange,
 }: CourseSectionModalProps) {
   const isDesktop = useMediaQuery('(min-width: 768px)');
-  const [cachedCourse, setCachedCourse] = useState<CourseDetails | null>(null);
+  const [cachedCourse, setCachedCourse] = useState<Course | null>(null);
   const { data, isLoading, isError } = useCourseById(courseId);
 
   const courseData = data?.data;

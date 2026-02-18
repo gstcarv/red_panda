@@ -1,5 +1,5 @@
 import { api } from "@/config/api";
-import type { Course, CourseDetails } from "@/types/course.type";
+import type { Course } from "@/types/course.type";
 
 export type CoursesResponse = {
     courses: Course[];
@@ -11,7 +11,7 @@ export type AvailableCoursesBySlotParams = {
 };
 
 export type AvailableCoursesBySlotResponse = {
-    courses: CourseDetails[];
+    courses: Course[];
 };
 
 function getCourses() {
@@ -19,7 +19,7 @@ function getCourses() {
 }
 
 function getCourseById(id: number) {
-    return api.get<CourseDetails>(`/courses/${id}`);
+    return api.get<Course>(`/courses/${id}`);
 }
 
 function getAvailableCoursesBySlot({

@@ -1,11 +1,11 @@
 import { useMemo, useState } from 'react';
 import { useAvailableCoursesBySlot } from '@/hooks/courses/use-available-courses-by-slot';
 import { useEnrollments } from '@/hooks/enrollments/use-enrollments';
-import type { CourseDetails } from '@/types/course.type';
+import type { Course } from '@/types/course.type';
 import type { SchedulerSlotSelection } from '@/types/scheduler.type';
 
 type CourseWithEligibility = {
-  course: CourseDetails;
+  course: Course;
   eligible: boolean;
 };
 

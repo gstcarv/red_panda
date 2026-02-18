@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { CourseSectionModal } from '@/components/courses/course-section-modal';
 import { useMediaQuery } from '@/lib/utils';
 import { useCourseById } from '@/hooks/courses/use-course-by-id';
-import type { CourseDetails, CourseSection } from '@/types/course.type';
+import type { Course, CourseSection } from '@/types/course.type';
 
 function createSection(overrides: Partial<CourseSection> = {}): CourseSection {
   return {
@@ -25,7 +25,7 @@ function createSection(overrides: Partial<CourseSection> = {}): CourseSection {
   };
 }
 
-function createCourseDetails(overrides: Partial<CourseDetails> = {}): CourseDetails {
+function createCourse(overrides: Partial<Course> = {}): Course {
   return {
     id: 1,
     code: 'MATH101',
@@ -107,7 +107,7 @@ describe('CourseSectionModal', () => {
     mockUseMediaQuery.mockReturnValue(true);
     mockUseCourseById.mockReturnValue({
       data: {
-        data: createCourseDetails({
+        data: createCourse({
           credits: 1,
           prerequisite: {
             id: 99,
@@ -136,7 +136,7 @@ describe('CourseSectionModal', () => {
     mockUseMediaQuery.mockReturnValue(false);
     mockUseCourseById.mockReturnValue({
       data: {
-        data: createCourseDetails(),
+        data: createCourse(),
       },
       isLoading: false,
       isError: false,

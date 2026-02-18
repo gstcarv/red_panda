@@ -1,5 +1,5 @@
 import { http, HttpResponse } from "msw";
-import type { Course, CourseDetails, CourseSection } from "@/types/course.type";
+import type { Course, CourseSection } from "@/types/course.type";
 import type { Enrollment } from "@/types/enrollments.type";
 import type {
   AvailableCoursesBySlotResponse,
@@ -19,6 +19,7 @@ const courses: Course[] = [
     credits: 3,
     hoursPerWeek: 4,
     gradeLevel: { min: 9, max: 12 },
+    availableSections: [],
   },
   {
     id: 2,
@@ -27,6 +28,7 @@ const courses: Course[] = [
     credits: 4,
     hoursPerWeek: 5,
     gradeLevel: { min: 9, max: 12 },
+    availableSections: [],
   },
   {
     id: 3,
@@ -40,6 +42,7 @@ const courses: Course[] = [
       name: "Introduction to Programming",
     },
     gradeLevel: { min: 10, max: 12 },
+    availableSections: [],
   },
   {
     id: 4,
@@ -53,6 +56,7 @@ const courses: Course[] = [
       name: "Data Structures",
     },
     gradeLevel: { min: 11, max: 12 },
+    availableSections: [],
   },
 ];
 
@@ -128,6 +132,13 @@ const mockSectionsByCourseId: Record<number, CourseSection[]> = {
   ],
 };
 
+function toCourseWithSections(course: Course): Course {
+  return {
+    ...course,
+    availableSections: mockSectionsByCourseId[course.id] ?? [],
+  };
+}
+
 const mockEnrollments: Enrollment[] = [
   {
     id: "1",
@@ -160,7 +171,9 @@ function isSlotWithinMeetingTime(
 
 export const handlers = [
   http.get("/courses", () => {
-    return HttpResponse.json<CoursesResponse>({ courses });
+    return HttpResponse.json<CoursesResponse>({
+      courses: courses.map(toCourseWithSections),
+    });
   }),
 
   http.get("/courses/available", ({ request }) => {
@@ -205,12 +218,9 @@ export const handlers = [
 
     if (!course) return new HttpResponse(null, { status: 404 });
 
-    const details: CourseDetails = {
-      ...course,
-      availableSections: mockSectionsByCourseId[id] ?? [],
-    };
+    const details: Course = toCourseWithSections(course);
 
-    return HttpResponse.json<CourseDetails>(details);
+    return HttpResponse.json<Course>(details);
   }),
 
   http.get("/enrollments", () => {

@@ -17,6 +17,7 @@ export interface Course {
   hoursPerWeek: number;
   prerequisite?: CoursePrerequisite;
   gradeLevel: CourseGradeLevel;
+  availableSections: CourseSection[];
 }
 
 export type CourseSection = {
@@ -32,8 +33,4 @@ export type CourseSection = {
   }>;
   capacity: number;
   enrolledCount: number;
-}
-
-export type CourseDetails = Course & {
-  availableSections: CourseSection[];
 }
