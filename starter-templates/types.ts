@@ -23,7 +23,13 @@ export interface Student {
 
 export interface StudentProfile extends Student {
   gpa: number;
-  creditsEarned: number;
+  credits: {
+    earned: number;
+    max: number;
+  };
+  options: {
+    maxCoursesPerSemester: number;
+  };
   courseHistory: CourseHistory[];
 }
 

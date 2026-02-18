@@ -33,7 +33,7 @@ export function evaluateCourseEligibility({
     // Return only the first error found (highest priority)
 
     // 1. max_courses
-    const enrollmentLimitError = checkEnrollmentLimit(enrollments);
+    const enrollmentLimitError = checkEnrollmentLimit(enrollments, student);
     if (enrollmentLimitError) {
         return {
             eligible: false,
@@ -109,12 +109,15 @@ export function useCheckCourseEligibility(): UseCheckCourseEligibilityReturn {
 }
 
 function checkEnrollmentLimit(
-    enrollments: Enrollment[]
+    enrollments: Enrollment[],
+    student?: Student,
 ): CourseAvailabilityError | null {
-    if (enrollments.length >= 5) {
+    const maxCoursesPerSemester = student?.options?.maxCoursesPerSemester ?? 5;
+
+    if (enrollments.length >= maxCoursesPerSemester) {
         return {
             type: 'max_courses',
-            message: "You have reached the maximum limit of 5 enrollments"
+            message: `You have reached the maximum limit of ${maxCoursesPerSemester} enrollments`
         };
     }
     return null;

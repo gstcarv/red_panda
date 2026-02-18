@@ -50,7 +50,13 @@ describe('useAvailableCoursesBySlot', () => {
             gradeLevel: 10,
             email: 'alex@example.com',
             gpa: 3.8,
-            creditsEarned: 30,
+            credits: {
+              earned: 30,
+              max: 44,
+            },
+            options: {
+              maxCoursesPerSemester: 5,
+            },
           },
         },
       },

@@ -103,7 +103,13 @@ describe("useCheckCourseEligibility", () => {
             gradeLevel: 11,
             email: "jane@example.com",
             gpa: 3.6,
-            creditsEarned: 24,
+            credits: {
+              earned: 24,
+              max: 44,
+            },
+            options: {
+              maxCoursesPerSemester: 5,
+            },
           },
         },
       },
@@ -151,7 +157,13 @@ describe("useCheckCourseEligibility", () => {
             gradeLevel: 8,
             email: "alex@example.com",
             gpa: 3.4,
-            creditsEarned: 18,
+            credits: {
+              earned: 18,
+              max: 44,
+            },
+            options: {
+              maxCoursesPerSemester: 5,
+            },
           },
         },
       },
@@ -201,7 +213,13 @@ describe("useCheckCourseEligibility", () => {
             gradeLevel: 11,
             email: "jane@example.com",
             gpa: 3.6,
-            creditsEarned: 24,
+            credits: {
+              earned: 24,
+              max: 44,
+            },
+            options: {
+              maxCoursesPerSemester: 5,
+            },
           },
         },
       },
@@ -257,7 +275,13 @@ describe("useCheckCourseEligibility", () => {
             gradeLevel: 11,
             email: "jane@example.com",
             gpa: 3.6,
-            creditsEarned: 24,
+            credits: {
+              earned: 24,
+              max: 44,
+            },
+            options: {
+              maxCoursesPerSemester: 5,
+            },
           },
         },
       },
@@ -327,7 +351,13 @@ describe("useCheckCourseEligibility", () => {
             gradeLevel: 11,
             email: "jane@example.com",
             gpa: 3.6,
-            creditsEarned: 24,
+            credits: {
+              earned: 24,
+              max: 44,
+            },
+            options: {
+              maxCoursesPerSemester: 5,
+            },
           },
         },
       },
@@ -391,7 +421,13 @@ describe("useCheckCourseEligibility", () => {
             gradeLevel: 8,
             email: "chris@example.com",
             gpa: 3.1,
-            creditsEarned: 16,
+            credits: {
+              earned: 16,
+              max: 44,
+            },
+            options: {
+              maxCoursesPerSemester: 5,
+            },
           },
         },
       },

@@ -47,7 +47,13 @@ describe('BaseLayout', () => {
             gradeLevel: 11,
             email: 'jane@example.com',
             gpa: 3.8,
-            creditsEarned: 27,
+            credits: {
+              earned: 27,
+              max: 44,
+            },
+            options: {
+              maxCoursesPerSemester: 5,
+            },
           },
         },
       },

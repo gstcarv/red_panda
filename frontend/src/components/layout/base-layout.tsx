@@ -33,7 +33,7 @@ export function BaseLayout({
     : 'User Name';
 
   const creditsLabel =
-    student?.creditsEarned != null ? `${student.creditsEarned} credits` : null;
+    student?.credits?.earned != null ? `${student.credits.earned} credits` : null;
 
   return (
     <div

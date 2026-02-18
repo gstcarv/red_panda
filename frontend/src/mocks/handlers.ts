@@ -633,7 +633,13 @@ const mockStudent: Student = {
   gradeLevel: 11,
   email: "alex.johnson@example.com",
   gpa: 3.7,
-  creditsEarned: 30,
+  credits: {
+    earned: 30,
+    max: 44,
+  },
+  options: {
+    maxCoursesPerSemester: 5,
+  },
 };
 
 export const handlers = [
@@ -722,6 +728,7 @@ export const handlers = [
     };
 
     mockEnrollments.push(enrollment);
+    mockStudent.credits.earned += course.credits;
 
     return HttpResponse.json<EnrollResponse>({ enrollment });
   }),
@@ -740,6 +747,10 @@ export const handlers = [
     }
 
     const [removedEnrollment] = mockEnrollments.splice(enrollmentIndex, 1);
+    mockStudent.credits.earned = Math.max(
+      0,
+      mockStudent.credits.earned - removedEnrollment.course.credits,
+    );
 
     return HttpResponse.json({
       enrollment: removedEnrollment,

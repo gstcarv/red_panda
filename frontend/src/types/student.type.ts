@@ -5,5 +5,11 @@ export interface Student {
     gradeLevel: number;
     email: string;
     gpa: number;
-    creditsEarned: number;
+    credits: {
+        earned: number;
+        max: number;
+    };
+    options: {
+        maxCoursesPerSemester: number;
+    };
 }
