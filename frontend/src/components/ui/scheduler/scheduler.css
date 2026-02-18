@@ -1,0 +1,158 @@
+.ui-scheduler,
+.ui-scheduler .fc {
+  font-family: "Outfit", system-ui, sans-serif;
+}
+
+.ui-scheduler {
+  position: relative;
+}
+
+.ui-scheduler .fc {
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  background-color: #fff;
+}
+
+.ui-scheduler .fc-theme-standard td,
+.ui-scheduler .fc-theme-standard th,
+.ui-scheduler .fc-theme-standard .fc-scrollgrid,
+.ui-scheduler .fc .fc-timegrid-slot,
+.ui-scheduler .fc .fc-timegrid-axis,
+.ui-scheduler .fc .fc-timegrid-col {
+  border-color: rgba(148, 163, 184, 0.16);
+}
+
+.ui-scheduler .fc .fc-scrollgrid,
+.ui-scheduler .fc .fc-timegrid-body,
+.ui-scheduler .fc .fc-timegrid-col-bg,
+.ui-scheduler .fc .fc-timegrid-slot,
+.ui-scheduler .fc .fc-timegrid-axis,
+.ui-scheduler .fc .fc-timegrid-col,
+.ui-scheduler .fc .fc-timegrid-cols table,
+.ui-scheduler .fc .fc-timegrid-axis-frame,
+.ui-scheduler .fc .fc-timegrid-slot-label-frame {
+  background-color: transparent;
+}
+
+.ui-scheduler .fc .fc-timegrid-slot {
+  height: 3.75rem;
+}
+
+.ui-scheduler .fc .fc-timegrid-axis-frame,
+.ui-scheduler .fc .fc-timegrid-slot-label-frame {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ui-scheduler .fc .fc-timegrid-slot-label-cushion {
+  display: block;
+  padding: 0 10px;
+  font-size: 0.76rem;
+  font-weight: 500;
+  color: rgba(107, 114, 128, 0.92);
+  letter-spacing: 0.01em;
+  text-align: center;
+}
+
+.ui-scheduler .fc .fc-timegrid-axis-cushion {
+  display: block;
+  width: auto;
+  padding: 0;
+  font-size: 0.66rem;
+  font-weight: 500;
+  color: rgba(107, 114, 128, 0.88);
+  text-align: center;
+}
+
+.ui-scheduler .fc .fc-col-header-cell-cushion {
+  padding-block: 0.7rem;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: rgba(107, 114, 128, 0.95);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.ui-scheduler .fc .fc-timegrid-body {
+  cursor: pointer;
+}
+
+.ui-scheduler .fc .fc-timegrid-col-frame {
+  padding-inline: 0.12rem;
+}
+
+.ui-scheduler .fc .fc-timegrid-event-harness {
+  margin-inline: 0.22rem;
+}
+
+.ui-scheduler .fc .fc-event,
+.ui-scheduler .fc .fc-timegrid-event {
+  border: 1px solid color-mix(in srgb, var(--nav-active) 78%, #ffffff 22%);
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--nav-active) 92%, #ffffff 8%) 0%,
+    var(--nav-active) 100%
+  );
+  color: #ffffff;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 8px 16px rgba(123, 82, 217, 0.22);
+  animation: scheduler-event-fade-in 120ms ease-out both;
+}
+
+.ui-scheduler .fc .fc-timegrid-event .fc-event-main {
+  padding: 0.38rem 0.56rem;
+  line-height: 1.15;
+}
+
+.ui-scheduler .fc .fc-timegrid-event .fc-event-title {
+  font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.ui-scheduler .fc .fc-timegrid-event .fc-event-time {
+  margin-bottom: 0.14rem;
+  font-size: 0.64rem;
+  font-weight: 500;
+  color: rgba(243, 244, 246, 0.92);
+}
+
+.ui-scheduler-hover-cell {
+  position: absolute;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0;
+  border-radius: 0.35rem;
+  background-color: rgba(148, 163, 184, 0.12);
+  transition: opacity 80ms ease-in-out;
+}
+
+.ui-scheduler .fc .fc-scroller {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.ui-scheduler .fc .fc-scroller::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+@keyframes scheduler-event-fade-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ui-scheduler .fc .fc-event,
+  .ui-scheduler .fc .fc-timegrid-event {
+    animation: none;
+  }
+}
