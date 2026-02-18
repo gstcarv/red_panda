@@ -15,12 +15,7 @@ vi.mock('@/hooks/courses/use-available-courses-by-slot', () => ({
 const courseSectionModalSpy = vi.fn();
 
 vi.mock('@/components/courses/course-section-modal', () => ({
-  CourseSectionModal: (props: {
-    courseId: number | null;
-    open: boolean;
-    onEnrollSection?: (sectionId: number) => void;
-    onUnenrollSection?: (sectionId: number) => void;
-  }) => {
+  CourseSectionModal: (props: { courseId: number | null; open: boolean }) => {
     courseSectionModalSpy(props);
     return (
       <div data-testid="course-section-modal">
@@ -225,57 +220,6 @@ describe('ScheduleFindCourseModal', () => {
     expect(onOpenChange).toHaveBeenCalledWith(false);
     expect(screen.getByTestId('course-section-modal')).toHaveTextContent(
       'course:1-open:yes',
-    );
-  });
-
-  it('passes enrollment handlers to course details modal', () => {
-    courseSectionModalSpy.mockClear();
-    setupEnrollmentsMock();
-    const onEnrollSection = vi.fn();
-    const onUnenrollSection = vi.fn();
-    mockedUseAvailableCoursesBySlot.mockReturnValue({
-      data: {
-        data: {
-          courses: [
-            {
-              id: 1,
-              code: 'MATH101',
-              name: 'Algebra I',
-              credits: 3,
-              hoursPerWeek: 4,
-              gradeLevel: { min: 9, max: 10 },
-              availableSections: [],
-            },
-          ],
-        },
-      },
-      isLoading: false,
-      isError: false,
-    } as never);
-
-    render(
-      <ScheduleFindCourseModal
-        open
-        slot={{
-          weekDay: 'monday',
-          startTime: '11:00',
-          dateLabel: 'Monday, 11:00 AM',
-        }}
-        onOpenChange={vi.fn()}
-        onEnrollSection={onEnrollSection}
-        onUnenrollSection={onUnenrollSection}
-      />,
-    );
-
-    fireEvent.click(screen.getByRole('button', { name: /algebra i/i }));
-
-    expect(courseSectionModalSpy).toHaveBeenLastCalledWith(
-      expect.objectContaining({
-        courseId: 1,
-        open: true,
-        onEnrollSection,
-        onUnenrollSection,
-      }),
     );
   });
 

@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { AlertCircle, BookOpen } from 'lucide-react';
 import {
   Card,
@@ -10,17 +9,13 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { CourseCard } from './course-card';
 import { CourseSectionModal } from './course-section-modal';
+import { useCourseDetailsModal } from '@/hooks/courses/use-course-details-modal';
 import type { Course } from '@/types/course.type';
 
 export interface CoursesListProps {
   courses: Course[];
   /** Optional: determine eligibility per course for the card badge */
   getEligible?: (course: Course) => boolean;
-  onEnrollSection?: (sectionId: number) => void;
-  onUnenrollSection?: (sectionId: number) => void;
-  enrollingSectionId?: number | null;
-  unenrollingSectionId?: number | null;
-  isSectionEnrolled?: (sectionId: number) => boolean;
   emptyMessage?: string;
   className?: string;
   /** When true, shows skeleton placeholders instead of the list */
@@ -64,11 +59,6 @@ function CourseCardSkeleton() {
 export function CoursesList({
   courses,
   getEligible,
-  onEnrollSection,
-  onUnenrollSection,
-  enrollingSectionId = null,
-  unenrollingSectionId = null,
-  isSectionEnrolled,
   emptyMessage = 'No courses match your filters.',
   className,
   isLoading = false,
@@ -78,30 +68,13 @@ export function CoursesList({
   onCourseSelect,
   onModalClose,
 }: CoursesListProps) {
-  const [internalSelectedCourseId, setInternalSelectedCourseId] = useState<
-    number | null
-  >(null);
-  const selectedCourseId =
-    controlledSelectedCourseId !== undefined
-      ? controlledSelectedCourseId
-      : internalSelectedCourseId;
-  const modalOpen = selectedCourseId !== null;
+  const { selectedCourseId, modalOpen, handleCourseSelect, handleModalClose } =
+    useCourseDetailsModal({
+      selectedCourseId: controlledSelectedCourseId,
+      onCourseSelect,
+      onModalClose,
+    });
 
-  const handleCourseSelect = (courseId: number) => {
-    if (onCourseSelect) {
-      onCourseSelect(courseId);
-    } else {
-      setInternalSelectedCourseId(courseId);
-    }
-  };
-
-  const handleModalClose = (open: boolean) => {
-    if (onModalClose) {
-      onModalClose(open);
-    } else if (!open) {
-      setInternalSelectedCourseId(null);
-    }
-  };
   if (isLoading) {
     return (
       <div className={className ?? ''}>
@@ -184,11 +157,6 @@ export function CoursesList({
         courseId={selectedCourseId}
         open={modalOpen}
         onOpenChange={handleModalClose}
-        onEnrollSection={onEnrollSection}
-        onUnenrollSection={onUnenrollSection}
-        enrollingSectionId={enrollingSectionId}
-        unenrollingSectionId={unenrollingSectionId}
-        isSectionEnrolled={isSectionEnrolled}
       />
     </div>
   );

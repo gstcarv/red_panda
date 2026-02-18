@@ -48,7 +48,7 @@ function mockMatchMedia(initialMatch: boolean): MatchMediaController {
 
 describe('utils', () => {
   it('merges classes with tailwind conflict resolution', () => {
-    expect(cn('px-2', false && 'hidden', 'px-4')).toBe('px-4');
+    expect(cn('px-2', undefined, 'px-4')).toBe('px-4');
   });
 
   it('returns current media query result and reacts to updates', () => {

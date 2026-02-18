@@ -1,7 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { describe, expect, it } from 'vitest';
-import { mockFn } from 'vitest-mock-extended';
+import { describe, expect, it, vi } from 'vitest';
 import { CourseSectionList } from '@/components/courses/course-section-list';
 import type { CourseSection } from '@/types/course.type';
 
@@ -25,78 +23,65 @@ function createSection(overrides: Partial<CourseSection> = {}): CourseSection {
   };
 }
 
+const enrollmentActionButtonSpy = vi.fn();
+
+vi.mock('@/components/courses/enrollment-action-button', () => ({
+  EnrollmentActionButton: (props: {
+    courseId: number | null;
+    sectionId: number;
+    isFull?: boolean;
+  }) => {
+    enrollmentActionButtonSpy(props);
+    return <button type="button">action-{props.sectionId}-{props.isFull ? 'full' : 'open'}</button>;
+  },
+}));
+
 describe('CourseSectionList', () => {
-  it('shows an empty state when no sections are available', () => {
-    render(<CourseSectionList sections={[]} />);
-
-    expect(
-      screen.getByText('No sections available for this course.'),
-    ).toBeInTheDocument();
-  });
-
   it('renders section schedule and enrollment status', () => {
-    render(<CourseSectionList sections={[createSection()]} />);
+    render(<CourseSectionList courseId={1} sections={[createSection()]} />);
 
     expect(screen.getByText('Jane Doe')).toBeInTheDocument();
     expect(screen.getByText('Mon 8:00 AM-9:30 AM')).toBeInTheDocument();
     expect(screen.getByText('18 spots')).toBeInTheDocument();
   });
 
-  it('calls onEnroll for available sections', async () => {
-    const user = userEvent.setup();
-    const onEnroll = mockFn<(sectionId: number) => void>();
+  it('shows an empty state when no sections are available', () => {
+    render(<CourseSectionList courseId={1} sections={[]} />);
 
-    render(
-      <CourseSectionList
-        sections={[createSection({ id: 9 })]}
-        onEnroll={onEnroll}
-      />,
-    );
-
-    await user.click(screen.getByRole('button', { name: 'Enroll' }));
-
-    expect(onEnroll).toHaveBeenCalledWith(9);
+    expect(
+      screen.getByText('No sections available for this course.'),
+    ).toBeInTheDocument();
   });
 
-  it('disables actions when section is full', () => {
+  it('passes course/section identifiers to EnrollmentActionButton', () => {
+    enrollmentActionButtonSpy.mockClear();
+
+    render(<CourseSectionList courseId={7} sections={[createSection({ id: 9 })]} />);
+
+    expect(enrollmentActionButtonSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        courseId: 7,
+        sectionId: 9,
+      }),
+    );
+  });
+
+  it('marks full sections in action props and badge', () => {
+    enrollmentActionButtonSpy.mockClear();
     render(
       <CourseSectionList
+        courseId={1}
         sections={[createSection({ capacity: 20, enrolledCount: 20 })]}
-        onEnroll={mockFn<(sectionId: number) => void>()}
       />,
     );
 
-    expect(screen.getAllByText('Full')).toHaveLength(2);
-    expect(screen.getByRole('button', { name: 'Full' })).toBeDisabled();
-  });
-
-  it('shows enrolling label and disables button for the enrolling section', () => {
-    render(
-      <CourseSectionList
-        sections={[createSection({ id: 12 })]}
-        onEnroll={mockFn<(sectionId: number) => void>()}
-        enrollingSectionId={12}
-      />,
+    expect(screen.getAllByText('Full')).toHaveLength(1);
+    expect(screen.getByRole('button', { name: 'action-10-full' })).toBeInTheDocument();
+    expect(enrollmentActionButtonSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        sectionId: 10,
+        isFull: true,
+      }),
     );
-
-    expect(screen.getByRole('button', { name: 'Enrolling...' })).toBeDisabled();
-  });
-
-  it('shows unenroll action for enrolled sections', async () => {
-    const user = userEvent.setup();
-    const onUnenroll = mockFn<(sectionId: number) => void>();
-
-    render(
-      <CourseSectionList
-        sections={[createSection({ id: 21 })]}
-        onUnenroll={onUnenroll}
-        isSectionEnrolled={() => true}
-      />,
-    );
-
-    await user.click(screen.getByRole('button', { name: 'Unenroll' }));
-    await user.click(screen.getByRole('button', { name: 'Confirm unenroll' }));
-
-    expect(onUnenroll).toHaveBeenCalledWith(21);
   });
 });

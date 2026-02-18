@@ -1,68 +1,38 @@
 import { CourseCard, EnrollmentActionButton } from '@/components/courses';
 import type { Course } from '@/types/course.type';
+import { useEnrollments } from '@/hooks/enrollments/use-enrollments';
+import { useMemo } from 'react';
 
 type SchedulerListProps = {
-  enrolledCourses: EnrolledCourseItem[];
-  isLoading?: boolean;
-  unenrollingEnrollmentId?: string | null;
-  onUnenroll?: (enrollmentId: string) => void;
   onCourseHoverChange?: (courseId: number | null) => void;
 };
 
 export type EnrolledCourseItem = {
   enrollmentId: string;
+  sectionId: number;
   course: Course;
 };
 
-type SchedulerListViewProps = {
-  enrolledCourses: EnrolledCourseItem[];
-  unenrollingEnrollmentId: string | null;
-  onCardHoverChange?: (courseId: number | null) => void;
-  onUnenroll: (enrollmentId: string) => void;
-};
-
-function SchedulerListView({
-  enrolledCourses,
-  unenrollingEnrollmentId,
-  onCardHoverChange,
-  onUnenroll,
-}: SchedulerListViewProps) {
-  return (
-    <div className="flex flex-col gap-3 sm:gap-4" aria-label="Course cards">
-      {enrolledCourses.map((course) => (
-        <div
-          key={course.course.id}
-          data-testid="schedule-course-card"
-          onMouseEnter={() => onCardHoverChange?.(course.course.id)}
-          onMouseLeave={() => onCardHoverChange?.(null)}
-        >
-          <CourseCard
-            course={course.course}
-            eligible
-            footerAction={
-              <EnrollmentActionButton
-                isEnrolled
-                isPending={unenrollingEnrollmentId === course.enrollmentId}
-                onUnenroll={() => onUnenroll(course.enrollmentId)}
-                confirmTitle="Unenroll from course?"
-                confirmDescription="This action will remove the course from your current schedule."
-                className="h-8 px-3 text-xs"
-              />
-            }
-          />
-        </div>
-      ))}
-    </div>
-  );
-}
-
 export function SchedulerList({
-  enrolledCourses,
-  isLoading = false,
-  unenrollingEnrollmentId = null,
-  onUnenroll,
   onCourseHoverChange,
 }: SchedulerListProps) {
+  const { data: enrollmentsResponse } = useEnrollments();
+  const enrolledCourses = useMemo<EnrolledCourseItem[]>(() => {
+    const enrollments = enrollmentsResponse?.data.enrollments ?? [];
+    const coursesById = new Map<number, EnrolledCourseItem>();
+
+    for (const enrollment of enrollments) {
+      coursesById.set(enrollment.course.id, {
+        enrollmentId: enrollment.id,
+        sectionId: enrollment.courseSection.id,
+        course: enrollment.course,
+      });
+    }
+
+    return Array.from(coursesById.values());
+  }, [enrollmentsResponse]);
+  const isLoading = !enrollmentsResponse;
+
   if (isLoading) {
     return (
       <div
@@ -83,11 +53,29 @@ export function SchedulerList({
   }
 
   return (
-    <SchedulerListView
-      enrolledCourses={enrolledCourses}
-      unenrollingEnrollmentId={unenrollingEnrollmentId}
-      onCardHoverChange={onCourseHoverChange}
-      onUnenroll={onUnenroll ?? (() => undefined)}
-    />
+    <div className="flex flex-col gap-3 sm:gap-4" aria-label="Course cards">
+      {enrolledCourses.map((course) => (
+        <div
+          key={course.course.id}
+          data-testid="schedule-course-card"
+          onMouseEnter={() => onCourseHoverChange?.(course.course.id)}
+          onMouseLeave={() => onCourseHoverChange?.(null)}
+        >
+          <CourseCard
+            course={course.course}
+            eligible
+            footerAction={
+              <EnrollmentActionButton
+                courseId={course.course.id}
+                sectionId={course.sectionId}
+                confirmTitle="Unenroll from course?"
+                confirmDescription="This action will remove the course from your current schedule."
+                className="h-8 px-3 text-xs"
+              />
+            }
+          />
+        </div>
+      ))}
+    </div>
   );
 }

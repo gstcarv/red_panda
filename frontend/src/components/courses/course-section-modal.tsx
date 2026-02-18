@@ -26,22 +26,12 @@ export interface CourseSectionModalProps {
   courseId: number | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onEnrollSection?: (sectionId: number) => void;
-  onUnenrollSection?: (sectionId: number) => void;
-  enrollingSectionId?: number | null;
-  unenrollingSectionId?: number | null;
-  isSectionEnrolled?: (sectionId: number) => boolean;
 }
 
 export function CourseSectionModal({
   courseId,
   open,
   onOpenChange,
-  onEnrollSection,
-  onUnenrollSection,
-  enrollingSectionId = null,
-  unenrollingSectionId = null,
-  isSectionEnrolled,
 }: CourseSectionModalProps) {
   const isDesktop = useMediaQuery('(min-width: 768px)');
   const [cachedCourse, setCachedCourse] = useState<CourseDetails | null>(null);
@@ -152,12 +142,11 @@ export function CourseSectionModal({
                 </Badge>
               </div>
               <CourseSectionList
+                courseId={courseId}
                 sections={course.availableSections}
-                onEnroll={onEnrollSection}
-                onUnenroll={onUnenrollSection}
-                enrollingSectionId={enrollingSectionId}
-                unenrollingSectionId={unenrollingSectionId}
-                isSectionEnrolled={isSectionEnrolled}
+                onEnrollSuccess={() => {
+                  onOpenChange(false);
+                }}
               />
             </div>
           </div>

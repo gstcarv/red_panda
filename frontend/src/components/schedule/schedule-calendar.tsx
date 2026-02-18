@@ -46,27 +46,11 @@ function toDateLabel(date: Date): string {
 type ScheduleCalendarProps = {
   events: SchedulerEvent[];
   activeCourseId?: number | null;
-  selectedCourseId?: number | null;
-  onCourseEventSelect?: (courseId: number) => void;
-  onCourseDetailsOpenChange?: (open: boolean) => void;
-  onEnrollSection?: (sectionId: number) => void;
-  onUnenrollSection?: (sectionId: number) => void;
-  enrollingSectionId?: number | null;
-  unenrollingSectionId?: number | null;
-  isSectionEnrolled?: (sectionId: number) => boolean;
 };
 
 export function ScheduleCalendar({
   events,
   activeCourseId = null,
-  selectedCourseId = null,
-  onCourseEventSelect,
-  onCourseDetailsOpenChange,
-  onEnrollSection,
-  onUnenrollSection,
-  enrollingSectionId = null,
-  unenrollingSectionId = null,
-  isSectionEnrolled,
 }: ScheduleCalendarProps) {
   const calendarContainerRef = useRef<HTMLElement | null>(null);
   const [calendarHeight, setCalendarHeight] = useState(720);
@@ -74,6 +58,7 @@ export function ScheduleCalendar({
     null,
   );
   const [isFindCourseModalOpen, setIsFindCourseModalOpen] = useState(false);
+  const [selectedCourseId, setSelectedCourseId] = useState<number | null>(null);
 
   useEffect(() => {
     const updateCalendarHeight = () => {
@@ -128,7 +113,7 @@ export function ScheduleCalendar({
       return;
     }
 
-    onCourseEventSelect?.(courseId);
+    setSelectedCourseId(courseId);
   };
 
   return (
@@ -147,21 +132,15 @@ export function ScheduleCalendar({
         open={isFindCourseModalOpen}
         slot={selectedSlot}
         onOpenChange={handleFindCourseModalOpenChange}
-        onEnrollSection={onEnrollSection}
-        onUnenrollSection={onUnenrollSection}
-        enrollingSectionId={enrollingSectionId}
-        unenrollingSectionId={unenrollingSectionId}
-        isSectionEnrolled={isSectionEnrolled}
       />
       <CourseSectionModal
         courseId={selectedCourseId}
         open={selectedCourseId !== null}
-        onEnrollSection={onEnrollSection}
-        onUnenrollSection={onUnenrollSection}
-        enrollingSectionId={enrollingSectionId}
-        unenrollingSectionId={unenrollingSectionId}
-        isSectionEnrolled={isSectionEnrolled}
-        onOpenChange={onCourseDetailsOpenChange ?? (() => undefined)}
+        onOpenChange={(open) => {
+          if (!open) {
+            setSelectedCourseId(null);
+          }
+        }}
       />
     </>
   );

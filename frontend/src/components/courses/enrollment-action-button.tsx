@@ -1,22 +1,20 @@
 import { useState } from 'react';
 import { LogOut, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { useEnroll } from '@/hooks/enrollments/use-enroll';
+import { useEnrollments } from '@/hooks/enrollments/use-enrollments';
+import { useUnenroll } from '@/hooks/enrollments/use-unenroll';
+import { useErrorHandler } from '@/hooks/use-error-handler';
+import { FeedbackDialog } from '@/components/ui/feedback-dialog';
+import { ConfirmationDialog } from '@/components/ui/confirmation-dialog';
 
 type EnrollmentActionButtonProps = {
-  isEnrolled: boolean;
-  isPending?: boolean;
+  courseId: number | null;
+  sectionId: number;
   isFull?: boolean;
-  onEnroll?: () => void;
-  onUnenroll?: () => void;
-  enrollLabel?: string;
+  onEnrollSuccess?: () => void;
+  onUnenrollSuccess?: () => void;
+  onError?: (error: unknown) => void;
   confirmTitle?: string;
   confirmDescription?: string;
   confirmButtonLabel?: string;
@@ -25,22 +23,72 @@ type EnrollmentActionButtonProps = {
 };
 
 export function EnrollmentActionButton({
-  isEnrolled,
-  isPending = false,
+  courseId,
+  sectionId,
   isFull = false,
-  onEnroll,
-  onUnenroll,
-  enrollLabel = 'Enroll',
+  onEnrollSuccess,
+  onUnenrollSuccess,
+  onError,
   confirmTitle = 'Unenroll from section?',
   confirmDescription = 'This action will remove your enrollment from this section.',
   confirmButtonLabel = 'Confirm unenroll',
   className,
   size = 'sm',
 }: EnrollmentActionButtonProps) {
+  const { notifyError } = useErrorHandler();
+  const { data: enrollmentsResponse } = useEnrollments();
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [successFeedback, setSuccessFeedback] = useState<{
+    open: boolean;
+    title: string;
+    description: string;
+  }>({
+    open: false,
+    title: '',
+    description: '',
+  });
+  const enrollments = enrollmentsResponse?.data.enrollments ?? [];
+  const enrollment = enrollments.find(
+    (value) => value.courseSection.id === sectionId,
+  );
+  const isEnrolled = Boolean(enrollment);
+
+  const enrollMutation = useEnroll(courseId, {
+    onSuccess: () => {
+      setSuccessFeedback({
+        open: true,
+        title: 'Enrollment Successful!',
+        description: 'You have been enrolled in this section.',
+      });
+    },
+    onError: (error) => {
+      if (onError) {
+        onError(error);
+        return;
+      }
+
+      notifyError(error, 'Failed to enroll. Please try again.');
+    },
+  });
+
+  const unenrollMutation = useUnenroll({
+    onSuccess: () => {
+      onUnenrollSuccess?.();
+    },
+    onError: (error) => {
+      if (onError) {
+        onError(error);
+        return;
+      }
+
+      notifyError(error, 'Failed to unenroll. Please try again.');
+    },
+  });
+
+  const isPending = enrollMutation.isPending || unenrollMutation.isPending;
 
   if (isEnrolled) {
-    if (!onUnenroll) {
+    if (!enrollment) {
       return (
         <Button
           type="button"
@@ -67,51 +115,73 @@ export function EnrollmentActionButton({
           <LogOut className="h-3.5 w-3.5 mr-1.5" />
           {isPending ? 'Unenrolling...' : 'Unenroll'}
         </Button>
-        <Dialog open={isConfirmOpen} onOpenChange={setIsConfirmOpen}>
-          <DialogContent className="max-w-md">
-            <DialogHeader>
-              <DialogTitle>{confirmTitle}</DialogTitle>
-              <DialogDescription>{confirmDescription}</DialogDescription>
-            </DialogHeader>
-            <DialogFooter>
-              <Button
-                type="button"
-                variant="ghost"
-                onClick={() => setIsConfirmOpen(false)}
-                disabled={isPending}
-              >
-                Cancel
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => {
-                  onUnenroll();
-                  setIsConfirmOpen(false);
-                }}
-                disabled={isPending}
-              >
-                <LogOut className="size-4" aria-hidden />
-                {isPending ? 'Unenrolling...' : confirmButtonLabel}
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+        <ConfirmationDialog
+          open={isConfirmOpen}
+          onOpenChange={setIsConfirmOpen}
+          title={confirmTitle}
+          description={confirmDescription}
+          onConfirm={() => {
+            unenrollMutation.mutate(enrollment.id);
+            setIsConfirmOpen(false);
+          }}
+          confirmLabel={isPending ? 'Unenrolling...' : confirmButtonLabel}
+          confirmDisabled={isPending}
+          cancelDisabled={isPending}
+          confirmIcon={<LogOut className="size-4 mr-1.5" aria-hidden />}
+        />
+        <FeedbackDialog
+          open={successFeedback.open}
+          onOpenChange={(open) => {
+            if (!open && successFeedback.open) {
+              onEnrollSuccess?.();
+            }
+            setSuccessFeedback((current) => ({
+              ...current,
+              open,
+            }));
+          }}
+          variant="success"
+          title={successFeedback.title}
+          description={successFeedback.description}
+        />
       </>
     );
   }
 
   return (
-    <Button
-      type="button"
-      variant="default"
-      size={size}
-      className={className}
-      onClick={onEnroll}
-      disabled={isFull || isPending || !onEnroll}
-    >
-      <Plus className="h-3.5 w-3.5 mr-1.5" />
-      {isPending ? 'Enrolling...' : isFull ? 'Full' : enrollLabel}
-    </Button>
+    <>
+      <Button
+        type="button"
+        variant="default"
+        size={size}
+        className={className}
+        onClick={() => {
+          if (!courseId) {
+            return;
+          }
+
+          enrollMutation.mutate(sectionId);
+        }}
+        disabled={isFull || isPending || !courseId}
+      >
+        <Plus className="h-3.5 w-3.5 mr-1.5" />
+        {isPending ? 'Enrolling...' : isFull ? 'Full' : 'Enroll'}
+      </Button>
+      <FeedbackDialog
+        open={successFeedback.open}
+        onOpenChange={(open) => {
+          if (!open && successFeedback.open) {
+            onEnrollSuccess?.();
+          }
+          setSuccessFeedback((current) => ({
+            ...current,
+            open,
+          }));
+        }}
+        variant="success"
+        title={successFeedback.title}
+        description={successFeedback.description}
+      />
+    </>
   );
 }
