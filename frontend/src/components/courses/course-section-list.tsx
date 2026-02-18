@@ -1,8 +1,12 @@
 import { Clock, Users, User, Plus } from 'lucide-react';
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import type { CourseSection } from '@/types/course.type';
 import { cn } from '@/lib/utils';
+
+dayjs.extend(customParseFormat);
 
 export interface CourseSectionListProps {
   sections: CourseSection[];
@@ -11,22 +15,25 @@ export interface CourseSectionListProps {
   isSectionEnrolled?: (sectionId: number) => boolean;
 }
 
-const dayAbbreviations: Record<string, string> = {
-  Monday: 'Mon',
-  Tuesday: 'Tue',
-  Wednesday: 'Wed',
-  Thursday: 'Thu',
-  Friday: 'Fri',
-  Saturday: 'Sat',
-  Sunday: 'Sun',
-};
+function formatDayOfWeek(dayOfWeek: string): string {
+  const dayIndex = [
+    'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+  ].indexOf(dayOfWeek);
+
+  if (dayIndex === -1) return dayOfWeek;
+
+  return dayjs('2000-01-02').add(dayIndex, 'day').format('ddd');
+}
 
 function formatTime(time: string): string {
-  const [hours, minutes] = time.split(':');
-  const hour = parseInt(hours, 10);
-  const ampm = hour >= 12 ? 'PM' : 'AM';
-  const displayHour = hour % 12 || 12;
-  return `${displayHour}:${minutes} ${ampm}`;
+  const parsedTime = dayjs(time, 'HH:mm', true);
+  return parsedTime.isValid() ? parsedTime.format('h:mm A') : time;
 }
 
 export function CourseSectionList({
@@ -35,6 +42,17 @@ export function CourseSectionList({
   enrollingSectionId = null,
   isSectionEnrolled,
 }: CourseSectionListProps) {
+  function getEnrollButtonLabel(
+    isEnrolling: boolean,
+    alreadyEnrolled: boolean,
+    isFull: boolean,
+  ): string {
+    if (isEnrolling) return 'Enrolling...';
+    if (alreadyEnrolled) return 'Enrolled';
+    if (isFull) return 'Full';
+    return 'Enroll';
+  }
+
   if (sections.length === 0) {
     return (
       <div className="py-4 text-center text-sm text-muted-foreground">
@@ -74,7 +92,7 @@ export function CourseSectionList({
                   >
                     <Clock className="h-3 w-3 shrink-0" />
                     <span>
-                      {dayAbbreviations[meeting.dayOfWeek] || meeting.dayOfWeek}{' '}
+                      {formatDayOfWeek(meeting.dayOfWeek)}{' '}
                       {formatTime(meeting.startTime)}-
                       {formatTime(meeting.endTime)}
                     </span>
@@ -109,13 +127,7 @@ export function CourseSectionList({
                   disabled={isFull || isEnrolling || alreadyEnrolled}
                 >
                   <Plus className="h-3.5 w-3.5 mr-1.5" />
-                  {isEnrolling
-                    ? 'Enrolling...'
-                    : alreadyEnrolled
-                      ? 'Enrolled'
-                      : isFull
-                        ? 'Full'
-                        : 'Enroll'}
+                  {getEnrollButtonLabel(isEnrolling, alreadyEnrolled, isFull)}
                 </Button>
               )}
             </div>
