@@ -1,7 +1,10 @@
 import { http, HttpResponse } from "msw";
 import type { Course, CourseDetails, CourseSection } from "@/types/course.type";
 import type { Enrollment } from "@/types/enrollments.type";
-import type { CoursesResponse } from "@/api/courses-api";
+import type {
+  AvailableCoursesBySlotResponse,
+  CoursesResponse,
+} from "@/api/courses-api";
 import type {
   EnrollParams,
   EnrollResponse,
@@ -139,9 +142,61 @@ const mockEnrollments: Enrollment[] = [
 ];
 let nextEnrollmentId = mockEnrollments.length + 1;
 
+function normalizeDayOfWeek(dayOfWeek: string): string {
+  return dayOfWeek.trim().toLowerCase();
+}
+
+function isSlotWithinMeetingTime(
+  meetingTime: { dayOfWeek: string; startTime: string; endTime: string },
+  weekDay: string,
+  startTime: string,
+) {
+  return (
+    normalizeDayOfWeek(meetingTime.dayOfWeek) === weekDay &&
+    startTime >= meetingTime.startTime &&
+    startTime < meetingTime.endTime
+  );
+}
+
 export const handlers = [
   http.get("/courses", () => {
     return HttpResponse.json<CoursesResponse>({ courses });
+  }),
+
+  http.get("/courses/available", ({ request }) => {
+    const { searchParams } = new URL(request.url);
+    const weekDayParam = searchParams.get("weekDay");
+    const startTime = searchParams.get("startTime");
+
+    if (!weekDayParam || !startTime) {
+      return HttpResponse.json<AvailableCoursesBySlotResponse>({ courses: [] });
+    }
+
+    const weekDay = normalizeDayOfWeek(weekDayParam);
+
+    const availableCourses = courses.flatMap((course) => {
+      const availableSections = (mockSectionsByCourseId[course.id] ?? []).filter(
+        (section) =>
+          section.meetingTimes.some((meetingTime) =>
+            isSlotWithinMeetingTime(meetingTime, weekDay, startTime),
+          ),
+      );
+
+      if (availableSections.length === 0) {
+        return [];
+      }
+
+      return [
+        {
+          ...course,
+          availableSections,
+        },
+      ];
+    });
+
+    return HttpResponse.json<AvailableCoursesBySlotResponse>({
+      courses: availableCourses,
+    });
   }),
 
   http.get("/courses/:id", ({ params }) => {

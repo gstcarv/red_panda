@@ -3,20 +3,42 @@ import {
   Scheduler,
   type SchedulerDateClickArg,
 } from '@/components/ui/scheduler';
-import type { SchedulerEvent } from '@/types/scheduler.type';
+import type {
+  SchedulerEvent,
+  SchedulerSlotSelection,
+} from '@/types/scheduler.type';
+import { ScheduleFindCourseModal } from './schedule-find-course-modal';
 
 const CALENDAR_BOTTOM_OFFSET = 40;
 
-function getIsoWeekNumber(date: Date): number {
-  const utcDate = new Date(
-    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()),
-  );
-  const day = utcDate.getUTCDay() || 7;
-  utcDate.setUTCDate(utcDate.getUTCDate() + 4 - day);
-  const yearStart = new Date(Date.UTC(utcDate.getUTCFullYear(), 0, 1));
-  return Math.ceil(
-    ((utcDate.getTime() - yearStart.getTime()) / 86400000 + 1) / 7,
-  );
+const WEEK_DAYS = [
+  'sunday',
+  'monday',
+  'tuesday',
+  'wednesday',
+  'thursday',
+  'friday',
+  'saturday',
+] as const;
+
+function toWeekDay(date: Date): string | null {
+  return WEEK_DAYS[date.getDay()] ?? null;
+}
+
+function toStartTime(date: Date): string {
+  return date.toLocaleTimeString('en-GB', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  });
+}
+
+function toDateLabel(date: Date): string {
+  return date.toLocaleString('en-US', {
+    weekday: 'long',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
 }
 
 type ScheduleCalendarProps = {
@@ -30,6 +52,10 @@ export function ScheduleCalendar({
 }: ScheduleCalendarProps) {
   const calendarContainerRef = useRef<HTMLElement | null>(null);
   const [calendarHeight, setCalendarHeight] = useState(720);
+  const [selectedSlot, setSelectedSlot] = useState<SchedulerSlotSelection | null>(
+    null,
+  );
+  const [isFindCourseModalOpen, setIsFindCourseModalOpen] = useState(false);
 
   useEffect(() => {
     const updateCalendarHeight = () => {
@@ -55,19 +81,44 @@ export function ScheduleCalendar({
   }, []);
 
   const handleDateClick = (arg: SchedulerDateClickArg) => {
-    const week = getIsoWeekNumber(arg.date);
-    console.log(`[Schedule] Semana ${week} | Data ${arg.dateStr}`);
+    const weekDay = toWeekDay(arg.date);
+
+    if (!weekDay) {
+      return;
+    }
+
+    setSelectedSlot({
+      weekDay,
+      startTime: toStartTime(arg.date),
+      dateLabel: toDateLabel(arg.date),
+    });
+    setIsFindCourseModalOpen(true);
+  };
+
+  const handleFindCourseModalOpenChange = (open: boolean) => {
+    setIsFindCourseModalOpen(open);
+
+    if (!open) {
+      setSelectedSlot(null);
+    }
   };
 
   return (
-    <Scheduler
-      events={events}
-      height={calendarHeight}
-      onDateClick={handleDateClick}
-      containerRef={calendarContainerRef}
-      activeCourseId={activeCourseId}
-      testId="schedule-calendar"
-      ariaLabel="Weekly calendar"
-    />
+    <>
+      <Scheduler
+        events={events}
+        height={calendarHeight}
+        onDateClick={handleDateClick}
+        containerRef={calendarContainerRef}
+        activeCourseId={activeCourseId}
+        testId="schedule-calendar"
+        ariaLabel="Weekly calendar"
+      />
+      <ScheduleFindCourseModal
+        open={isFindCourseModalOpen}
+        slot={selectedSlot}
+        onOpenChange={handleFindCourseModalOpenChange}
+      />
+    </>
   );
 }

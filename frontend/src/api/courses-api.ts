@@ -5,6 +5,15 @@ export type CoursesResponse = {
     courses: Course[];
 };
 
+export type AvailableCoursesBySlotParams = {
+    startTime: string;
+    weekDay: string;
+};
+
+export type AvailableCoursesBySlotResponse = {
+    courses: CourseDetails[];
+};
+
 function getCourses() {
     return api.get<CoursesResponse>("/courses");
 }
@@ -13,4 +22,16 @@ function getCourseById(id: number) {
     return api.get<CourseDetails>(`/courses/${id}`);
 }
 
-export { getCourses, getCourseById };
+function getAvailableCoursesBySlot({
+    startTime,
+    weekDay,
+}: AvailableCoursesBySlotParams) {
+    return api.get<AvailableCoursesBySlotResponse>("/courses/available", {
+        params: {
+            startTime,
+            weekDay,
+        },
+    });
+}
+
+export { getCourses, getCourseById, getAvailableCoursesBySlot };

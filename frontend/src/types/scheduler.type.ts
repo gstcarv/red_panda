@@ -6,3 +6,9 @@ export type SchedulerEvent = {
   startTime: string;
   endTime: string;
 };
+
+export type SchedulerSlotSelection = {
+  weekDay: string;
+  startTime: string;
+  dateLabel: string;
+};
