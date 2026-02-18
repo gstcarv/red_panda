@@ -84,13 +84,7 @@ export function CourseStudentStatusTag({ course }: CourseStudentStatusTagProps) 
         <Tooltip>
           <TooltipTrigger asChild>{badge}</TooltipTrigger>
           <TooltipContent>
-            <div className="space-y-1.5">
-              {validation.map((error, index) => (
-                <div key={`${error.type}-${index}`}>
-                  <EligibilityErrorMessage error={error} />
-                </div>
-              ))}
-            </div>
+            <EligibilityErrorMessage error={validation[0]} />
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>

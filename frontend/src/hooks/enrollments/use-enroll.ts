@@ -10,6 +10,7 @@ import type { GetEnrollmentsResponse } from '@/api/enrollments-api';
 import { enroll } from '@/api/enrollments-api';
 import { buildCoursesQueryKey } from '@/hooks/courses/use-courses';
 import { buildEnrollmentsQueryKey } from '@/hooks/enrollments/use-enrollments';
+import { buildStudentQueryKey } from '@/hooks/students/use-student';
 
 const CURRENT_STUDENT_ID = 1;
 
@@ -51,6 +52,7 @@ function updateEnrollmentsCacheAfterEnroll({
   );
 }
 
+
 export function useEnroll(
   selectedCourseId: number | null,
   options?: UseEnrollOptions,
@@ -88,6 +90,9 @@ export function useEnroll(
         }),
         queryClient.invalidateQueries({
           queryKey: buildCoursesQueryKey(),
+        }),
+        queryClient.invalidateQueries({
+          queryKey: buildStudentQueryKey(CURRENT_STUDENT_ID),
         }),
       ]);
 

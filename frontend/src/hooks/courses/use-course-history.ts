@@ -1,13 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
-import { getCourseHistory } from "@/api/course-history-api";
+import { getStudentCourseHistory } from "@/api/students-api";
 
-export function buildCourseHistoryQueryKey() {
-  return ["course-history"] as const;
+export function buildCourseHistoryQueryKey(studentId: number) {
+  return ["students", studentId, "courses", "history"] as const;
 }
 
 export function useCourseHistory() {
+  // TODO: replace with real studentId from auth/route state
+  const studentId = 1;
   return useQuery({
-    queryKey: buildCourseHistoryQueryKey(),
-    queryFn: getCourseHistory,
+    queryKey: buildCourseHistoryQueryKey(studentId),
+    queryFn: () => getStudentCourseHistory(studentId),
   });
 }

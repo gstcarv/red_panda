@@ -3,6 +3,7 @@ import type { Course, CourseSection } from '@/types/course.type';
 import type { Enrollment } from '@/types/enrollments.type';
 import { buildEnrollmentsQueryKey } from '@/hooks/enrollments/use-enrollments';
 import { useEnroll } from '@/hooks/enrollments/use-enroll';
+import { buildStudentQueryKey } from '@/hooks/students/use-student';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -41,6 +42,7 @@ describe('useEnroll', () => {
       credits: 4,
       hoursPerWeek: 5,
       gradeLevel: { min: 9, max: 12 },
+      availableSections: [],
     },
     courseSection: {
       id: 100,
@@ -129,6 +131,7 @@ describe('useEnroll', () => {
       credits: 4,
       hoursPerWeek: 5,
       gradeLevel: { min: 9, max: 12 },
+      availableSections: [],
     };
     const section: CourseSection = {
       id: 200,
@@ -175,5 +178,26 @@ describe('useEnroll', () => {
     expect(cacheData?.data.enrollments[1].course.id).toBe(10);
     expect(cacheData?.data.enrollments[1].courseSection.id).toBe(200);
     expect(cacheData?.data.enrollments[1].id).toBe('e-2');
+  });
+
+  it('invalidates student profile query after successful enrollment', async () => {
+    const { queryClient, wrapper } = createWrapper();
+    const invalidateQueriesSpy = vi.spyOn(queryClient, 'invalidateQueries');
+
+    vi.spyOn(enrollmentsApi, 'enroll').mockResolvedValue({
+      data: { enrollment: mockEnrollment },
+    } as never);
+
+    const { result } = renderHook(() => useEnroll(20), {
+      wrapper,
+    });
+
+    await result.current.mutateAsync(100);
+
+    expect(invalidateQueriesSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        queryKey: buildStudentQueryKey(1),
+      }),
+    );
   });
 });

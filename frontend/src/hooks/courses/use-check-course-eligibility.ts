@@ -1,8 +1,10 @@
-import type { Course, CourseAvailabilityError } from "@/types/course.type";
-import { useEnrollments } from "../enrollments/use-enrollments";
-import type { Enrollment } from "@/types/enrollments.type";
 import type { CourseHistory } from "@/types/course-history.type";
+import type { Course, CourseAvailabilityError } from "@/types/course.type";
+import type { Enrollment } from "@/types/enrollments.type";
+import type { Student } from "@/types/student.type";
+import { useEnrollments } from "../enrollments/use-enrollments";
 import { useCourseHistory } from "./use-course-history";
+import { useStudent } from "../students/use-student";
 
 type CheckEligiblityReturn = {
     eligible: boolean
@@ -13,45 +15,97 @@ export function useCheckCourseEligibility(course: Course): CheckEligiblityReturn
     const { data: enrollmentsResponse } = useEnrollments();
     const { data: courseHistoryResponse, isLoading: isCourseHistoryLoading } =
         useCourseHistory();
-
-    // should not be available if user already has a course in the same time slot OK    
-    // should not be available if prerequisite is not passed
-
-
-    // should not be available if reached the limit of 5 courses on the semester
-    // should not be available if total courses credits exceed limit of 30
-    // should not be available if the grade level is not appropriate
-
-    const errors: CourseAvailabilityError[] = []
+    const { data: studentResponse } = useStudent();
 
     const enrollments = enrollmentsResponse?.data.enrollments ?? [];
     const courseHistory = courseHistoryResponse?.data.courseHistory ?? [];
+    const student = studentResponse?.data.student;
 
-    const hasTimeslotConflicts = checkForTimeslotConflict(course, enrollments)
-
-    if (hasTimeslotConflicts.length) {
-        errors.push({
-            type: 'conflict',
-            message: "This course conflicts with your current schedule"
-        })
+    // Check in priority order: max_courses -> grade_level -> prereq -> time -> others
+    // Return only the first error found (highest priority)
+    
+    // 1. max_courses
+    const enrollmentLimitError = checkEnrollmentLimit(enrollments);
+    if (enrollmentLimitError) {
+        return {
+            eligible: false,
+            validation: [enrollmentLimitError]
+        };
     }
 
+    // 2. grade_level
+    const gradeLevelError = checkGradeLevelEligibility(course, student);
+    if (gradeLevelError) {
+        return {
+            eligible: false,
+            validation: [gradeLevelError]
+        };
+    }
+
+    // 3. prereq
     if (
         course.prerequisite &&
         !isCourseHistoryLoading &&
         !checkCoursePrerequisite(course, courseHistory)
     ) {
-        errors.push({
-            type: "prerequisite",
-            message: "Missing prerequisite:",
-            prerequisite: course.prerequisite,
-        });
+        return {
+            eligible: false,
+            validation: [{
+                type: "prerequisite",
+                message: "Missing prerequisite:",
+                prerequisite: course.prerequisite,
+            }]
+        };
+    }
+
+    // 4. time (conflict)
+    const hasTimeslotConflicts = checkForTimeslotConflict(course, enrollments);
+    if (hasTimeslotConflicts.length) {
+        return {
+            eligible: false,
+            validation: [{
+                type: 'conflict',
+                message: "This course conflicts with your current schedule"
+            }]
+        };
     }
 
     return {
-        eligible: !errors.length,
-        validation: errors
+        eligible: true
     };
+}
+
+function checkEnrollmentLimit(
+    enrollments: Enrollment[]
+): CourseAvailabilityError | null {
+    if (enrollments.length >= 5) {
+        return {
+            type: 'max_courses',
+            message: "You have reached the maximum limit of 5 enrollments"
+        };
+    }
+    return null;
+}
+
+function checkGradeLevelEligibility(
+    course: Course,
+    student: Student | undefined
+): CourseAvailabilityError | null {
+    if (!student || !course.gradeLevel) {
+        return null;
+    }
+
+    const studentGradeLevel = student.gradeLevel;
+    const { min, max } = course.gradeLevel;
+    
+    if (studentGradeLevel < min || studentGradeLevel > max) {
+        return {
+            type: 'grade_level',
+            message: `This course is only available for grade levels ${min}-${max}. Your current grade level is ${studentGradeLevel}.`
+        };
+    }
+
+    return null;
 }
 
 function checkCoursePrerequisite(
@@ -70,14 +124,6 @@ function checkCoursePrerequisite(
 }
 
 function checkForTimeslotConflict(course: Course, enrollments: Enrollment[]) {
-    // Itera
-    // get all meeting_times for the course
-    // iterate all meeting_times for the course
-    // for each meeting_time, remove ":" and convert to number
-    // then 12:30 => 1230
-    // and 1300 => 1300
-    // to check overlap, we can check
-    // isValid = enrollStartTime > startEnd & enrollEndTime < endTime
 
     const courseSections = course.availableSections
 

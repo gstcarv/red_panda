@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { renderHook, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
-import * as courseHistoryApi from "@/api/course-history-api";
+import * as studentsApi from "@/api/students-api";
 import {
   buildCourseHistoryQueryKey,
   useCourseHistory,
@@ -23,7 +23,12 @@ function createWrapper() {
 
 describe("useCourseHistory", () => {
   it("builds a stable course history query key", () => {
-    expect(buildCourseHistoryQueryKey()).toEqual(["course-history"]);
+    expect(buildCourseHistoryQueryKey(1)).toEqual([
+      "students",
+      1,
+      "courses",
+      "history",
+    ]);
   });
 
   it("loads course history data from api", async () => {
@@ -41,7 +46,7 @@ describe("useCourseHistory", () => {
       },
     };
     const getCourseHistorySpy = vi
-      .spyOn(courseHistoryApi, "getCourseHistory")
+      .spyOn(studentsApi, "getStudentCourseHistory")
       .mockResolvedValue(response as never);
 
     const { result } = renderHook(() => useCourseHistory(), {
@@ -53,6 +58,7 @@ describe("useCourseHistory", () => {
     });
 
     expect(getCourseHistorySpy).toHaveBeenCalledTimes(1);
+    expect(getCourseHistorySpy).toHaveBeenCalledWith(1);
     expect(result.current.data?.data.courseHistory).toHaveLength(1);
     expect(result.current.data?.data.courseHistory[0].status).toBe("passed");
   });

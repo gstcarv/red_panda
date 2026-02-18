@@ -26,7 +26,7 @@ function createSection(overrides: Partial<CourseSection> = {}): CourseSection {
 
 const enrollmentActionButtonSpy = vi.fn();
 const useCheckCourseEligibilitySpy = mockFn<
-  () => { eligible: boolean; validation: { message: string; type: 'conflict' }[] }
+  () => { eligible: boolean; validation?: Array<{ message: string; type: 'conflict' | 'grade_level' | 'max_courses' | 'prerequisite' | 'other' }> }
 >();
 
 vi.mock('@formkit/auto-animate/react', () => ({

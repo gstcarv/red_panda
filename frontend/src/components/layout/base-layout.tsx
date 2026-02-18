@@ -4,6 +4,8 @@ import { User } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 import { NavTabs } from '@/components/layout/nav-tabs';
+import { useStudent } from '@/hooks/students/use-student';
+import { Badge } from '@/components/ui/badge';
 
 export interface BaseLayoutProps {
   children: ReactNode;
@@ -23,6 +25,16 @@ export function BaseLayout({
   className,
   mainClassName,
 }: BaseLayoutProps) {
+  const { data } = useStudent();
+  const student = data?.data.student;
+
+  const studentName = student
+    ? `${student.firstName} ${student.lastName}`
+    : 'User Name';
+
+  const creditsLabel =
+    student?.creditsEarned != null ? `${student.creditsEarned} credits` : null;
+
   return (
     <div
       className={cn(
@@ -50,8 +62,13 @@ export function BaseLayout({
           </div>
 
           <div className="flex shrink-0 items-center gap-2">
-            <span className="hidden max-w-[120px] truncate text-sm text-foreground sm:inline-block">
-              User Name
+            {creditsLabel ? (
+              <Badge variant="secondary" className="hidden sm:inline-flex">
+                {creditsLabel}
+              </Badge>
+            ) : null}
+            <span className="hidden max-w-[260px] truncate text-sm text-foreground sm:inline-block">
+              {studentName}
             </span>
             <div
               className="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground"

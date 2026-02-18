@@ -228,13 +228,9 @@ export function EnrollmentActionButton({
               {button}
             </TooltipTrigger>
             <TooltipContent>
-              <div className="space-y-1.5">
-                {validation.map((error, index) => (
-                  <div key={`${error.type}-${index}`}>
-                    <EligibilityErrorMessage error={error} />
-                  </div>
-                ))}
-              </div>
+              {validation && validation.length > 0 && (
+                <EligibilityErrorMessage error={validation[0]} />
+              )}
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>

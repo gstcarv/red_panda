@@ -23,13 +23,7 @@ export function EligibilityAlert({ course }: EligibilityAlertProps) {
       <AlertTriangle className="h-4 w-4" />
       <AlertTitle className="mb-2">No sections available for enrollment</AlertTitle>
       <AlertDescription>
-        <div className="space-y-1.5">
-          {validation.map((error, index) => (
-            <div key={`${error.type}-${index}`}>
-              <EligibilityErrorMessage error={error} />
-            </div>
-          ))}
-        </div>
+        <EligibilityErrorMessage error={validation[0]} />
       </AlertDescription>
     </Alert>
   );

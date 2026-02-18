@@ -36,7 +36,7 @@ export interface CourseSection {
 }
 
 export interface CourseAvailabilityError {
-  type: 'prerequisite' | 'conflict' | 'max_courses' | 'other';
+  type: 'prerequisite' | 'conflict' | 'max_courses' | 'grade_level' | 'other';
   message: string;
   prerequisite?: CoursePrerequisite;
 }

@@ -3,6 +3,7 @@ import type { Course, CourseSection } from '@/types/course.type';
 import type { Enrollment } from '@/types/enrollments.type';
 import { buildEnrollmentsQueryKey } from '@/hooks/enrollments/use-enrollments';
 import { useUnenroll } from '@/hooks/enrollments/use-unenroll';
+import { buildStudentQueryKey } from '@/hooks/students/use-student';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -89,6 +90,7 @@ describe('useUnenroll', () => {
       credits: 4,
       hoursPerWeek: 5,
       gradeLevel: { min: 9, max: 12 },
+      availableSections: [],
     };
     const section: CourseSection = {
       id: 200,
@@ -133,5 +135,26 @@ describe('useUnenroll', () => {
 
     expect(cacheData?.data.enrollments).toHaveLength(1);
     expect(cacheData?.data.enrollments[0].id).toBe('e-2');
+  });
+
+  it('invalidates student profile query after successful unenrollment', async () => {
+    const { queryClient, wrapper } = createWrapper();
+    const invalidateQueriesSpy = vi.spyOn(queryClient, 'invalidateQueries');
+
+    vi.spyOn(enrollmentsApi, 'unenroll').mockResolvedValue({
+      data: {},
+    } as never);
+
+    const { result } = renderHook(() => useUnenroll(), {
+      wrapper,
+    });
+
+    await result.current.mutateAsync('enroll-1');
+
+    expect(invalidateQueriesSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        queryKey: buildStudentQueryKey(1),
+      }),
+    );
   });
 });

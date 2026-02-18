@@ -7,7 +7,7 @@ import type { Course } from '@/types/course.type';
 const useCheckCourseEligibilitySpy = mockFn<
   () => {
     eligible: boolean;
-    validation?: Array<{ type: 'conflict' | 'other'; message: string }>;
+    validation?: Array<{ type: 'conflict' | 'grade_level' | 'max_courses' | 'prerequisite' | 'other'; message: string; prerequisite?: unknown }>;
   }
 >();
 
@@ -70,10 +70,7 @@ describe('EligibilityAlert', () => {
     });
     useCheckCourseEligibilitySpy.mockReturnValue({
       eligible: false,
-      validation: [
-        { type: 'conflict', message: 'This course conflicts with your current schedule' },
-        { type: 'other', message: 'No section has available seats' },
-      ],
+      validation: [{ type: 'conflict', message: 'This course conflicts with your current schedule' }],
     });
 
     render(<EligibilityAlert course={createCourse()} />);
@@ -85,6 +82,36 @@ describe('EligibilityAlert', () => {
     expect(
       screen.getByText('This course conflicts with your current schedule'),
     ).toBeInTheDocument();
-    expect(screen.getByText('No section has available seats')).toBeInTheDocument();
+  });
+
+  it('renders only the first validation message', () => {
+    useCheckCourseStatusSpy.mockReturnValue({
+      status: undefined,
+      enrolledSections: [],
+      isLoading: false,
+      isError: false,
+    });
+    useCheckCourseEligibilitySpy.mockReturnValue({
+      eligible: false,
+      validation: [
+        {
+          type: 'max_courses',
+          message: 'You have reached the maximum limit of 5 enrollments',
+        },
+        {
+          type: 'conflict',
+          message: 'This course conflicts with your current schedule',
+        },
+      ],
+    });
+
+    render(<EligibilityAlert course={createCourse()} />);
+
+    expect(
+      screen.getByText('You have reached the maximum limit of 5 enrollments'),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText('This course conflicts with your current schedule'),
+    ).not.toBeInTheDocument();
   });
 });

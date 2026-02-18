@@ -8,6 +8,7 @@ import type { GetEnrollmentsResponse } from '@/api/enrollments-api';
 import { unenroll } from '@/api/enrollments-api';
 import { buildCoursesQueryKey } from '@/hooks/courses/use-courses';
 import { buildEnrollmentsQueryKey } from '@/hooks/enrollments/use-enrollments';
+import { buildStudentQueryKey } from '@/hooks/students/use-student';
 
 type UnenrollMutationData = Awaited<ReturnType<typeof unenroll>>;
 
@@ -15,6 +16,8 @@ type UseUnenrollOptions = Omit<
   UseMutationOptions<UnenrollMutationData, unknown, string>,
   'mutationFn'
 >;
+
+const CURRENT_STUDENT_ID = 1;
 
 function updateEnrollmentsCacheAfterUnenroll({
   queryClient,
@@ -45,6 +48,7 @@ function updateEnrollmentsCacheAfterUnenroll({
   );
 }
 
+
 export function useUnenroll(options?: UseUnenrollOptions) {
   const queryClient = useQueryClient();
   const { onSuccess, ...mutationOptions } = options ?? {};
@@ -64,6 +68,9 @@ export function useUnenroll(options?: UseUnenrollOptions) {
         }),
         queryClient.invalidateQueries({
           queryKey: buildCoursesQueryKey(),
+        }),
+        queryClient.invalidateQueries({
+          queryKey: buildStudentQueryKey(CURRENT_STUDENT_ID),
         }),
       ]);
 
