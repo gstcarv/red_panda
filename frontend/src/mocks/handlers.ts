@@ -1,5 +1,6 @@
 import { http, HttpResponse } from "msw";
 import type { Course, CourseSection } from "@/types/course.type";
+import type { CourseHistory } from "@/types/course-history.type";
 import type { Enrollment } from "@/types/enrollments.type";
 import type {
   AvailableCoursesBySlotResponse,
@@ -153,6 +154,30 @@ const mockEnrollments: Enrollment[] = [
 ];
 let nextEnrollmentId = mockEnrollments.length + 1;
 
+const mockCourseHistory: CourseHistory[] = [
+  {
+    id: 1,
+    courseId: 1,
+    courseName: "Algebra I",
+    semesterId: 1,
+    status: "passed",
+  },
+  {
+    id: 2,
+    courseId: 2,
+    courseName: "Introduction to Programming",
+    semesterId: 1,
+    status: "passed",
+  },
+  {
+    id: 3,
+    courseId: 3,
+    courseName: "Data Structures",
+    semesterId: 2,
+    status: "failed",
+  },
+];
+
 function normalizeDayOfWeek(dayOfWeek: string): string {
   return dayOfWeek.trim().toLowerCase();
 }
@@ -226,6 +251,12 @@ export const handlers = [
   http.get("/enrollments", () => {
     return HttpResponse.json<GetEnrollmentsResponse>({
       enrollments: mockEnrollments,
+    });
+  }),
+
+  http.get("/course-history", () => {
+    return HttpResponse.json({
+      courseHistory: mockCourseHistory,
     });
   }),
 

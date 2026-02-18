@@ -1,4 +1,5 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { CourseSectionModal } from '@/components/courses/course-section-modal';
 import { useMediaQuery } from '@/lib/utils';
@@ -150,6 +151,41 @@ describe('CourseSectionModal', () => {
     expect(screen.getByTestId('course-section-list')).toHaveTextContent(
       'course:1-sections:1',
     );
+  });
+
+  it('opens the prerequisite course when clicking prerequisite link', async () => {
+    const user = userEvent.setup();
+
+    mockUseMediaQuery.mockReturnValue(true);
+    mockUseCheckCourseEnrolled.mockReturnValue({
+      isEnrolled: false,
+      enrolledSections: [],
+      isLoading: false,
+      isError: false,
+    });
+    mockUseCourseById.mockImplementation((courseId: number | null) => ({
+      data: {
+        data: createCourse({
+          id: Number(courseId),
+          prerequisite: {
+            id: 99,
+            code: 'MATH001',
+            name: 'Math Basics',
+          },
+          availableSections: [createSection({ id: 3 })],
+        }),
+      },
+      isLoading: false,
+      isError: false,
+    }) as never);
+
+    render(<CourseSectionModal courseId={1} open onOpenChange={vi.fn()} />);
+
+    await user.click(screen.getByRole('button', { name: 'MATH001 - Math Basics' }));
+
+    await waitFor(() => {
+      expect(mockUseCourseById).toHaveBeenCalledWith(99);
+    });
   });
 
   it('renders mobile sheet variant', () => {

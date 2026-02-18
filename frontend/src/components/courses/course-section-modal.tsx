@@ -25,6 +25,7 @@ import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { cn } from '@/lib/utils';
 import type { Course } from '@/types/course.type';
+import { PrerequisiteLink } from './prerequisite-link';
 
 export interface CourseSectionModalProps {
   courseId: number | null;
@@ -140,9 +141,7 @@ export function CourseSectionModal({
                   <BookOpen className="h-4 w-4 text-muted-foreground shrink-0" />
                   <div>
                     <p className="font-medium">Prerequisite</p>
-                    <p className="text-muted-foreground text-xs">
-                      {course.prerequisite.code} - {course.prerequisite.name}
-                    </p>
+                    <PrerequisiteLink prerequisite={course.prerequisite} />
                   </div>
                 </div>
               )}

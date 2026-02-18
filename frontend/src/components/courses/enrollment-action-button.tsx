@@ -14,6 +14,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import type { CourseAvailabilityError } from '@/types/course.type';
+import { EligibilityErrorMessage } from './eligibility-error-message';
 
 type EnrollmentActionButtonProps = {
   courseId: number | null;
@@ -160,7 +161,7 @@ export function EnrollmentActionButton({
   }
 
   const isDisabled = isFull || isPending || !courseId;
-  const errorMessages = validation?.map((error) => error.message).join('\n') || '';
+  const hasValidationErrors = Boolean(!eligible && validation && validation.length > 0);
 
   const button = (
     <Button
@@ -193,7 +194,7 @@ export function EnrollmentActionButton({
     </Button>
   );
 
-  if (!eligible && errorMessages) {
+  if (hasValidationErrors && validation) {
     return (
       <>
         <TooltipProvider>
@@ -202,7 +203,13 @@ export function EnrollmentActionButton({
               {button}
             </TooltipTrigger>
             <TooltipContent>
-              <div className="whitespace-pre-line">{errorMessages}</div>
+              <div className="space-y-1.5">
+                {validation.map((error, index) => (
+                  <div key={`${error.type}-${index}`}>
+                    <EligibilityErrorMessage error={error} />
+                  </div>
+                ))}
+              </div>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>

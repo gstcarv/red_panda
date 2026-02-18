@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/card';
 import type { Course } from '@/types/course.type';
 import { EligibilityTag } from './eligibility-tag';
+import { PrerequisiteLink } from './prerequisite-link';
 
 export interface CourseCardProps {
   course: Course;
@@ -64,7 +65,12 @@ export function CourseCard({
         <CardContent className="flex-1 min-h-0 pb-4">
           {course.prerequisite != null ? (
             <p className="text-sm text-muted-foreground">
-              Prerequisite: {course.prerequisite.name}
+              Prerequisite:{' '}
+              <PrerequisiteLink
+                prerequisite={course.prerequisite}
+                onCourseSelect={onClick}
+                className="text-sm"
+              />
             </p>
           ) : null}
         </CardContent>

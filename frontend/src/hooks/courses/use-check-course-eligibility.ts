@@ -1,6 +1,8 @@
 import type { Course, CourseAvailabilityError } from "@/types/course.type";
 import { useEnrollments } from "../enrollments/use-enrollments";
 import type { Enrollment } from "@/types/enrollments.type";
+import type { CourseHistory } from "@/types/course-history.type";
+import { useCourseHistory } from "./use-course-history";
 
 type CheckEligiblityReturn = {
     eligible: boolean
@@ -8,17 +10,24 @@ type CheckEligiblityReturn = {
 }
 
 export function useCheckCourseEligibility(course: Course): CheckEligiblityReturn {
-    const { data, isLoading, isError } = useEnrollments();
+    const { data: enrollmentsResponse } = useEnrollments();
+    const { data: courseHistoryResponse, isLoading: isCourseHistoryLoading } =
+        useCourseHistory();
 
+    // should not be available if user already has a course in the same time slot OK    
     // should not be available if prerequisite is not passed
+
+
     // should not be available if reached the limit of 5 courses on the semester
     // should not be available if total courses credits exceed limit of 30
-    // should not be available if user already has a course in the same time slot
     // should not be available if the grade level is not appropriate
 
     const errors: CourseAvailabilityError[] = []
 
-    const hasTimeslotConflicts = checkForTimeslotConflict(course, data?.data.enrollments || [])
+    const enrollments = enrollmentsResponse?.data.enrollments ?? [];
+    const courseHistory = courseHistoryResponse?.data.courseHistory ?? [];
+
+    const hasTimeslotConflicts = checkForTimeslotConflict(course, enrollments)
 
     if (hasTimeslotConflicts.length) {
         errors.push({
@@ -27,10 +36,37 @@ export function useCheckCourseEligibility(course: Course): CheckEligiblityReturn
         })
     }
 
+    if (
+        course.prerequisite &&
+        !isCourseHistoryLoading &&
+        !checkCoursePrerequisite(course, courseHistory)
+    ) {
+        errors.push({
+            type: "prerequisite",
+            message: "Missing prerequisite:",
+            prerequisite: course.prerequisite,
+        });
+    }
+
     return {
         eligible: !errors.length,
         validation: errors
     };
+}
+
+function checkCoursePrerequisite(
+    course: Course,
+    courseHistory: CourseHistory[],
+): boolean {
+    const prerequisite = course.prerequisite;
+    if (!prerequisite) return true;
+
+    return courseHistory.some((history) => {
+        return (
+            history.courseId === prerequisite.id &&
+            history.status === "passed"
+        );
+    });
 }
 
 function checkForTimeslotConflict(course: Course, enrollments: Enrollment[]) {

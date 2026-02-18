@@ -38,4 +38,5 @@ export interface CourseSection {
 export interface CourseAvailabilityError {
   type: 'prerequisite' | 'conflict' | 'max_courses' | 'other';
   message: string;
+  prerequisite?: CoursePrerequisite;
 }

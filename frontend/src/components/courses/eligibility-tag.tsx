@@ -10,6 +10,7 @@ import { useCheckCourseEligibility } from '@/hooks/courses/use-check-course-elig
 import { useCheckCourseEnrolled } from '@/hooks/courses/use-check-course-enrolled';
 import { cn } from '@/lib/utils';
 import type { Course } from '@/types/course.type';
+import { EligibilityErrorMessage } from './eligibility-error-message';
 
 interface EligibilityTagProps {
   course: Course;
@@ -54,14 +55,18 @@ export function EligibilityTag({ course }: EligibilityTagProps) {
   );
 
   if (!eligible && validation && validation.length > 0) {
-    const errorMessages = validation.map((error) => error.message).join('\n');
-
     return (
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>{badge}</TooltipTrigger>
           <TooltipContent>
-            <div className="whitespace-pre-line">{errorMessages}</div>
+            <div className="space-y-1.5">
+              {validation.map((error, index) => (
+                <div key={`${error.type}-${index}`}>
+                  <EligibilityErrorMessage error={error} />
+                </div>
+              ))}
+            </div>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
