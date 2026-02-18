@@ -17,7 +17,9 @@ export interface CoursesListProps {
   /** Optional: determine eligibility per course for the card badge */
   getEligible?: (course: Course) => boolean;
   onEnrollSection?: (sectionId: number) => void;
+  onUnenrollSection?: (sectionId: number) => void;
   enrollingSectionId?: number | null;
+  unenrollingSectionId?: number | null;
   isSectionEnrolled?: (sectionId: number) => boolean;
   emptyMessage?: string;
   className?: string;
@@ -63,7 +65,9 @@ export function CoursesList({
   courses,
   getEligible,
   onEnrollSection,
+  onUnenrollSection,
   enrollingSectionId = null,
+  unenrollingSectionId = null,
   isSectionEnrolled,
   emptyMessage = 'No courses match your filters.',
   className,
@@ -181,7 +185,9 @@ export function CoursesList({
         open={modalOpen}
         onOpenChange={handleModalClose}
         onEnrollSection={onEnrollSection}
+        onUnenrollSection={onUnenrollSection}
         enrollingSectionId={enrollingSectionId}
+        unenrollingSectionId={unenrollingSectionId}
         isSectionEnrolled={isSectionEnrolled}
       />
     </div>

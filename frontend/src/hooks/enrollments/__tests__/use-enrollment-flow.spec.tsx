@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { mockFn } from 'vitest-mock-extended';
 import { useEnrollmentFlow } from '@/hooks/enrollments/use-enrollment-flow';
 import { useEnroll } from '@/hooks/enrollments/use-enroll';
+import { useUnenroll } from '@/hooks/enrollments/use-unenroll';
 import { useEnrollments } from '@/hooks/enrollments/use-enrollments';
 
 vi.mock('@/hooks/enrollments/use-enroll', () => ({
@@ -13,8 +14,13 @@ vi.mock('@/hooks/enrollments/use-enrollments', () => ({
   useEnrollments: vi.fn(),
 }));
 
+vi.mock('@/hooks/enrollments/use-unenroll', () => ({
+  useUnenroll: vi.fn(),
+}));
+
 const mockUseEnroll = vi.mocked(useEnroll);
 const mockUseEnrollments = vi.mocked(useEnrollments);
+const mockUseUnenroll = vi.mocked(useUnenroll);
 
 describe('useEnrollmentFlow', () => {
   afterEach(() => {
@@ -27,6 +33,9 @@ describe('useEnrollmentFlow', () => {
     } as never);
     mockUseEnroll.mockReturnValue({
       mutate: mockFn<(sectionId: number) => void>(),
+    } as never);
+    mockUseUnenroll.mockReturnValue({
+      mutate: mockFn<(enrollmentId: string) => void>(),
     } as never);
 
     const { result } = renderHook(() => useEnrollmentFlow(10));
@@ -54,6 +63,9 @@ describe('useEnrollmentFlow', () => {
     mockUseEnroll.mockReturnValue({
       mutate,
     } as never);
+    mockUseUnenroll.mockReturnValue({
+      mutate: mockFn<(enrollmentId: string) => void>(),
+    } as never);
 
     const { result } = renderHook(() => useEnrollmentFlow(10));
     result.current.enrollInSection(200);
@@ -74,6 +86,9 @@ describe('useEnrollmentFlow', () => {
     } as never);
     mockUseEnroll.mockReturnValue({
       mutate,
+    } as never);
+    mockUseUnenroll.mockReturnValue({
+      mutate: mockFn<(enrollmentId: string) => void>(),
     } as never);
 
     const { result } = renderHook(() => useEnrollmentFlow(10));
@@ -103,6 +118,9 @@ describe('useEnrollmentFlow', () => {
         mutate: mockFn<(sectionId: number) => void>(),
       } as never;
     });
+    mockUseUnenroll.mockReturnValue({
+      mutate: mockFn<(enrollmentId: string) => void>(),
+    } as never);
 
     renderHook(() =>
       useEnrollmentFlow(10, {
@@ -131,6 +149,9 @@ describe('useEnrollmentFlow', () => {
         mutate: mockFn<(sectionId: number) => void>(),
       } as never;
     });
+    mockUseUnenroll.mockReturnValue({
+      mutate: mockFn<(enrollmentId: string) => void>(),
+    } as never);
 
     const { result } = renderHook(() => useEnrollmentFlow(10));
 
@@ -145,5 +166,35 @@ describe('useEnrollmentFlow', () => {
     });
 
     expect(result.current.enrollingSectionId).toBe(null);
+  });
+
+  it('unenrolls from enrolled section when requested', () => {
+    const unenrollMutate = mockFn<(enrollmentId: string) => void>();
+
+    mockUseEnrollments.mockReturnValue({
+      data: {
+        data: {
+          enrollments: [
+            {
+              id: 'enroll-1',
+              courseSection: {
+                id: 200,
+              },
+            },
+          ],
+        },
+      },
+    } as never);
+    mockUseEnroll.mockReturnValue({
+      mutate: mockFn<(sectionId: number) => void>(),
+    } as never);
+    mockUseUnenroll.mockReturnValue({
+      mutate: unenrollMutate,
+    } as never);
+
+    const { result } = renderHook(() => useEnrollmentFlow(10));
+    result.current.unenrollFromSection(200);
+
+    expect(unenrollMutate).toHaveBeenCalledWith('enroll-1');
   });
 });

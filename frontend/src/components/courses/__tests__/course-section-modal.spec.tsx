@@ -57,12 +57,15 @@ vi.mock('@/components/courses/course-section-list', () => ({
   CourseSectionList: ({
     sections,
     enrollingSectionId,
+    unenrollingSectionId,
   }: {
     sections: Array<{ id: number }>;
     enrollingSectionId: number | null | undefined;
+    unenrollingSectionId: number | null | undefined;
   }) => (
     <div data-testid="course-section-list">
-      sections:{sections.length}-enrolling:{enrollingSectionId ?? 'none'}
+      sections:{sections.length}-enrolling:{enrollingSectionId ?? 'none'}-unenrolling:
+      {unenrollingSectionId ?? 'none'}
     </div>
   ),
 }));
@@ -128,7 +131,7 @@ describe('CourseSectionModal', () => {
     expect(screen.getByText('1 credit')).toBeInTheDocument();
     expect(screen.getByText('Prerequisite')).toBeInTheDocument();
     expect(screen.getByTestId('course-section-list')).toHaveTextContent(
-      'sections:1-enrolling:none',
+      'sections:1-enrolling:none-unenrolling:none',
     );
   });
 

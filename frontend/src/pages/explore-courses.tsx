@@ -28,7 +28,13 @@ export function ExploreCourses() {
   const { data: courseData } = useCourseById(selectedCourseId);
   const { notifyError } = useErrorHandler();
 
-  const { enrollInSection, enrollingSectionId, isSectionEnrolled } =
+  const {
+    enrollInSection,
+    unenrollFromSection,
+    enrollingSectionId,
+    unenrollingSectionId,
+    isSectionEnrolled,
+  } =
     useEnrollmentFlow(selectedCourseId, {
       onSuccess: () => {
         setEnrolledCourseName(courseData?.data.name ?? 'the course');
@@ -53,6 +59,13 @@ export function ExploreCourses() {
       enrollInSection(sectionId);
     },
     [enrollInSection, selectedCourseId],
+  );
+
+  const handleUnenrollSection = useCallback(
+    (sectionId: number) => {
+      unenrollFromSection(sectionId);
+    },
+    [unenrollFromSection],
   );
 
   const handleCourseSelect = useCallback((courseId: number) => {
@@ -83,7 +96,9 @@ export function ExploreCourses() {
           isError={isError}
           onRetry={() => refetch()}
           onEnrollSection={handleEnrollSection}
+          onUnenrollSection={handleUnenrollSection}
           enrollingSectionId={enrollingSectionId}
+          unenrollingSectionId={unenrollingSectionId}
           isSectionEnrolled={isSectionEnrolled}
           selectedCourseId={selectedCourseId}
           onCourseSelect={handleCourseSelect}

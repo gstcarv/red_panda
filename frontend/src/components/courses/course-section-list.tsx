@@ -1,8 +1,8 @@
-import { Clock, Users, User, Plus } from 'lucide-react';
+import { Clock, Users, User } from 'lucide-react';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { EnrollmentActionButton } from '@/components/courses/enrollment-action-button';
 import type { CourseSection } from '@/types/course.type';
 import { cn } from '@/lib/utils';
 
@@ -11,7 +11,9 @@ dayjs.extend(customParseFormat);
 export interface CourseSectionListProps {
   sections: CourseSection[];
   onEnroll?: (sectionId: number) => void;
+  onUnenroll?: (sectionId: number) => void;
   enrollingSectionId?: number | null;
+  unenrollingSectionId?: number | null;
   isSectionEnrolled?: (sectionId: number) => boolean;
 }
 
@@ -39,7 +41,9 @@ function formatTime(time: string): string {
 export function CourseSectionList({
   sections,
   onEnroll,
+  onUnenroll,
   enrollingSectionId = null,
+  unenrollingSectionId = null,
   isSectionEnrolled,
 }: CourseSectionListProps) {
   function getEnrollButtonLabel(
@@ -65,6 +69,7 @@ export function CourseSectionList({
     <div className="space-y-2">
       {sections.map((section) => {
         const isEnrolling = enrollingSectionId === section.id;
+        const isUnenrolling = unenrollingSectionId === section.id;
         const isFull = section.enrolledCount >= section.capacity;
         const alreadyEnrolled = isSectionEnrolled?.(section.id) ?? false;
         const spotsAvailable = section.capacity - section.enrolledCount;
@@ -118,18 +123,29 @@ export function CourseSectionList({
               </div>
             </div>
             <div className="flex items-center gap-2 shrink-0">
-              {onEnroll && (
-                <Button
-                  variant="default"
-                  size="sm"
+              {alreadyEnrolled && onUnenroll ? (
+                <EnrollmentActionButton
+                  isEnrolled
+                  isPending={isUnenrolling || isEnrolling}
+                  onUnenroll={() => onUnenroll(section.id)}
+                  confirmTitle="Unenroll from section?"
+                  confirmDescription="This action will remove your enrollment from this section."
                   className="h-8 px-3 text-xs"
-                  onClick={() => onEnroll(section.id)}
-                  disabled={isFull || isEnrolling || alreadyEnrolled}
-                >
-                  <Plus className="h-3.5 w-3.5 mr-1.5" />
-                  {getEnrollButtonLabel(isEnrolling, alreadyEnrolled, isFull)}
-                </Button>
-              )}
+                />
+              ) : onEnroll ? (
+                <EnrollmentActionButton
+                  isEnrolled={false}
+                  isPending={isEnrolling}
+                  isFull={isFull}
+                  onEnroll={() => onEnroll(section.id)}
+                  enrollLabel={getEnrollButtonLabel(
+                    isEnrolling,
+                    alreadyEnrolled,
+                    isFull,
+                  )}
+                  className="h-8 px-3 text-xs"
+                />
+              ) : null}
             </div>
           </div>
         );

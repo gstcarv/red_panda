@@ -3,6 +3,7 @@ import FullCalendar from '@fullcalendar/react';
 import interactionPlugin, {
   type DateClickArg,
 } from '@fullcalendar/interaction';
+import type { EventClickArg } from '@fullcalendar/core';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import type { SchedulerEvent } from '@/types/scheduler.type';
 import './scheduler.css';
@@ -12,18 +13,21 @@ type SchedulerProps = {
   height: number;
   activeCourseId?: number | null;
   onDateClick?: (arg: DateClickArg) => void;
+  onEventClick?: (arg: EventClickArg) => void;
   containerRef?: Ref<HTMLElement>;
   testId?: string;
   ariaLabel?: string;
 };
 
 export type SchedulerDateClickArg = DateClickArg;
+export type SchedulerEventClickArg = EventClickArg;
 
 export function Scheduler({
   events,
   height,
   activeCourseId = null,
   onDateClick,
+  onEventClick,
   containerRef,
   testId,
   ariaLabel = 'Weekly calendar',
@@ -52,6 +56,7 @@ export function Scheduler({
         height={height}
         dayHeaderFormat={{ weekday: 'short' }}
         dateClick={onDateClick}
+        eventClick={onEventClick}
         eventClassNames={(arg) => {
           if (activeCourseId === null) {
             return [];

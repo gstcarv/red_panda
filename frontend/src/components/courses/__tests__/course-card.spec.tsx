@@ -49,4 +49,17 @@ describe('CourseCard', () => {
 
     expect(onClick).toHaveBeenCalledTimes(2);
   });
+
+  it('renders optional footer action content', () => {
+    const course = createCourse();
+
+    render(
+      <CourseCard
+        course={course}
+        footerAction={<button type="button">Unenroll</button>}
+      />,
+    );
+
+    expect(screen.getByRole('button', { name: 'Unenroll' })).toBeInTheDocument();
+  });
 });

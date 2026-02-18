@@ -2,12 +2,14 @@ import { useEffect, useRef, useState } from 'react';
 import {
   Scheduler,
   type SchedulerDateClickArg,
+  type SchedulerEventClickArg,
 } from '@/components/ui/scheduler';
 import type {
   SchedulerEvent,
   SchedulerSlotSelection,
 } from '@/types/scheduler.type';
 import { ScheduleFindCourseModal } from './schedule-find-course-modal';
+import { CourseSectionModal } from '@/components/courses/course-section-modal';
 
 const CALENDAR_BOTTOM_OFFSET = 40;
 
@@ -44,11 +46,27 @@ function toDateLabel(date: Date): string {
 type ScheduleCalendarProps = {
   events: SchedulerEvent[];
   activeCourseId?: number | null;
+  selectedCourseId?: number | null;
+  onCourseEventSelect?: (courseId: number) => void;
+  onCourseDetailsOpenChange?: (open: boolean) => void;
+  onEnrollSection?: (sectionId: number) => void;
+  onUnenrollSection?: (sectionId: number) => void;
+  enrollingSectionId?: number | null;
+  unenrollingSectionId?: number | null;
+  isSectionEnrolled?: (sectionId: number) => boolean;
 };
 
 export function ScheduleCalendar({
   events,
   activeCourseId = null,
+  selectedCourseId = null,
+  onCourseEventSelect,
+  onCourseDetailsOpenChange,
+  onEnrollSection,
+  onUnenrollSection,
+  enrollingSectionId = null,
+  unenrollingSectionId = null,
+  isSectionEnrolled,
 }: ScheduleCalendarProps) {
   const calendarContainerRef = useRef<HTMLElement | null>(null);
   const [calendarHeight, setCalendarHeight] = useState(720);
@@ -103,12 +121,23 @@ export function ScheduleCalendar({
     }
   };
 
+  const handleEventClick = (arg: SchedulerEventClickArg) => {
+    const courseId = Number(arg.event.extendedProps.courseId);
+
+    if (Number.isNaN(courseId)) {
+      return;
+    }
+
+    onCourseEventSelect?.(courseId);
+  };
+
   return (
     <>
       <Scheduler
         events={events}
         height={calendarHeight}
         onDateClick={handleDateClick}
+        onEventClick={handleEventClick}
         containerRef={calendarContainerRef}
         activeCourseId={activeCourseId}
         testId="schedule-calendar"
@@ -118,6 +147,21 @@ export function ScheduleCalendar({
         open={isFindCourseModalOpen}
         slot={selectedSlot}
         onOpenChange={handleFindCourseModalOpenChange}
+        onEnrollSection={onEnrollSection}
+        onUnenrollSection={onUnenrollSection}
+        enrollingSectionId={enrollingSectionId}
+        unenrollingSectionId={unenrollingSectionId}
+        isSectionEnrolled={isSectionEnrolled}
+      />
+      <CourseSectionModal
+        courseId={selectedCourseId}
+        open={selectedCourseId !== null}
+        onEnrollSection={onEnrollSection}
+        onUnenrollSection={onUnenrollSection}
+        enrollingSectionId={enrollingSectionId}
+        unenrollingSectionId={unenrollingSectionId}
+        isSectionEnrolled={isSectionEnrolled}
+        onOpenChange={onCourseDetailsOpenChange ?? (() => undefined)}
       />
     </>
   );

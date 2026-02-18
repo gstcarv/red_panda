@@ -14,60 +14,58 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { CourseSectionModal } from '@/components/courses/course-section-modal';
 import { useAvailableCoursesBySlot } from '@/hooks/courses/use-available-courses-by-slot';
 import { useEnrollments } from '@/hooks/enrollments/use-enrollments';
-import { useEnrollmentFlow } from '@/hooks/enrollments/use-enrollment-flow';
-import { useErrorHandler } from '@/hooks/use-error-handler';
+import type { CourseDetails } from '@/types/course.type';
 import type { SchedulerSlotSelection } from '@/types/scheduler.type';
 
 type ScheduleFindCourseModalProps = {
   open: boolean;
   slot: SchedulerSlotSelection | null;
   onOpenChange: (open: boolean) => void;
+  onEnrollSection?: (sectionId: number) => void;
+  onUnenrollSection?: (sectionId: number) => void;
+  enrollingSectionId?: number | null;
+  unenrollingSectionId?: number | null;
+  isSectionEnrolled?: (sectionId: number) => boolean;
 };
 
-export function ScheduleFindCourseModal({
+type CourseWithEligibility = {
+  course: CourseDetails;
+  eligible: boolean;
+};
+
+type ScheduleFindCourseModalViewProps = {
+  open: boolean;
+  slot: SchedulerSlotSelection | null;
+  courses: CourseWithEligibility[];
+  isLoading: boolean;
+  isError: boolean;
+  selectedCourseId: number | null;
+  enrollingSectionId: number | null;
+  unenrollingSectionId: number | null;
+  isSectionEnrolled: (sectionId: number) => boolean;
+  onOpenChange: (open: boolean) => void;
+  onCourseClick: (courseId: number) => void;
+  onCourseDetailsOpenChange: (open: boolean) => void;
+  onEnrollSection: (sectionId: number) => void;
+  onUnenrollSection: (sectionId: number) => void;
+};
+
+function ScheduleFindCourseModalView({
   open,
   slot,
+  courses,
+  isLoading,
+  isError,
+  selectedCourseId,
+  enrollingSectionId,
+  unenrollingSectionId,
+  isSectionEnrolled,
   onOpenChange,
-}: ScheduleFindCourseModalProps) {
-  const [selectedCourseId, setSelectedCourseId] = useState<number | null>(null);
-  const { notifyError } = useErrorHandler();
-  const queryParams = slot
-    ? {
-        weekDay: slot.weekDay,
-        startTime: slot.startTime,
-      }
-    : null;
-
-  const { data, isLoading, isError } = useAvailableCoursesBySlot(queryParams);
-  const { data: enrollmentsResponse } = useEnrollments();
-  const courses = data?.data.courses ?? [];
-  const enrolledCourseIds = useMemo(() => {
-    const enrollments = enrollmentsResponse?.data.enrollments ?? [];
-    return new Set(enrollments.map((enrollment) => enrollment.course.id));
-  }, [enrollmentsResponse]);
-  const { enrollInSection, enrollingSectionId, isSectionEnrolled } =
-    useEnrollmentFlow(selectedCourseId, {
-      onSuccess: () => {
-        setSelectedCourseId(null);
-      },
-      onError: (error) => {
-        notifyError(error, 'Failed to enroll. Please try again.');
-      },
-    });
-
-  const handleCourseClick = (courseId: number) => {
-    setSelectedCourseId(courseId);
-    onOpenChange(false);
-  };
-
-  const isCourseEligible = (course: (typeof courses)[number]) => {
-    if (!course.prerequisite) {
-      return true;
-    }
-
-    return enrolledCourseIds.has(course.prerequisite.id);
-  };
-
+  onCourseClick,
+  onCourseDetailsOpenChange,
+  onEnrollSection,
+  onUnenrollSection,
+}: ScheduleFindCourseModalViewProps) {
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
@@ -100,13 +98,13 @@ export function ScheduleFindCourseModal({
             </div>
           ) : (
             <div className="space-y-3">
-              {courses.map((course) => (
+              {courses.map(({ course, eligible }) => (
                 <Button
                   key={course.id}
                   type="button"
                   variant="outline"
                   className="h-auto w-full justify-between p-4"
-                  onClick={() => handleCourseClick(course.id)}
+                  onClick={() => onCourseClick(course.id)}
                 >
                   <div className="text-left">
                     <h3 className="text-base font-semibold">{course.name}</h3>
@@ -116,15 +114,15 @@ export function ScheduleFindCourseModal({
                   </div>
                   <div className="flex items-center gap-2">
                     <Badge
-                      variant={isCourseEligible(course) ? 'default' : 'secondary'}
+                      variant={eligible ? 'default' : 'secondary'}
                       className="gap-1"
                     >
-                      {isCourseEligible(course) ? (
+                      {eligible ? (
                         <CheckCircle2 className="size-3" aria-hidden />
                       ) : (
                         <XCircle className="size-3" aria-hidden />
                       )}
-                      {isCourseEligible(course) ? 'Eligible' : 'Not eligible'}
+                      {eligible ? 'Eligible' : 'Not eligible'}
                     </Badge>
                     <Badge variant="outline">
                       {course.availableSections.length} section
@@ -140,15 +138,75 @@ export function ScheduleFindCourseModal({
       <CourseSectionModal
         courseId={selectedCourseId}
         open={selectedCourseId !== null}
-        onEnrollSection={enrollInSection}
+        onEnrollSection={onEnrollSection}
+        onUnenrollSection={onUnenrollSection}
         enrollingSectionId={enrollingSectionId}
+        unenrollingSectionId={unenrollingSectionId}
         isSectionEnrolled={isSectionEnrolled}
-        onOpenChange={(isOpen) => {
-          if (!isOpen) {
-            setSelectedCourseId(null);
-          }
-        }}
+        onOpenChange={onCourseDetailsOpenChange}
       />
     </>
+  );
+}
+
+export function ScheduleFindCourseModal({
+  open,
+  slot,
+  onOpenChange,
+  onEnrollSection,
+  onUnenrollSection,
+  enrollingSectionId = null,
+  unenrollingSectionId = null,
+  isSectionEnrolled = () => false,
+}: ScheduleFindCourseModalProps) {
+  const [selectedCourseId, setSelectedCourseId] = useState<number | null>(null);
+  const queryParams = slot
+    ? {
+        weekDay: slot.weekDay,
+        startTime: slot.startTime,
+      }
+    : null;
+
+  const { data, isLoading, isError } = useAvailableCoursesBySlot(queryParams);
+  const { data: enrollmentsResponse } = useEnrollments();
+  const enrolledCourseIds = useMemo(() => {
+    const enrollments = enrollmentsResponse?.data.enrollments ?? [];
+    return new Set(enrollments.map((enrollment) => enrollment.course.id));
+  }, [enrollmentsResponse]);
+  const coursesWithEligibility = useMemo<CourseWithEligibility[]>(() => {
+    const availableCourses = data?.data.courses ?? [];
+
+    return availableCourses.map((course) => ({
+      course,
+      eligible: course.prerequisite
+        ? enrolledCourseIds.has(course.prerequisite.id)
+        : true,
+    }));
+  }, [data, enrolledCourseIds]);
+
+  return (
+    <ScheduleFindCourseModalView
+      open={open}
+      slot={slot}
+      courses={coursesWithEligibility}
+      isLoading={isLoading}
+      isError={isError}
+      selectedCourseId={selectedCourseId}
+      enrollingSectionId={enrollingSectionId}
+      unenrollingSectionId={unenrollingSectionId}
+      isSectionEnrolled={isSectionEnrolled}
+      onOpenChange={onOpenChange}
+      onCourseClick={(courseId) => {
+        setSelectedCourseId(courseId);
+        onOpenChange(false);
+      }}
+      onCourseDetailsOpenChange={(isOpen) => {
+        if (!isOpen) {
+          setSelectedCourseId(null);
+        }
+      }}
+      onEnrollSection={onEnrollSection ?? (() => undefined)}
+      onUnenrollSection={onUnenrollSection ?? (() => undefined)}
+    />
   );
 }

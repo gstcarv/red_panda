@@ -1,4 +1,5 @@
 import { CheckCircle2, XCircle } from 'lucide-react';
+import type { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -15,6 +16,7 @@ export interface CourseCardProps {
   eligible?: boolean;
   onClick?: (courseId: number) => void;
   className?: string;
+  footerAction?: ReactNode;
 }
 
 export function CourseCard({
@@ -22,6 +24,7 @@ export function CourseCard({
   eligible = false,
   onClick,
   className,
+  footerAction,
 }: CourseCardProps) {
   return (
     <Card
@@ -85,6 +88,7 @@ export function CourseCard({
           <span className="text-sm text-muted-foreground">
             {course.credits} {course.credits === 1 ? 'credit' : 'credits'}
           </span>
+          {footerAction ?? null}
         </CardFooter>
       </article>
     </Card>

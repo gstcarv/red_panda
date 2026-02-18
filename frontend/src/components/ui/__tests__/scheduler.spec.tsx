@@ -20,6 +20,7 @@ vi.mock('@fullcalendar/react', () => ({
     height,
     dayHeaderFormat,
     dateClick,
+    eventClick,
     eventClassNames,
   }: {
     plugins: unknown[];
@@ -36,6 +37,7 @@ vi.mock('@fullcalendar/react', () => ({
     height: number;
     dayHeaderFormat: { weekday: string };
     dateClick: (arg: { date: Date; dateStr: string }) => void;
+    eventClick: (arg: { event: { extendedProps: { courseId: number } } }) => void;
     eventClassNames: (arg: { event: { extendedProps: { courseId: number } } }) => string[];
   }) => {
     fullCalendarSpy({
@@ -53,6 +55,7 @@ vi.mock('@fullcalendar/react', () => ({
       height,
       dayHeaderFormat,
       dateClick,
+      eventClick,
       eventClassNames,
     });
     return <div data-testid="full-calendar" />;
@@ -70,6 +73,7 @@ vi.mock('@fullcalendar/interaction', () => ({
 describe('Scheduler', () => {
   it('renders fullcalendar with scheduler defaults', () => {
     const onDateClick = vi.fn();
+    const onEventClick = vi.fn();
 
     render(
       <Scheduler
@@ -86,6 +90,7 @@ describe('Scheduler', () => {
         height={700}
         activeCourseId={1}
         onDateClick={onDateClick}
+        onEventClick={onEventClick}
         testId="scheduler-root"
       />,
     );
@@ -114,6 +119,7 @@ describe('Scheduler', () => {
         weekday: 'short',
       },
       dateClick: onDateClick,
+      eventClick: onEventClick,
       eventClassNames: expect.any(Function),
     });
 

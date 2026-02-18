@@ -4,9 +4,14 @@ import { ScheduleCalendar } from '@/components/schedule/schedule-calendar';
 
 const schedulerSpy = vi.fn();
 const findCourseModalSpy = vi.fn();
+const courseSectionModalSpy = vi.fn();
 
 vi.mock('@/components/ui/scheduler', () => ({
-  Scheduler: (props: { testId?: string; onDateClick?: (arg: { date: Date }) => void }) => {
+  Scheduler: (props: {
+    testId?: string;
+    onDateClick?: (arg: { date: Date }) => void;
+    onEventClick?: (arg: { event: { extendedProps: { courseId: number } } }) => void;
+  }) => {
     schedulerSpy(props);
     return (
       <div data-testid={props.testId ?? 'ui-scheduler'} data-ui-scheduler="true" />
@@ -28,10 +33,18 @@ vi.mock('@/components/schedule/schedule-find-course-modal', () => ({
   },
 }));
 
+vi.mock('@/components/courses/course-section-modal', () => ({
+  CourseSectionModal: (props: { courseId: number | null; open: boolean }) => {
+    courseSectionModalSpy(props);
+    return <div data-testid="course-section-modal" />;
+  },
+}));
+
 describe('ScheduleCalendar', () => {
   it('renders scheduler UI component with mapped props', () => {
     schedulerSpy.mockClear();
     findCourseModalSpy.mockClear();
+    courseSectionModalSpy.mockClear();
 
     render(
       <ScheduleCalendar
@@ -58,12 +71,19 @@ describe('ScheduleCalendar', () => {
         height: expect.any(Number),
         containerRef: expect.any(Object),
         onDateClick: expect.any(Function),
+        onEventClick: expect.any(Function),
       }),
     );
     expect(findCourseModalSpy).toHaveBeenCalledWith(
       expect.objectContaining({
         open: false,
         slot: null,
+      }),
+    );
+    expect(courseSectionModalSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        open: false,
+        courseId: null,
       }),
     );
 
@@ -82,6 +102,7 @@ describe('ScheduleCalendar', () => {
   it('opens find-course modal with selected slot on calendar click', async () => {
     schedulerSpy.mockClear();
     findCourseModalSpy.mockClear();
+    courseSectionModalSpy.mockClear();
 
     render(<ScheduleCalendar events={[]} />);
 
@@ -105,5 +126,28 @@ describe('ScheduleCalendar', () => {
         }),
       );
     });
+  });
+
+  it('emits selected course id when clicking calendar event', () => {
+    schedulerSpy.mockClear();
+    findCourseModalSpy.mockClear();
+    courseSectionModalSpy.mockClear();
+    const onCourseEventSelect = vi.fn();
+
+    render(
+      <ScheduleCalendar events={[]} onCourseEventSelect={onCourseEventSelect} />,
+    );
+
+    const onEventClick = schedulerSpy.mock.calls[0][0].onEventClick as (arg: {
+      event: { extendedProps: { courseId: number } };
+    }) => void;
+
+    act(() => {
+      onEventClick({
+        event: { extendedProps: { courseId: 12 } },
+      });
+    });
+
+    expect(onCourseEventSelect).toHaveBeenCalledWith(12);
   });
 });

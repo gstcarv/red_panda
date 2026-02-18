@@ -263,4 +263,24 @@ export const handlers = [
 
     return HttpResponse.json<EnrollResponse>({ enrollment });
   }),
+
+  http.delete("/enrollments/:id", ({ params }) => {
+    const enrollmentId = String(params.id);
+    const enrollmentIndex = mockEnrollments.findIndex(
+      (value) => value.id === enrollmentId,
+    );
+
+    if (enrollmentIndex === -1) {
+      return HttpResponse.json(
+        { error: "Enrollment not found" },
+        { status: 404 },
+      );
+    }
+
+    const [removedEnrollment] = mockEnrollments.splice(enrollmentIndex, 1);
+
+    return HttpResponse.json({
+      enrollment: removedEnrollment,
+    });
+  }),
 ];

@@ -15,12 +15,20 @@ export type EnrollResponse = {
     enrollment: Enrollment;
 };
 
+export type UnenrollResponse = {
+    enrollment: Enrollment;
+};
+
 function enroll(params: EnrollParams) {
     return api.post<EnrollResponse>("/enrollments", params);
+}
+
+function unenroll(enrollmentId: string) {
+    return api.delete<UnenrollResponse>(`/enrollments/${enrollmentId}`);
 }
 
 function getEnrollments() {
     return api.get<GetEnrollmentsResponse>("/enrollments");
 }
 
-export { enroll, getEnrollments };
+export { enroll, unenroll, getEnrollments };

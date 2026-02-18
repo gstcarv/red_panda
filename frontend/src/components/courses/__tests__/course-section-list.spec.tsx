@@ -81,4 +81,22 @@ describe('CourseSectionList', () => {
 
     expect(screen.getByRole('button', { name: 'Enrolling...' })).toBeDisabled();
   });
+
+  it('shows unenroll action for enrolled sections', async () => {
+    const user = userEvent.setup();
+    const onUnenroll = mockFn<(sectionId: number) => void>();
+
+    render(
+      <CourseSectionList
+        sections={[createSection({ id: 21 })]}
+        onUnenroll={onUnenroll}
+        isSectionEnrolled={() => true}
+      />,
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Unenroll' }));
+    await user.click(screen.getByRole('button', { name: 'Confirm unenroll' }));
+
+    expect(onUnenroll).toHaveBeenCalledWith(21);
+  });
 });

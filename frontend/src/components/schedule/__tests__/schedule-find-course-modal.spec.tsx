@@ -2,39 +2,32 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { ScheduleFindCourseModal } from '@/components/schedule/schedule-find-course-modal';
 import { useAvailableCoursesBySlot } from '@/hooks/courses/use-available-courses-by-slot';
-import { useEnrollmentFlow } from '@/hooks/enrollments/use-enrollment-flow';
 import { useEnrollments } from '@/hooks/enrollments/use-enrollments';
-
-vi.mock('@/hooks/enrollments/use-enrollment-flow', () => ({
-  useEnrollmentFlow: vi.fn(),
-}));
 
 vi.mock('@/hooks/enrollments/use-enrollments', () => ({
   useEnrollments: vi.fn(),
-}));
-
-vi.mock('@/hooks/use-error-handler', () => ({
-  useErrorHandler: () => ({
-    notifyError: vi.fn(),
-  }),
 }));
 
 vi.mock('@/hooks/courses/use-available-courses-by-slot', () => ({
   useAvailableCoursesBySlot: vi.fn(),
 }));
 
+const courseSectionModalSpy = vi.fn();
+
 vi.mock('@/components/courses/course-section-modal', () => ({
-  CourseSectionModal: ({
-    courseId,
-    open,
-  }: {
+  CourseSectionModal: (props: {
     courseId: number | null;
     open: boolean;
-  }) => (
-    <div data-testid="course-section-modal">
-      course:{courseId ?? 'none'}-open:{open ? 'yes' : 'no'}
-    </div>
-  ),
+    onEnrollSection?: (sectionId: number) => void;
+    onUnenrollSection?: (sectionId: number) => void;
+  }) => {
+    courseSectionModalSpy(props);
+    return (
+      <div data-testid="course-section-modal">
+        course:{props.courseId ?? 'none'}-open:{props.open ? 'yes' : 'no'}
+      </div>
+    );
+  },
 }));
 
 vi.mock('@/components/ui/dialog', () => ({
@@ -50,22 +43,9 @@ vi.mock('@/components/ui/dialog', () => ({
 }));
 
 const mockedUseAvailableCoursesBySlot = vi.mocked(useAvailableCoursesBySlot);
-const mockedUseEnrollmentFlow = vi.mocked(useEnrollmentFlow);
 const mockedUseEnrollments = vi.mocked(useEnrollments);
 
 describe('ScheduleFindCourseModal', () => {
-  const enrollInSectionMock = vi.fn();
-  const isSectionEnrolledMock = vi.fn();
-
-  function setupEnrollmentFlowMock() {
-    mockedUseEnrollmentFlow.mockReturnValue({
-      enrollInSection: enrollInSectionMock,
-      enrollingSectionId: null,
-      isSectionEnrolled: isSectionEnrolledMock,
-      isEnrollmentsLoading: false,
-    });
-  }
-
   function setupEnrollmentsMock(courseIds: number[] = []) {
     mockedUseEnrollments.mockReturnValue({
       data: {
@@ -94,7 +74,7 @@ describe('ScheduleFindCourseModal', () => {
   }
 
   it('shows loading state', () => {
-    setupEnrollmentFlowMock();
+    courseSectionModalSpy.mockClear();
     setupEnrollmentsMock();
     mockedUseAvailableCoursesBySlot.mockReturnValue({
       data: undefined,
@@ -118,7 +98,7 @@ describe('ScheduleFindCourseModal', () => {
   });
 
   it('shows empty state when no courses are available', () => {
-    setupEnrollmentFlowMock();
+    courseSectionModalSpy.mockClear();
     setupEnrollmentsMock();
     mockedUseAvailableCoursesBySlot.mockReturnValue({
       data: {
@@ -148,7 +128,7 @@ describe('ScheduleFindCourseModal', () => {
   });
 
   it('shows available courses only', () => {
-    setupEnrollmentFlowMock();
+    courseSectionModalSpy.mockClear();
     setupEnrollmentsMock();
     mockedUseAvailableCoursesBySlot.mockReturnValue({
       data: {
@@ -197,7 +177,7 @@ describe('ScheduleFindCourseModal', () => {
   });
 
   it('opens course details modal when clicking a course', () => {
-    setupEnrollmentFlowMock();
+    courseSectionModalSpy.mockClear();
     setupEnrollmentsMock();
     mockedUseAvailableCoursesBySlot.mockReturnValue({
       data: {
@@ -249,8 +229,10 @@ describe('ScheduleFindCourseModal', () => {
   });
 
   it('passes enrollment handlers to course details modal', () => {
-    setupEnrollmentFlowMock();
+    courseSectionModalSpy.mockClear();
     setupEnrollmentsMock();
+    const onEnrollSection = vi.fn();
+    const onUnenrollSection = vi.fn();
     mockedUseAvailableCoursesBySlot.mockReturnValue({
       data: {
         data: {
@@ -280,22 +262,25 @@ describe('ScheduleFindCourseModal', () => {
           dateLabel: 'Monday, 11:00 AM',
         }}
         onOpenChange={vi.fn()}
+        onEnrollSection={onEnrollSection}
+        onUnenrollSection={onUnenrollSection}
       />,
     );
 
     fireEvent.click(screen.getByRole('button', { name: /algebra i/i }));
 
-    expect(mockedUseEnrollmentFlow).toHaveBeenLastCalledWith(
-      1,
+    expect(courseSectionModalSpy).toHaveBeenLastCalledWith(
       expect.objectContaining({
-        onSuccess: expect.any(Function),
-        onError: expect.any(Function),
+        courseId: 1,
+        open: true,
+        onEnrollSection,
+        onUnenrollSection,
       }),
     );
   });
 
   it('shows not eligible when prerequisite is not enrolled', () => {
-    setupEnrollmentFlowMock();
+    courseSectionModalSpy.mockClear();
     setupEnrollmentsMock([]);
     mockedUseAvailableCoursesBySlot.mockReturnValue({
       data: {
