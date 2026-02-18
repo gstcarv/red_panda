@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { CourseSectionModal } from '@/components/courses/course-section-modal';
 import { useMediaQuery } from '@/lib/utils';
 import { useCourseById } from '@/hooks/courses/use-course-by-id';
+import { useCheckCourseEnrolled } from '@/hooks/courses/use-check-course-enrolled';
 import type { Course, CourseSection } from '@/types/course.type';
 
 function createSection(overrides: Partial<CourseSection> = {}): CourseSection {
@@ -53,6 +54,18 @@ vi.mock('@/hooks/courses/use-course-by-id', () => ({
   useCourseById: vi.fn(),
 }));
 
+vi.mock('@/hooks/courses/use-check-course-enrolled', () => ({
+  useCheckCourseEnrolled: vi.fn(),
+}));
+
+vi.mock('@/components/courses/eligibility-tag', () => ({
+  EligibilityTag: () => <span>Eligible</span>,
+}));
+
+vi.mock('@/components/courses/eligibility-alert', () => ({
+  EligibilityAlert: () => null,
+}));
+
 vi.mock('@/components/courses/course-section-list', () => ({
   CourseSectionList: ({
     courseId,
@@ -101,10 +114,17 @@ vi.mock('@/components/ui/sheet', () => ({
 
 const mockUseMediaQuery = vi.mocked(useMediaQuery);
 const mockUseCourseById = vi.mocked(useCourseById);
+const mockUseCheckCourseEnrolled = vi.mocked(useCheckCourseEnrolled);
 
 describe('CourseSectionModal', () => {
   it('renders desktop details with section list and metadata', () => {
     mockUseMediaQuery.mockReturnValue(true);
+    mockUseCheckCourseEnrolled.mockReturnValue({
+      isEnrolled: false,
+      enrolledSections: [],
+      isLoading: false,
+      isError: false,
+    });
     mockUseCourseById.mockReturnValue({
       data: {
         data: createCourse({
@@ -134,6 +154,12 @@ describe('CourseSectionModal', () => {
 
   it('renders mobile sheet variant', () => {
     mockUseMediaQuery.mockReturnValue(false);
+    mockUseCheckCourseEnrolled.mockReturnValue({
+      isEnrolled: false,
+      enrolledSections: [],
+      isLoading: false,
+      isError: false,
+    });
     mockUseCourseById.mockReturnValue({
       data: {
         data: createCourse(),
@@ -149,6 +175,12 @@ describe('CourseSectionModal', () => {
 
   it('shows error feedback when course loading fails', () => {
     mockUseMediaQuery.mockReturnValue(true);
+    mockUseCheckCourseEnrolled.mockReturnValue({
+      isEnrolled: false,
+      enrolledSections: [],
+      isLoading: false,
+      isError: false,
+    });
     mockUseCourseById.mockReturnValue({
       data: undefined,
       isLoading: false,

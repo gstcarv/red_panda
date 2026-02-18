@@ -1,7 +1,5 @@
-import { CheckCircle2, XCircle } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
-import { Badge } from '@/components/ui/badge';
 import {
   Card,
   CardContent,
@@ -9,6 +7,7 @@ import {
   CardHeader,
 } from '@/components/ui/card';
 import type { Course } from '@/types/course.type';
+import { EligibilityTag } from './eligibility-tag';
 
 export interface CourseCardProps {
   course: Course;
@@ -21,7 +20,7 @@ export interface CourseCardProps {
 
 export function CourseCard({
   course,
-  eligible = false,
+  // eligible = false,
   onClick,
   className,
   footerAction,
@@ -59,21 +58,7 @@ export function CourseCard({
               </span>
             </div>
           </div>
-          <Badge
-            variant={eligible ? 'default' : 'secondary'}
-            className={cn(
-              'shrink-0 gap-1',
-              !eligible && 'bg-muted text-muted-foreground',
-            )}
-            aria-label={eligible ? 'Eligible' : 'Not eligible'}
-          >
-            {eligible ? (
-              <CheckCircle2 className="size-3" aria-hidden />
-            ) : (
-              <XCircle className="size-3" aria-hidden />
-            )}
-            {eligible ? 'Eligible' : 'Not eligible'}
-          </Badge>
+          <EligibilityTag course={course} />
         </CardHeader>
 
         <CardContent className="flex-1 min-h-0 pb-4">

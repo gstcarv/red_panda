@@ -7,6 +7,7 @@ import type { SchedulerSlotSelection } from '@/types/scheduler.type';
 type CourseWithEligibility = {
   course: Course;
   eligible: boolean;
+  isEnrolled: boolean;
 };
 
 export function useScheduleFindCourseModal(slot: SchedulerSlotSelection | null) {
@@ -30,6 +31,7 @@ export function useScheduleFindCourseModal(slot: SchedulerSlotSelection | null) 
 
     return availableCourses.map((course) => ({
       course,
+      isEnrolled: enrolledCourseIds.has(course.id),
       eligible: course.prerequisite
         ? enrolledCourseIds.has(course.prerequisite.id)
         : true,

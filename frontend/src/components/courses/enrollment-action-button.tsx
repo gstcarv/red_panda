@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { LogOut, Plus } from 'lucide-react';
+import { LogOut, Plus, XCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useEnroll } from '@/hooks/enrollments/use-enroll';
 import { useEnrollments } from '@/hooks/enrollments/use-enrollments';
@@ -7,11 +7,20 @@ import { useUnenroll } from '@/hooks/enrollments/use-unenroll';
 import { useErrorHandler } from '@/hooks/use-error-handler';
 import { FeedbackDialog } from '@/components/ui/feedback-dialog';
 import { ConfirmationDialog } from '@/components/ui/confirmation-dialog';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import type { CourseAvailabilityError } from '@/types/course.type';
 
 type EnrollmentActionButtonProps = {
   courseId: number | null;
   sectionId: number;
   isFull?: boolean;
+  eligible?: boolean;
+  validation?: CourseAvailabilityError[];
   onEnrollSuccess?: () => void;
   onUnenrollSuccess?: () => void;
   onError?: (error: unknown) => void;
@@ -26,6 +35,8 @@ export function EnrollmentActionButton({
   courseId,
   sectionId,
   isFull = false,
+  eligible = true,
+  validation,
   onEnrollSuccess,
   onUnenrollSuccess,
   onError,
@@ -148,25 +159,75 @@ export function EnrollmentActionButton({
     );
   }
 
+  const isDisabled = isFull || isPending || !courseId;
+  const errorMessages = validation?.map((error) => error.message).join('\n') || '';
+
+  const button = (
+    <Button
+      type="button"
+      variant={eligible ? 'default' : 'secondary'}
+      size={size}
+      className={className}
+      onClick={() => {
+        if (!courseId || !eligible || isDisabled) {
+          return;
+        }
+
+        enrollMutation.mutate(sectionId);
+      }}
+      disabled={isDisabled || !eligible}
+      aria-disabled={!eligible}
+    >
+      {eligible ? (
+        <Plus className="h-3.5 w-3.5 mr-1.5" />
+      ) : (
+        <XCircle className="h-3.5 w-3.5 mr-1.5" />
+      )}
+      {!eligible
+        ? 'Not eligible for enrollment'
+        : isPending
+          ? 'Enrolling...'
+          : isFull
+            ? 'Full'
+            : 'Enroll'}
+    </Button>
+  );
+
+  if (!eligible && errorMessages) {
+    return (
+      <>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger className="inline-flex">
+              {button}
+            </TooltipTrigger>
+            <TooltipContent>
+              <div className="whitespace-pre-line">{errorMessages}</div>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+        <FeedbackDialog
+          open={successFeedback.open}
+          onOpenChange={(open) => {
+            if (!open && successFeedback.open) {
+              onEnrollSuccess?.();
+            }
+            setSuccessFeedback((current) => ({
+              ...current,
+              open,
+            }));
+          }}
+          variant="success"
+          title={successFeedback.title}
+          description={successFeedback.description}
+        />
+      </>
+    );
+  }
+
   return (
     <>
-      <Button
-        type="button"
-        variant="default"
-        size={size}
-        className={className}
-        onClick={() => {
-          if (!courseId) {
-            return;
-          }
-
-          enrollMutation.mutate(sectionId);
-        }}
-        disabled={isFull || isPending || !courseId}
-      >
-        <Plus className="h-3.5 w-3.5 mr-1.5" />
-        {isPending ? 'Enrolling...' : isFull ? 'Full' : 'Enroll'}
-      </Button>
+      {button}
       <FeedbackDialog
         open={successFeedback.open}
         onOpenChange={(open) => {

@@ -15,11 +15,15 @@ import {
   SheetTitle,
 } from '@/components/ui/sheet';
 import { CourseSectionList } from './course-section-list';
+import { EligibilityTag } from './eligibility-tag';
+import { EligibilityAlert } from './eligibility-alert';
 import { useCourseById } from '@/hooks/courses/use-course-by-id';
+import { useCheckCourseEnrolled } from '@/hooks/courses/use-check-course-enrolled';
 import { Skeleton } from '@/components/ui/skeleton';
 import { AlertCircle, BookOpen, Clock, GraduationCap } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { cn } from '@/lib/utils';
 import type { Course } from '@/types/course.type';
 
 export interface CourseSectionModalProps {
@@ -59,6 +63,14 @@ export function CourseSectionModal({
   // Use cached course if available, otherwise use current data
   // This prevents flicker during close animation
   const course = cachedCourse || courseData;
+  // Use a dummy course with invalid ID when course is not loaded yet
+  const courseForHook = course ?? ({ id: -1 } as Course);
+  const { isEnrolled, enrolledSections } = useCheckCourseEnrolled(courseForHook);
+
+  // Show enrolled sections if enrolled, otherwise show all available sections
+  const displayedSections = isEnrolled && course
+    ? enrolledSections
+    : course?.availableSections ?? [];
 
   const content = (
     <div className="space-y-4">
@@ -93,10 +105,14 @@ export function CourseSectionModal({
                 <p className="text-sm text-muted-foreground font-mono">
                   {course.code}
                 </p>
+                <EligibilityAlert course={course} />
               </div>
-              <Badge variant="secondary" className="text-xs">
-                {course.credits} {course.credits === 1 ? 'credit' : 'credits'}
-              </Badge>
+              <div className="flex items-center gap-2">
+                <EligibilityTag course={course} />
+                <Badge variant="secondary" className="text-xs">
+                  {course.credits} {course.credits === 1 ? 'credit' : 'credits'}
+                </Badge>
+              </div>
             </div>
 
             {/* Course Details Grid */}
@@ -135,15 +151,24 @@ export function CourseSectionModal({
             {/* Sections */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <h3 className="text-sm font-semibold">Available Sections</h3>
+                <h3
+                  className={cn(
+                    'text-sm font-semibold',
+                    isEnrolled && 'text-green-600 dark:text-green-500',
+                  )}
+                >
+                  {isEnrolled ? 'Enrolled Section' : 'Available Sections'}
+                </h3>
                 <Badge variant="outline" className="text-xs">
-                  {course.availableSections.length} section
-                  {course.availableSections.length !== 1 ? 's' : ''}
+                  {displayedSections.length} section
+                  {displayedSections.length !== 1 ? 's' : ''}
                 </Badge>
               </div>
               <CourseSectionList
                 courseId={courseId}
-                sections={course.availableSections}
+                course={course}
+                sections={displayedSections}
+                enrolledSections={isEnrolled ? enrolledSections : []}
                 onEnrollSuccess={() => {
                   onOpenChange(false);
                 }}
@@ -158,14 +183,16 @@ export function CourseSectionModal({
   if (isDesktop) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
+        <DialogContent className="max-w-3xl max-h-[90vh] flex flex-col">
+          <DialogHeader className="shrink-0">
             <DialogTitle>Course Details</DialogTitle>
             <DialogDescription>
-              View course information and available sections
+              {course && isEnrolled
+                ? 'View course information and enrolled section'
+                : 'View course information and available sections'}
             </DialogDescription>
           </DialogHeader>
-          {content}
+          <div className="overflow-y-auto flex-1 min-h-0">{content}</div>
         </DialogContent>
       </Dialog>
     );
@@ -177,7 +204,9 @@ export function CourseSectionModal({
         <SheetHeader>
           <SheetTitle>Course Details</SheetTitle>
           <SheetDescription>
-            View course information and available sections
+            {course && isEnrolled
+              ? 'View course information and enrolled section'
+              : 'View course information and available sections'}
           </SheetDescription>
         </SheetHeader>
         <div className="mt-6">{content}</div>

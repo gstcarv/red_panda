@@ -1,7 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
+import { mockFn } from 'vitest-mock-extended';
 import { CourseSectionList } from '@/components/courses/course-section-list';
-import type { CourseSection } from '@/types/course.type';
+import type { Course, CourseSection } from '@/types/course.type';
 
 function createSection(overrides: Partial<CourseSection> = {}): CourseSection {
   return {
@@ -24,6 +25,17 @@ function createSection(overrides: Partial<CourseSection> = {}): CourseSection {
 }
 
 const enrollmentActionButtonSpy = vi.fn();
+const useCheckCourseEligibilitySpy = mockFn<
+  () => { eligible: boolean; validation: { message: string; type: 'conflict' }[] }
+>();
+
+vi.mock('@formkit/auto-animate/react', () => ({
+  useAutoAnimate: () => [vi.fn()],
+}));
+
+vi.mock('@/hooks/courses/use-check-course-eligibility', () => ({
+  useCheckCourseEligibility: () => useCheckCourseEligibilitySpy(),
+}));
 
 vi.mock('@/components/courses/enrollment-action-button', () => ({
   EnrollmentActionButton: (props: {
@@ -36,9 +48,36 @@ vi.mock('@/components/courses/enrollment-action-button', () => ({
   },
 }));
 
+function createCourse(overrides: Partial<Course> = {}): Course {
+  return {
+    id: 1,
+    code: 'MATH101',
+    name: 'Algebra I',
+    credits: 3,
+    hoursPerWeek: 4,
+    gradeLevel: {
+      min: 9,
+      max: 10,
+    },
+    availableSections: [createSection()],
+    ...overrides,
+  };
+}
+
 describe('CourseSectionList', () => {
   it('renders section schedule and enrollment status', () => {
-    render(<CourseSectionList courseId={1} sections={[createSection()]} />);
+    useCheckCourseEligibilitySpy.mockReturnValue({
+      eligible: true,
+      validation: [],
+    });
+
+    render(
+      <CourseSectionList
+        courseId={1}
+        course={createCourse()}
+        sections={[createSection()]}
+      />,
+    );
 
     expect(screen.getByText('Jane Doe')).toBeInTheDocument();
     expect(screen.getByText('Mon 8:00 AM-9:30 AM')).toBeInTheDocument();
@@ -46,7 +85,14 @@ describe('CourseSectionList', () => {
   });
 
   it('shows an empty state when no sections are available', () => {
-    render(<CourseSectionList courseId={1} sections={[]} />);
+    useCheckCourseEligibilitySpy.mockReturnValue({
+      eligible: true,
+      validation: [],
+    });
+
+    render(
+      <CourseSectionList courseId={1} course={createCourse()} sections={[]} />,
+    );
 
     expect(
       screen.getByText('No sections available for this course.'),
@@ -55,8 +101,18 @@ describe('CourseSectionList', () => {
 
   it('passes course/section identifiers to EnrollmentActionButton', () => {
     enrollmentActionButtonSpy.mockClear();
+    useCheckCourseEligibilitySpy.mockReturnValue({
+      eligible: true,
+      validation: [],
+    });
 
-    render(<CourseSectionList courseId={7} sections={[createSection({ id: 9 })]} />);
+    render(
+      <CourseSectionList
+        courseId={7}
+        course={createCourse()}
+        sections={[createSection({ id: 9 })]}
+      />,
+    );
 
     expect(enrollmentActionButtonSpy).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -68,9 +124,15 @@ describe('CourseSectionList', () => {
 
   it('marks full sections in action props and badge', () => {
     enrollmentActionButtonSpy.mockClear();
+    useCheckCourseEligibilitySpy.mockReturnValue({
+      eligible: true,
+      validation: [],
+    });
+
     render(
       <CourseSectionList
         courseId={1}
+        course={createCourse()}
         sections={[createSection({ capacity: 20, enrolledCount: 20 })]}
       />,
     );

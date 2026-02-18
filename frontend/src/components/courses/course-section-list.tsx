@@ -1,16 +1,20 @@
 import { Clock, Users, User } from 'lucide-react';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
+import { useAutoAnimate } from '@formkit/auto-animate/react';
 import { Badge } from '@/components/ui/badge';
 import { EnrollmentActionButton } from '@/components/courses/enrollment-action-button';
-import type { CourseSection } from '@/types/course.type';
+import type { CourseSection, Course } from '@/types/course.type';
 import { cn } from '@/lib/utils';
+import { useCheckCourseEligibility } from '@/hooks/courses/use-check-course-eligibility';
 
 dayjs.extend(customParseFormat);
 
 export interface CourseSectionListProps {
   courseId: number | null;
+  course: Course;
   sections: CourseSection[];
+  enrolledSections?: CourseSection[];
   onEnrollSuccess?: () => void;
 }
 
@@ -37,9 +41,15 @@ function formatTime(time: string): string {
 
 export function CourseSectionList({
   courseId,
+  course,
   sections,
+  enrolledSections = [],
   onEnrollSuccess,
 }: CourseSectionListProps) {
+  const { eligible, validation } = useCheckCourseEligibility(course);
+  const enrolledSectionIds = new Set(enrolledSections.map((s) => s.id));
+  const [containerRef] = useAutoAnimate({ duration: 300 });
+
   if (sections.length === 0) {
     return (
       <div className="py-4 text-center text-sm text-muted-foreground">
@@ -49,16 +59,20 @@ export function CourseSectionList({
   }
 
   return (
-    <div className="space-y-2">
+    <div ref={containerRef} className="space-y-2">
       {sections.map((section) => {
         const isFull = section.enrolledCount >= section.capacity;
         const spotsAvailable = section.capacity - section.enrolledCount;
+        const isEnrolled = enrolledSectionIds.has(section.id);
 
         return (
           <div
             key={section.id}
             className={cn(
               'flex items-center justify-between gap-3 rounded-lg border p-3 transition-colors',
+              isEnrolled
+                ? 'border-green-500 dark:border-green-600'
+                : 'border-border',
               'hover:bg-muted/50',
             )}
           >
@@ -107,6 +121,8 @@ export function CourseSectionList({
                 courseId={courseId}
                 sectionId={section.id}
                 isFull={isFull}
+                eligible={eligible}
+                validation={validation}
                 onEnrollSuccess={onEnrollSuccess}
                 confirmTitle="Unenroll from section?"
                 confirmDescription="This action will remove your enrollment from this section."

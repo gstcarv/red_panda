@@ -1,4 +1,4 @@
-import { AlertCircle, CheckCircle2, XCircle } from 'lucide-react';
+import { AlertCircle } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/dialog';
 import { Skeleton } from '@/components/ui/skeleton';
 import { CourseSectionModal } from '@/components/courses/course-section-modal';
+import { EligibilityTag } from '@/components/courses/eligibility-tag';
 import { useScheduleFindCourseModal } from '@/hooks/schedule/use-schedule-find-course-modal';
 import type { SchedulerSlotSelection } from '@/types/scheduler.type';
 
@@ -70,7 +71,7 @@ export function ScheduleFindCourseModal({
             </div>
           ) : (
             <div className="space-y-3">
-              {coursesWithEligibility.map(({ course, eligible }) => (
+              {coursesWithEligibility.map(({ course }) => (
                 <Button
                   key={course.id}
                   type="button"
@@ -85,17 +86,7 @@ export function ScheduleFindCourseModal({
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Badge
-                      variant={eligible ? 'default' : 'secondary'}
-                      className="gap-1"
-                    >
-                      {eligible ? (
-                        <CheckCircle2 className="size-3" aria-hidden />
-                      ) : (
-                        <XCircle className="size-3" aria-hidden />
-                      )}
-                      {eligible ? 'Eligible' : 'Not eligible'}
-                    </Badge>
+                    <EligibilityTag course={course} />
                     <Badge variant="outline">
                       {course.availableSections.length} section
                       {course.availableSections.length !== 1 ? 's' : ''}

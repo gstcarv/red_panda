@@ -20,7 +20,7 @@ export interface Course {
   availableSections: CourseSection[];
 }
 
-export type CourseSection = {
+export interface CourseSection {
   id: number;
   teacher: {
     id: number;
@@ -33,4 +33,9 @@ export type CourseSection = {
   }>;
   capacity: number;
   enrolledCount: number;
+}
+
+export interface CourseAvailabilityError {
+  type: 'prerequisite' | 'conflict' | 'max_courses' | 'other';
+  message: string;
 }

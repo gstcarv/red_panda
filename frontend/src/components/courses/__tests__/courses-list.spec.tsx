@@ -16,9 +16,24 @@ function createCourse(overrides: Partial<Course> = {}): Course {
       min: 9,
       max: 10,
     },
+    availableSections: [],
     ...overrides,
   };
 }
+
+vi.mock('@/components/courses/course-card', () => ({
+  CourseCard: ({
+    course,
+    onClick,
+  }: {
+    course: { id: number; name: string };
+    onClick?: (courseId: number) => void;
+  }) => (
+    <button type="button" onClick={() => onClick?.(course.id)}>
+      {course.name}
+    </button>
+  ),
+}));
 
 vi.mock('@/components/courses/course-section-modal', () => ({
   CourseSectionModal: ({

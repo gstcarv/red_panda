@@ -1,9 +1,13 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { mockFn } from 'vitest-mock-extended';
 import { CourseCard } from '@/components/courses/course-card';
 import type { Course } from '@/types/course.type';
+
+vi.mock('@/components/courses/eligibility-tag', () => ({
+  EligibilityTag: () => <span aria-label="Eligible">Eligible</span>,
+}));
 
 function createCourse(overrides: Partial<Course> = {}): Course {
   return {
@@ -16,6 +20,7 @@ function createCourse(overrides: Partial<Course> = {}): Course {
       min: 9,
       max: 10,
     },
+    availableSections: [],
     ...overrides,
   };
 }
