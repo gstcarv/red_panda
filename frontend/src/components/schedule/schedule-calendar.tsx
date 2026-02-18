@@ -21,9 +21,13 @@ function getIsoWeekNumber(date: Date): number {
 
 type ScheduleCalendarProps = {
   events: SchedulerEvent[];
+  activeCourseId?: number | null;
 };
 
-export function ScheduleCalendar({ events }: ScheduleCalendarProps) {
+export function ScheduleCalendar({
+  events,
+  activeCourseId = null,
+}: ScheduleCalendarProps) {
   const calendarContainerRef = useRef<HTMLElement | null>(null);
   const [calendarHeight, setCalendarHeight] = useState(720);
 
@@ -61,6 +65,7 @@ export function ScheduleCalendar({ events }: ScheduleCalendarProps) {
       height={calendarHeight}
       onDateClick={handleDateClick}
       containerRef={calendarContainerRef}
+      activeCourseId={activeCourseId}
       testId="schedule-calendar"
       ariaLabel="Weekly calendar"
     />

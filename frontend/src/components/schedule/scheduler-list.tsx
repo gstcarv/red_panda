@@ -2,7 +2,11 @@ import { useMemo } from 'react';
 import { CourseCard } from '@/components/courses';
 import { useEnrollments } from '@/hooks/enrollments/use-enrollments';
 
-export function SchedulerList() {
+type SchedulerListProps = {
+  onCourseHoverChange?: (courseId: number | null) => void;
+};
+
+export function SchedulerList({ onCourseHoverChange }: SchedulerListProps) {
   const { data: enrollmentsResponse } = useEnrollments();
 
   const enrolledCourses = useMemo(() => {
@@ -38,7 +42,12 @@ export function SchedulerList() {
   return (
     <div className="flex flex-col gap-3 sm:gap-4" aria-label="Course cards">
       {enrolledCourses.map((course) => (
-        <div key={course.id} data-testid="schedule-course-card">
+        <div
+          key={course.id}
+          data-testid="schedule-course-card"
+          onMouseEnter={() => onCourseHoverChange?.(course.id)}
+          onMouseLeave={() => onCourseHoverChange?.(null)}
+        >
           <CourseCard course={course} eligible />
         </div>
       ))}

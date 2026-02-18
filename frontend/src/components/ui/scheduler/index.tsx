@@ -10,6 +10,7 @@ import './scheduler.css';
 type SchedulerProps = {
   events: SchedulerEvent[];
   height: number;
+  activeCourseId?: number | null;
   onDateClick?: (arg: DateClickArg) => void;
   containerRef?: Ref<HTMLElement>;
   testId?: string;
@@ -21,6 +22,7 @@ export type SchedulerDateClickArg = DateClickArg;
 export function Scheduler({
   events,
   height,
+  activeCourseId = null,
   onDateClick,
   containerRef,
   testId,
@@ -50,6 +52,16 @@ export function Scheduler({
         height={height}
         dayHeaderFormat={{ weekday: 'short' }}
         dateClick={onDateClick}
+        eventClassNames={(arg) => {
+          if (activeCourseId === null) {
+            return [];
+          }
+
+          const eventCourseId = Number(arg.event.extendedProps.courseId);
+          return eventCourseId === activeCourseId
+            ? ['ui-scheduler-event-highlighted']
+            : ['ui-scheduler-event-dimmed'];
+        }}
       />
     </section>
   );

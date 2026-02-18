@@ -20,6 +20,7 @@ vi.mock('@fullcalendar/react', () => ({
     height,
     dayHeaderFormat,
     dateClick,
+    eventClassNames,
   }: {
     plugins: unknown[];
     initialView: string;
@@ -35,6 +36,7 @@ vi.mock('@fullcalendar/react', () => ({
     height: number;
     dayHeaderFormat: { weekday: string };
     dateClick: (arg: { date: Date; dateStr: string }) => void;
+    eventClassNames: (arg: { event: { extendedProps: { courseId: number } } }) => string[];
   }) => {
     fullCalendarSpy({
       plugins,
@@ -51,6 +53,7 @@ vi.mock('@fullcalendar/react', () => ({
       height,
       dayHeaderFormat,
       dateClick,
+      eventClassNames,
     });
     return <div data-testid="full-calendar" />;
   },
@@ -73,6 +76,7 @@ describe('Scheduler', () => {
         events={[
           {
             id: 'enroll-1-101-1-09:00',
+            courseId: 1,
             title: 'MATH101 - Algebra I',
             daysOfWeek: [1],
             startTime: '09:00',
@@ -80,6 +84,7 @@ describe('Scheduler', () => {
           },
         ]}
         height={700}
+        activeCourseId={1}
         onDateClick={onDateClick}
         testId="scheduler-root"
       />,
@@ -109,6 +114,19 @@ describe('Scheduler', () => {
         weekday: 'short',
       },
       dateClick: onDateClick,
+      eventClassNames: expect.any(Function),
     });
+
+    const eventClassNames = fullCalendarSpy.mock.calls[0][0]
+      .eventClassNames as (arg: {
+      event: { extendedProps: { courseId: number } };
+    }) => string[];
+
+    expect(
+      eventClassNames({ event: { extendedProps: { courseId: 1 } } }),
+    ).toEqual(['ui-scheduler-event-highlighted']);
+    expect(
+      eventClassNames({ event: { extendedProps: { courseId: 2 } } }),
+    ).toEqual(['ui-scheduler-event-dimmed']);
   });
 });

@@ -11,12 +11,22 @@ vi.mock('@/hooks/enrollments/use-scheduler-enrollments', () => ({
 }));
 
 vi.mock('@/components/schedule', () => ({
-  ScheduleCalendar: ({ events }: { events: unknown[] }) => {
-    scheduleCalendarSpy({ events });
+  ScheduleCalendar: ({
+    events,
+    activeCourseId,
+  }: {
+    events: unknown[];
+    activeCourseId?: number | null;
+  }) => {
+    scheduleCalendarSpy({ events, activeCourseId });
     return <div data-testid="schedule-calendar" />;
   },
-  SchedulerList: () => {
-    schedulerListSpy();
+  SchedulerList: ({
+    onCourseHoverChange,
+  }: {
+    onCourseHoverChange?: (courseId: number | null) => void;
+  }) => {
+    schedulerListSpy({ onCourseHoverChange });
     return <div data-testid="scheduler-list" />;
   },
 }));
@@ -26,7 +36,16 @@ const mockedUseSchedulerEnrollments = vi.mocked(useSchedulerEnrollments);
 describe('Schedule', () => {
   it('renders schedule heading and description', () => {
     mockedUseSchedulerEnrollments.mockReturnValue({
-      events: [{ id: 'event-1', title: 'Event 1' }],
+      events: [
+        {
+          id: 'event-1',
+          courseId: 1,
+          title: 'Event 1',
+          daysOfWeek: [1],
+          startTime: '09:00',
+          endTime: '10:00',
+        },
+      ],
     } as never);
 
     render(<Schedule />);
@@ -39,9 +58,21 @@ describe('Schedule', () => {
     ).toBeInTheDocument();
     expect(screen.getByTestId('schedule-calendar')).toBeInTheDocument();
     expect(screen.getByTestId('scheduler-list')).toBeInTheDocument();
-    expect(schedulerListSpy).toHaveBeenCalledTimes(1);
+    expect(schedulerListSpy).toHaveBeenCalledWith({
+      onCourseHoverChange: expect.any(Function),
+    });
     expect(scheduleCalendarSpy).toHaveBeenCalledWith({
-      events: [{ id: 'event-1', title: 'Event 1' }],
+      events: [
+        {
+          id: 'event-1',
+          courseId: 1,
+          title: 'Event 1',
+          daysOfWeek: [1],
+          startTime: '09:00',
+          endTime: '10:00',
+        },
+      ],
+      activeCourseId: null,
     });
   });
 });

@@ -36,6 +36,7 @@ export function useSchedulerEnrollments() {
         return [
           {
             id: `${enrollment.id}-${enrollment.courseSection.id}-${dayIndex}-${meetingTime.startTime}`,
+            courseId: enrollment.course.id,
             title,
             daysOfWeek: [dayIndex],
             startTime: meetingTime.startTime,

@@ -52,6 +52,7 @@ describe('useSchedulerEnrollments', () => {
     expect(result.current.events).toEqual([
       {
         id: 'enroll-1-100-1-09:00',
+        courseId: 1,
         title: 'MATH101 - Algebra I',
         daysOfWeek: [1],
         startTime: '09:00',
@@ -59,6 +60,7 @@ describe('useSchedulerEnrollments', () => {
       },
       {
         id: 'enroll-1-100-3-09:00',
+        courseId: 1,
         title: 'MATH101 - Algebra I',
         daysOfWeek: [3],
         startTime: '09:00',

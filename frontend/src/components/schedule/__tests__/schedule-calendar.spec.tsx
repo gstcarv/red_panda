@@ -22,6 +22,7 @@ describe('ScheduleCalendar', () => {
         events={[
           {
             id: 'enroll-1-101-1-09:00',
+            courseId: 1,
             title: 'MATH101 - Algebra I',
             daysOfWeek: [1],
             startTime: '09:00',

@@ -99,6 +99,17 @@
   border-radius: var(--radius-lg);
   box-shadow: 0 8px 16px rgba(123, 82, 217, 0.22);
   animation: scheduler-event-fade-in 120ms ease-out both;
+  transition:
+    background 120ms ease,
+    border-color 120ms ease,
+    box-shadow 120ms ease,
+    opacity 120ms ease,
+    filter 120ms ease;
+}
+
+.ui-scheduler .fc .fc-event.ui-scheduler-event-dimmed,
+.ui-scheduler .fc .fc-timegrid-event.ui-scheduler-event-dimmed {
+  filter: opacity(0.1);
 }
 
 .ui-scheduler .fc .fc-timegrid-event .fc-event-main {
