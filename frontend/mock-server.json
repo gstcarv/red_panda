@@ -1,0 +1,48 @@
+{
+  "courses": {
+    "courses": [
+      {
+        "id": 1,
+        "code": "MATH-101",
+        "name": "Algebra I",
+        "credits": 3,
+        "hoursPerWeek": 4,
+        "gradeLevel": { "min": 9, "max": 12 }
+      },
+      {
+        "id": 2,
+        "code": "CS-101",
+        "name": "Introduction to Programming",
+        "credits": 4,
+        "hoursPerWeek": 5,
+        "gradeLevel": { "min": 9, "max": 12 }
+      },
+      {
+        "id": 3,
+        "code": "CS-201",
+        "name": "Data Structures",
+        "credits": 4,
+        "hoursPerWeek": 5,
+        "prerequisite": {
+          "id": 2,
+          "code": "CS-101",
+          "name": "Introduction to Programming"
+        },
+        "gradeLevel": { "min": 10, "max": 12 }
+      },
+      {
+        "id": 4,
+        "code": "CS-301",
+        "name": "Algorithms",
+        "credits": 4,
+        "hoursPerWeek": 5,
+        "prerequisite": {
+          "id": 3,
+          "code": "CS-201",
+          "name": "Data Structures"
+        },
+        "gradeLevel": { "min": 11, "max": 12 }
+      }
+    ]
+  }
+}

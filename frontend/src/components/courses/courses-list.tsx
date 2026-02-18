@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { AlertCircle, BookOpen } from 'lucide-react';
 import {
   Card,
@@ -8,14 +9,15 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { CourseCard } from './course-card';
+import { CourseSectionModal } from './course-section-modal';
 import type { Course } from '@/types/course.type';
 
 export interface CoursesListProps {
   courses: Course[];
   /** Optional: determine eligibility per course for the card badge */
   getEligible?: (course: Course) => boolean;
-  onEnroll?: (courseId: number) => void;
-  enrollingId?: number | null;
+  onEnrollSection?: (sectionId: number) => void;
+  enrollingSectionId?: number | null;
   emptyMessage?: string;
   className?: string;
   /** When true, shows skeleton placeholders instead of the list */
@@ -53,14 +55,16 @@ function CourseCardSkeleton() {
 export function CoursesList({
   courses,
   getEligible,
-  onEnroll,
-  enrollingId = null,
+  onEnrollSection,
+  enrollingSectionId = null,
   emptyMessage = 'No courses match your filters.',
   className,
   isLoading = false,
   isError = false,
   onRetry,
 }: CoursesListProps) {
+  const [selectedCourseId, setSelectedCourseId] = useState<number | null>(null);
+  const modalOpen = selectedCourseId !== null;
   if (isLoading) {
     return (
       <div className={className ?? ''}>
@@ -134,12 +138,18 @@ export function CoursesList({
             <CourseCard
               course={course}
               eligible={getEligible?.(course) ?? false}
-              onEnroll={onEnroll}
-              isEnrolling={enrollingId === course.id}
+              onClick={(id) => setSelectedCourseId(id)}
             />
           </li>
         ))}
       </ul>
+      <CourseSectionModal
+        courseId={selectedCourseId}
+        open={modalOpen}
+        onOpenChange={(open) => !open && setSelectedCourseId(null)}
+        onEnrollSection={onEnrollSection}
+        enrollingSectionId={enrollingSectionId}
+      />
     </div>
   );
 }

@@ -18,3 +18,22 @@ export interface Course {
   prerequisite?: CoursePrerequisite;
   gradeLevel: CourseGradeLevel;
 }
+
+export type CourseSection = {
+  id: number;
+  teacher: {
+    id: number;
+    name: string;
+  },
+  meetingTimes: Array<{
+    dayOfWeek: string;
+    startTime: string;
+    endTime: string;
+  }>;
+  capacity: number;
+  enrolledCount: number;
+}
+
+export type CourseDetails = Course & {
+  availableSections: CourseSection[];
+}

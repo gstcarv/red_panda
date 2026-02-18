@@ -1,7 +1,6 @@
 import { CheckCircle2, XCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -14,24 +13,32 @@ export interface CourseCardProps {
   course: Course;
   /** Passed from parent; badge is always shown (Eligible / Not eligible) */
   eligible?: boolean;
-  onEnroll?: (courseId: number) => void;
-  isEnrolling?: boolean;
+  onClick?: (courseId: number) => void;
   className?: string;
 }
 
 export function CourseCard({
   course,
   eligible = false,
-  onEnroll,
-  isEnrolling = false,
+  onClick,
   className,
 }: CourseCardProps) {
   return (
     <Card
       className={cn(
         'flex h-full flex-col gap-0 py-0 transition-shadow hover:shadow-md content-visibility-auto contain-intrinsic-size-[0_300px]',
+        onClick && 'cursor-pointer',
         className,
       )}
+      onClick={() => onClick?.(course.id)}
+      role={onClick ? 'button' : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      onKeyDown={(e) => {
+        if (onClick && (e.key === 'Enter' || e.key === ' ')) {
+          e.preventDefault();
+          onClick(course.id);
+        }
+      }}
     >
       <article className="contents">
         <CardHeader className="flex flex-row items-start justify-between gap-3 pt-6 pb-2">
@@ -78,16 +85,6 @@ export function CourseCard({
           <span className="text-sm text-muted-foreground">
             {course.credits} {course.credits === 1 ? 'credit' : 'credits'}
           </span>
-          {onEnroll ? (
-            <Button
-              size="sm"
-              onClick={() => onEnroll(course.id)}
-              disabled={!eligible || isEnrolling}
-              className="shrink-0"
-            >
-              {isEnrolling ? 'Enrolling…' : '+ Enroll'}
-            </Button>
-          ) : null}
         </CardFooter>
       </article>
     </Card>
