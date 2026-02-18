@@ -98,7 +98,6 @@
   color: #ffffff;
   border-radius: var(--radius-lg);
   box-shadow: 0 8px 16px rgba(123, 82, 217, 0.22);
-  animation: scheduler-event-fade-in 120ms ease-out both;
   transition:
     background 120ms ease,
     border-color 120ms ease,
@@ -150,20 +149,3 @@
   height: 0;
 }
 
-@keyframes scheduler-event-fade-in {
-  from {
-    opacity: 0;
-    transform: translate3d(0, 12px, 0);
-  }
-  to {
-    opacity: 1;
-    transform: translate3d(0, 0, 0);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .ui-scheduler .fc .fc-event,
-  .ui-scheduler .fc .fc-timegrid-event {
-    animation: none;
-  }
-}
