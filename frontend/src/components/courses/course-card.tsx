@@ -76,7 +76,7 @@ export function CourseCard({
         <CardContent className="flex-1 min-h-0 pb-4">
           {course.prerequisite != null ? (
             <p className="text-sm text-muted-foreground">
-              Prerequisite: course #{course.prerequisite.name}
+              Prerequisite: {course.prerequisite.name}
             </p>
           ) : null}
         </CardContent>

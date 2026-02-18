@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useMediaQuery } from '@/hooks/use-media-query';
+import { useMediaQuery } from '@/lib/utils';
 import {
   Dialog,
   DialogContent,
