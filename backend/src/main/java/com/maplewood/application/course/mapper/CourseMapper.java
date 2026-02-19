@@ -27,13 +27,9 @@ public interface CourseMapper {
     @Mapping(target = "id", source = "id")
     @Mapping(target = "code", source = "code")
     @Mapping(target = "name", source = "name")
-    @Mapping(target = "description", source = "description")
     @Mapping(target = "credits", source = "credits")
     @Mapping(target = "hoursPerWeek", source = "hoursPerWeek")
-    @Mapping(target = "courseType", source = "courseType")
-    @Mapping(target = "gradeLevelMin", source = "gradeLevelMin")
-    @Mapping(target = "gradeLevelMax", source = "gradeLevelMax")
-    @Mapping(target = "semesterOrder", source = "semesterOrder")
+    @Mapping(target = "gradeLevel", expression = "java(toGradeLevelDto(course))")
     CourseDTO toDTO(Course course);
 
     /**
@@ -42,13 +38,13 @@ public interface CourseMapper {
     @Mapping(target = "id", source = "id")
     @Mapping(target = "code", source = "code")
     @Mapping(target = "name", source = "name")
-    @Mapping(target = "description", source = "description")
+    @Mapping(target = "description", ignore = true)
     @Mapping(target = "credits", source = "credits")
     @Mapping(target = "hoursPerWeek", source = "hoursPerWeek")
-    @Mapping(target = "courseType", source = "courseType")
-    @Mapping(target = "gradeLevelMin", source = "gradeLevelMin")
-    @Mapping(target = "gradeLevelMax", source = "gradeLevelMax")
-    @Mapping(target = "semesterOrder", source = "semesterOrder")
+    @Mapping(target = "courseType", ignore = true)
+    @Mapping(target = "gradeLevelMin", expression = "java(dto.getGradeLevel() != null ? dto.getGradeLevel().getMin() : null)")
+    @Mapping(target = "gradeLevelMax", expression = "java(dto.getGradeLevel() != null ? dto.getGradeLevel().getMax() : null)")
+    @Mapping(target = "semesterOrder", ignore = true)
     @Mapping(target = "specializationId", ignore = true)
     @Mapping(target = "prerequisiteId", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
@@ -63,6 +59,10 @@ public interface CourseMapper {
      * Convert list of CourseDTOs to list of Course entities
      */
     List<Course> toEntityList(List<CourseDTO> dtos);
+
+    default CourseDTO.GradeLevelDTO toGradeLevelDto(Course course) {
+        return new CourseDTO.GradeLevelDTO(course.getGradeLevelMin(), course.getGradeLevelMax());
+    }
 
     default String map(CourseType value) {
         return value == null ? null : value.getValue();

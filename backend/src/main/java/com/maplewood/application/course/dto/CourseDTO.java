@@ -16,11 +16,15 @@ public class CourseDTO {
     private Integer id;
     private String code;
     private String name;
-    private String description;
     private Double credits;
     private Integer hoursPerWeek;
-    private String courseType;
-    private Integer gradeLevelMin;
-    private Integer gradeLevelMax;
-    private Integer semesterOrder;
+    private GradeLevelDTO gradeLevel;
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class GradeLevelDTO {
+        private Integer min;
+        private Integer max;
+    }
 }

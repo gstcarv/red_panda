@@ -1,10 +1,12 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
+import { env } from '@/config/env/index.ts'; // Validate environment variables at startup
 import App from './App.tsx';
 
 async function enableMocking() {
-  if (import.meta.env.MODE !== 'development') {
+  // Only enable MSW if explicitly enabled via env variable
+  if (!env.VITE_ENABLE_MSW) {
     return;
   }
 
