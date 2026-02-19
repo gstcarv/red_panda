@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 import { NavTabs } from '@/components/layout/nav-tabs';
 import { useStudent } from '@/hooks/students/use-student';
 import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export interface BaseLayoutProps {
   children: ReactNode;
@@ -25,7 +26,7 @@ export function BaseLayout({
   className,
   mainClassName,
 }: BaseLayoutProps) {
-  const { data } = useStudent();
+  const { data, isLoading } = useStudent();
   const student = data?.data.student;
 
   const studentName = student
@@ -34,6 +35,8 @@ export function BaseLayout({
 
   const creditsLabel =
     student?.credits?.earned != null ? `${student.credits.earned} credits` : null;
+  const gradeLabel =
+    student?.gradeLevel != null ? `Grade ${student.gradeLevel}` : null;
 
   return (
     <div
@@ -62,14 +65,26 @@ export function BaseLayout({
           </div>
 
           <div className="flex shrink-0 items-center gap-2">
+            {gradeLabel ? (
+              <Badge variant="secondary" className="hidden sm:inline-flex">
+                {gradeLabel}
+              </Badge>
+            ) : null}
             {creditsLabel ? (
               <Badge variant="secondary" className="hidden sm:inline-flex">
                 {creditsLabel}
               </Badge>
             ) : null}
-            <span className="hidden max-w-[260px] truncate text-sm text-foreground sm:inline-block">
-              {studentName}
-            </span>
+            {isLoading ? (
+              <Skeleton
+                data-testid="student-name-skeleton"
+                className="hidden h-4 w-28 sm:inline-flex"
+              />
+            ) : (
+              <span className="hidden max-w-[260px] truncate text-sm text-foreground sm:inline-block">
+                {studentName}
+              </span>
+            )}
             <div
               className="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground"
               aria-hidden

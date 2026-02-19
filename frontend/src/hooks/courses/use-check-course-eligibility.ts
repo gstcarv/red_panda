@@ -133,11 +133,12 @@ function checkGradeLevelEligibility(
 
     const studentGradeLevel = student.gradeLevel;
     const { min, max } = course.gradeLevel;
+    const gradeRangeLabel = min === max ? `${min}` : `${min}-${max}`;
     
     if (studentGradeLevel < min || studentGradeLevel > max) {
         return {
             type: 'grade_level',
-            message: `This course is only available for grade levels ${min}-${max}. Your current grade level is ${studentGradeLevel}.`
+            message: `This course is only available for grade levels ${gradeRangeLabel}. Your current grade level is ${studentGradeLevel}.`
         };
     }
 

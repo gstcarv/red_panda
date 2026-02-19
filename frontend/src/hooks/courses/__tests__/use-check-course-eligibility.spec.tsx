@@ -180,6 +180,69 @@ describe("useCheckCourseEligibility", () => {
     expect(eligibility.validation).toEqual([
       expect.objectContaining({
         type: "grade_level",
+        message:
+          "This course is only available for grade levels 10-12. Your current grade level is 8.",
+      }),
+    ]);
+  });
+
+  it("renders a single grade number when course min and max are equal", () => {
+    mockedUseEnrollments.mockReturnValue({
+      data: {
+        data: {
+          enrollments: [],
+        },
+      },
+      isLoading: false,
+      isError: false,
+    } as never);
+    mockedUseCourseHistory.mockReturnValue({
+      data: {
+        data: {
+          courseHistory: [],
+        },
+      },
+      isLoading: false,
+      isError: false,
+    } as never);
+    mockedUseStudent.mockReturnValue({
+      data: {
+        data: {
+          student: {
+            id: 1,
+            firstName: "Alex",
+            lastName: "Student",
+            gradeLevel: 12,
+            email: "alex@example.com",
+            gpa: 3.4,
+            credits: {
+              earned: 18,
+              max: 44,
+            },
+            options: {
+              maxCoursesPerSemester: 5,
+            },
+          },
+        },
+      },
+      isLoading: false,
+      isError: false,
+    } as never);
+
+    const { result } = renderHook(() => useCheckCourseEligibility());
+    const eligibility = result.current.evaluate(
+      createCourse({
+        prerequisite: undefined,
+        gradeLevel: { min: 9, max: 9 },
+      }),
+    );
+
+    expect(eligibility.eligible).toBe(false);
+    expect(eligibility.validation).toEqual([
+      expect.objectContaining({
+        type: "grade_level",
+        message:
+          "This course is only available for grade levels 9. Your current grade level is 12.",
       }),
     ]);
   });

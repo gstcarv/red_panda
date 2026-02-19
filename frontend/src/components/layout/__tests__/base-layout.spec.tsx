@@ -72,6 +72,28 @@ describe('BaseLayout', () => {
     );
 
     expect(screen.getByText('Jane Doe')).toBeInTheDocument();
+    expect(screen.getByText('Grade 11')).toBeInTheDocument();
     expect(screen.getByText('27 credits')).toBeInTheDocument();
+  });
+
+  it('renders student name skeleton while profile is loading', () => {
+    mockedUseStudent.mockReturnValue({
+      data: undefined,
+      isLoading: true,
+      isError: false,
+    } as never);
+
+    render(
+      <QueryClientProvider>
+        <MemoryRouter>
+          <BaseLayout>
+            <div>Page Content</div>
+          </BaseLayout>
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    expect(screen.getByTestId('student-name-skeleton')).toBeInTheDocument();
+    expect(screen.queryByText('User Name')).not.toBeInTheDocument();
   });
 });
