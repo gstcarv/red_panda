@@ -169,7 +169,7 @@ describe('useCheckCourseStatus', () => {
     expect(result.current.enrolledSections).toEqual([]);
   });
 
-  it('ignores history from different semester when course has semester context', () => {
+  it('ignores semester when determining history status', () => {
     mockedUseEnrollments.mockReturnValue({
       data: {
         data: {
@@ -217,7 +217,7 @@ describe('useCheckCourseStatus', () => {
       ),
     );
 
-    expect(result.current.status).toBeUndefined();
+    expect(result.current.status).toBe('passed');
   });
 });
 

@@ -15,9 +15,15 @@ import { cn } from '@/lib/utils';
 import type { Course } from '@/types/course.type';
 import { EligibilityErrorMessage } from './eligibility-error-message';
 
-interface CourseStudentStatusTagProps {
-  course: Course;
-}
+type CourseStudentStatusTagProps =
+  | {
+      status: CourseStudentStatus;
+      course?: never;
+    }
+  | {
+      course: Course;
+      status?: undefined;
+    };
 
 function getStatusBadgeProps(status: CourseStudentStatus) {
   switch (status) {
@@ -42,23 +48,27 @@ function getStatusBadgeProps(status: CourseStudentStatus) {
   }
 }
 
-export function CourseStudentStatusTag({ course }: CourseStudentStatusTagProps) {
+function CourseStudentStatusBadge({ status }: { status: CourseStudentStatus }) {
+  const { className, icon: Icon, label } = getStatusBadgeProps(status);
+  return (
+    <Badge
+      variant="default"
+      className={cn('shrink-0 gap-1', className)}
+      aria-label={label}
+    >
+      <Icon className="size-3" aria-hidden />
+      {label}
+    </Badge>
+  );
+}
+
+function CourseStudentStatusTagWithEligibility({ course }: { course: Course }) {
   const { evaluate } = useCheckCourseEligibility();
   const { eligible, validation } = evaluate(course);
   const { status } = useCheckCourseStatus(course);
 
   if (status) {
-    const { className, icon: Icon, label } = getStatusBadgeProps(status);
-    return (
-      <Badge
-        variant="default"
-        className={cn('shrink-0 gap-1', className)}
-        aria-label={label}
-      >
-        <Icon className="size-3" aria-hidden />
-        {label}
-      </Badge>
-    );
+    return <CourseStudentStatusBadge status={status} />;
   }
 
   const badge = (
@@ -84,7 +94,7 @@ export function CourseStudentStatusTag({ course }: CourseStudentStatusTagProps) 
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>{badge}</TooltipTrigger>
-          <TooltipContent>
+          <TooltipContent className="[&_button]:text-white [&_button:hover]:text-white">
             <EligibilityErrorMessage error={validation[0]} />
           </TooltipContent>
         </Tooltip>
@@ -93,5 +103,13 @@ export function CourseStudentStatusTag({ course }: CourseStudentStatusTagProps) 
   }
 
   return badge;
+}
+
+export function CourseStudentStatusTag(props: CourseStudentStatusTagProps) {
+  if (props.status !== undefined) {
+    return <CourseStudentStatusBadge status={props.status} />;
+  }
+
+  return <CourseStudentStatusTagWithEligibility course={props.course} />;
 }
 

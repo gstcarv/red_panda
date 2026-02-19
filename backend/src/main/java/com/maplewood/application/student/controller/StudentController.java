@@ -1,6 +1,8 @@
 package com.maplewood.application.student.controller;
 
+import com.maplewood.application.student.dto.CourseHistoryResponseDTO;
 import com.maplewood.application.student.dto.StudentProfileResponseDTO;
+import com.maplewood.application.student.usecase.GetMyCourseHistoryUseCase;
 import com.maplewood.application.student.usecase.GetMyProfileUseCase;
 import com.maplewood.infrastructure.exception.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,9 +26,13 @@ import org.springframework.web.bind.annotation.RestController;
 @SecurityRequirement(name = "bearerAuth")
 public class StudentController {
 
+    private final GetMyCourseHistoryUseCase getMyCourseHistoryUseCase;
     private final GetMyProfileUseCase getMyProfileUseCase;
 
-    public StudentController(GetMyProfileUseCase getMyProfileUseCase) {
+    public StudentController(
+            GetMyCourseHistoryUseCase getMyCourseHistoryUseCase,
+            GetMyProfileUseCase getMyProfileUseCase) {
+        this.getMyCourseHistoryUseCase = getMyCourseHistoryUseCase;
         this.getMyProfileUseCase = getMyProfileUseCase;
     }
 
@@ -44,6 +50,23 @@ public class StudentController {
         Integer studentId = extractStudentId(authentication);
         log.info("Received request to get profile for student id: {}", studentId);
         return ResponseEntity.ok(getMyProfileUseCase.execute(studentId));
+    }
+
+    @Operation(
+            summary = "Get current student course history",
+            description = "Retrieve historical course results for the authenticated student."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved student course history", content = @Content(schema = @Schema(implementation = CourseHistoryResponseDTO.class))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - missing or invalid JWT token"),
+            @ApiResponse(responseCode = "400", description = "Related course or semester data missing", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Student not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    @GetMapping("/courses/history")
+    public ResponseEntity<CourseHistoryResponseDTO> getMyCourseHistory(Authentication authentication) {
+        Integer studentId = extractStudentId(authentication);
+        log.info("Received request to get course history for student id: {}", studentId);
+        return ResponseEntity.ok(getMyCourseHistoryUseCase.execute(studentId));
     }
 
     private Integer extractStudentId(Authentication authentication) {

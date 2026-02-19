@@ -1,5 +1,8 @@
 package com.maplewood.domain.coursesection.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+
 /**
  * Enum representing days of the week for course section meeting times
  * Part of Domain Layer
@@ -17,6 +20,7 @@ public enum DayOfWeek {
         this.value = value;
     }
 
+    @JsonValue
     public String getValue() {
         return value;
     }
@@ -36,5 +40,10 @@ public enum DayOfWeek {
             }
         }
         return null;
+    }
+
+    @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
+    public static DayOfWeek fromJson(String value) {
+        return fromValue(value);
     }
 }

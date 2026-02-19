@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { CourseStudentStatusTag } from '@/components/courses/course-student-status-tag';
 import {
   Card,
@@ -7,18 +7,15 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
+import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import type { Course } from '@/types/course.type';
 import type { CourseHistoryCardProps } from './types';
-
-const INITIAL_VISIBLE_HISTORY_ITEMS = 4;
 
 export function CourseHistoryCard({
   isLoading,
@@ -26,19 +23,13 @@ export function CourseHistoryCard({
   metrics,
   onCourseClick,
 }: CourseHistoryCardProps) {
-  const [visibleItems, setVisibleItems] = useState(INITIAL_VISIBLE_HISTORY_ITEMS);
-
-  const visibleHistory = useMemo(() => {
-    return history.slice(0, visibleItems);
-  }, [history, visibleItems]);
-
   const groupedHistory = useMemo(() => {
     const grouped = new Map<
       string,
-      { semesterLabel: string; semesterOrder: number; items: typeof visibleHistory }
+      { semesterLabel: string; semesterOrder: number; items: typeof history }
     >();
 
-    for (const item of visibleHistory) {
+    for (const item of history) {
       const semesterKey = `${item.semester.year}-${item.semester.order_in_year}`;
       const semesterLabel = `${item.semester.name} ${item.semester.year}`;
       const semesterOrder = item.semester.year * 10 + item.semester.order_in_year;
@@ -62,9 +53,7 @@ export function CourseHistoryCard({
         key,
         ...value,
       }));
-  }, [visibleHistory]);
-
-  const hasMoreItems = history.length > visibleItems;
+  }, [history]);
 
   return (
     <Card>
@@ -94,28 +83,55 @@ export function CourseHistoryCard({
             <Accordion
               key={groupedHistory.map((group) => group.key).join('|')}
               type="multiple"
-              defaultValue={groupedHistory.map((group) => group.key)}
               className="w-full"
             >
-              {groupedHistory.map((group) => (
-                <AccordionItem key={group.key} value={group.key}>
-                  <AccordionTrigger>
-                    <span className="text-sm font-medium">{group.semesterLabel}</span>
+              {groupedHistory.map((group) => {
+                const passedCount = group.items.filter(
+                  (course) => course.status === 'passed',
+                ).length;
+                const failedCount = group.items.length - passedCount;
+
+                return (
+                <AccordionItem
+                  key={group.key}
+                  value={group.key}
+                  className="mb-2 border-none last:mb-0"
+                >
+                  <AccordionTrigger
+                    className="rounded-lg border border-border bg-muted/35 px-4 py-3 hover:bg-muted/55 hover:no-underline data-[state=open]:bg-muted/65"
+                  >
+                    <div className="flex min-w-0 flex-1 items-center justify-between gap-4">
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-semibold text-foreground">
+                          {group.semesterLabel}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {group.items.length}{' '}
+                          {group.items.length === 1 ? 'course' : 'courses'}
+                        </p>
+                      </div>
+                      <div
+                        className="hidden items-center gap-2 sm:flex"
+                        aria-hidden="true"
+                      >
+                        <Badge
+                          variant="outline"
+                          className="border-emerald-200/70 bg-emerald-500/10 text-emerald-700 dark:border-emerald-900 dark:bg-emerald-900/30 dark:text-emerald-300"
+                        >
+                          {passedCount} passed
+                        </Badge>
+                        <Badge
+                          variant="outline"
+                          className="border-rose-200/70 bg-rose-500/10 text-rose-700 dark:border-rose-900 dark:bg-rose-900/30 dark:text-rose-300"
+                        >
+                          {failedCount} failed
+                        </Badge>
+                      </div>
+                    </div>
                   </AccordionTrigger>
-                  <AccordionContent>
+                  <AccordionContent className="pt-3">
                     <div className="space-y-3">
                       {group.items.map((item) => {
-                        const historyCourse: Course = {
-                          id: item.courseId,
-                          code: String(item.courseId),
-                          name: item.courseName,
-                          credits: 0,
-                          hoursPerWeek: 0,
-                          gradeLevel: { min: 9, max: 12 },
-                          availableSections: [],
-                          semester: item.semester,
-                        };
-
                         return (
                           <button
                             key={item.id}
@@ -128,29 +144,16 @@ export function CourseHistoryCard({
                                 {item.courseName}
                               </span>
                             </div>
-                            <CourseStudentStatusTag course={historyCourse} />
+                            <CourseStudentStatusTag status={item.status} />
                           </button>
                         );
                       })}
                     </div>
                   </AccordionContent>
                 </AccordionItem>
-              ))}
+                );
+              })}
             </Accordion>
-            {hasMoreItems ? (
-              <Button
-                type="button"
-                variant="link"
-                className="px-0"
-                onClick={() =>
-                  setVisibleItems((currentVisible) =>
-                    Math.min(currentVisible + INITIAL_VISIBLE_HISTORY_ITEMS, history.length),
-                  )
-                }
-              >
-                See more
-              </Button>
-            ) : null}
           </>
         )}
       </CardContent>

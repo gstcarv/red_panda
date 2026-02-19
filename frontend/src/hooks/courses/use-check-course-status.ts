@@ -26,35 +26,15 @@ export function useCheckCourseStatus(course: Course): CheckCourseStatusReturn {
 
   const enrollments = enrollmentsResponse?.data.enrollments;
   const courseHistory = courseHistoryResponse?.data.courseHistory;
-  const selectedSemesterId = course.semester?.id;
 
   const enrolledSections = useMemo(() => {
     return (enrollments ?? [])
-      .filter((enrollment) => {
-        if (enrollment.course.id !== course.id) return false;
-        if (selectedSemesterId == null) return true;
-        return enrollment.semester.id === selectedSemesterId;
-      })
+      .filter((enrollment) => enrollment.course.id === course.id)
       .map((enrollment) => enrollment.courseSection);
-  }, [enrollments, course.id, selectedSemesterId]);
+  }, [enrollments, course.id]);
 
   const status = useMemo<CourseStudentStatus | undefined>(() => {
-    const enrolledSemesterIds = new Set(
-      (enrollments ?? [])
-        .filter((enrollment) => enrollment.course.id === course.id)
-        .map((enrollment) => enrollment.semester.id),
-    );
-
-    const items = (courseHistory ?? []).filter((h) => {
-      if (h.courseId !== course.id) return false;
-      if (selectedSemesterId != null) {
-        return h.semester.id === selectedSemesterId;
-      }
-      if (enrolledSemesterIds.size > 0) {
-        return enrolledSemesterIds.has(h.semester.id);
-      }
-      return true;
-    });
+    const items = (courseHistory ?? []).filter((h) => h.courseId === course.id);
 
     if (items.find((h) => h.status === 'passed')) return 'passed';
 
@@ -63,7 +43,7 @@ export function useCheckCourseStatus(course: Course): CheckCourseStatusReturn {
     if (items.find((h) => h.status === 'failed')) return 'failed';
 
     return undefined;
-  }, [course.id, courseHistory, enrollments, enrolledSections.length, selectedSemesterId]);
+  }, [course.id, courseHistory, enrolledSections.length]);
 
   return {
     status,

@@ -102,14 +102,6 @@
             <version>${mapstruct.version}</version>
         </dependency>
 
-        <!-- Spring Boot DevTools (optional, for hot reload) -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-            <scope>runtime</scope>
-            <optional>true</optional>
-        </dependency>
-
         <!-- Spring Boot Actuator (Health checks and monitoring) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

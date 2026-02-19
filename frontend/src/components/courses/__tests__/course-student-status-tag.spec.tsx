@@ -72,6 +72,17 @@ function createCourse(overrides: Partial<Course> = {}): Course {
 }
 
 describe('CourseStudentStatusTag', () => {
+  it('renders provided status without evaluating hooks', () => {
+    useCheckCourseStatusSpy.mockReset();
+    useCheckCourseEligibilitySpy.mockReset();
+
+    render(<CourseStudentStatusTag status="failed" />);
+
+    expect(screen.getByLabelText('Failed')).toBeInTheDocument();
+    expect(useCheckCourseStatusSpy).not.toHaveBeenCalled();
+    expect(useCheckCourseEligibilitySpy).not.toHaveBeenCalled();
+  });
+
   it('prioritizes student status over eligibility result', () => {
     useCheckCourseStatusSpy.mockReturnValue({
       status: 'passed',

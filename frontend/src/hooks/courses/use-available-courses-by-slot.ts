@@ -117,12 +117,10 @@ export function useAvailableCoursesBySlot() {
     ...coursesQuery,
     isLoading:
       coursesQuery.isLoading ||
-      enrollmentsQuery.isLoading ||
       courseHistoryQuery.isLoading ||
       studentQuery.isLoading,
     isError:
       coursesQuery.isError ||
-      enrollmentsQuery.isError ||
       courseHistoryQuery.isError ||
       studentQuery.isError,
     coursesBySlot,

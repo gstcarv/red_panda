@@ -10,6 +10,8 @@ import java.util.Optional;
  * Implementation is in infrastructure layer
  */
 public interface SemesterRepositoryPort {
+
+    Optional<Semester> findById(Integer id);
     
     /**
      * Find the active semester

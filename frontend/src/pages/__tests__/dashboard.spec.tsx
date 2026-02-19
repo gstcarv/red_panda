@@ -119,8 +119,14 @@ describe('Dashboard', () => {
     expect(screen.getByText('14')).toBeInTheDocument();
     expect(screen.getByText('68%')).toBeInTheDocument();
     expect(screen.getByText('1 passed, 1 failed')).toBeInTheDocument();
-    expect(screen.getByText('Data Structures')).toBeInTheDocument();
-    expect(screen.getByText('Introduction to Programming')).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: /^Fall 2024/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: /^Spring 2024/i }),
+    ).toBeInTheDocument();
+    expect(screen.queryByText('Data Structures')).not.toBeInTheDocument();
+    expect(screen.queryByText('Introduction to Programming')).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'See more' })).not.toBeInTheDocument();
   });
 
@@ -130,6 +136,7 @@ describe('Dashboard', () => {
 
     render(<Dashboard />);
 
+    await user.click(screen.getByRole('button', { name: /^Fall 2024/i }));
     await user.click(
       screen.getByRole('button', { name: /Data Structures/i }),
     );
@@ -139,7 +146,7 @@ describe('Dashboard', () => {
     );
   });
 
-  it('shows See more when history has many records', async () => {
+  it('renders all history records without See more', async () => {
     const user = userEvent.setup();
     const studentRefetch = vi.fn().mockResolvedValue({});
     const historyRefetch = vi.fn().mockResolvedValue({});
@@ -243,11 +250,9 @@ describe('Dashboard', () => {
 
     render(<Dashboard />);
 
-    expect(screen.getByRole('button', { name: 'See more' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'See more' })).not.toBeInTheDocument();
     expect(screen.queryByText('Course A')).not.toBeInTheDocument();
-
-    await user.click(screen.getByRole('button', { name: 'See more' }));
-
+    await user.click(screen.getByRole('button', { name: /^Fall 2023/i }));
     expect(screen.getByText('Course A')).toBeInTheDocument();
   });
 

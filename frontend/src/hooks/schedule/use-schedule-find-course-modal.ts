@@ -15,6 +15,7 @@ type CourseWithEligibility = {
 export function useScheduleFindCourseModal(slot: SchedulerSlotSelection | null) {
   const [selectedCourseId, setSelectedCourseId] = useState<number | null>(null);
   const { coursesBySlot, isLoading, isError } = useAvailableCoursesBySlot();
+
   const { data: enrollmentsResponse } = useEnrollments();
 
   const enrolledCourseIds = useMemo(() => {

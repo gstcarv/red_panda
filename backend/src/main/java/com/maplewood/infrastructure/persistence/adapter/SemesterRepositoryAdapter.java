@@ -24,6 +24,12 @@ public class SemesterRepositoryAdapter implements SemesterRepositoryPort {
     }
 
     @Override
+    public Optional<Semester> findById(Integer id) {
+        return semesterRepository.findById(id)
+                .map(this::toDomain);
+    }
+
+    @Override
     public Optional<Semester> findActiveSemester() {
         return semesterRepository.findByIsActiveTrue()
                 .map(this::toDomain);
