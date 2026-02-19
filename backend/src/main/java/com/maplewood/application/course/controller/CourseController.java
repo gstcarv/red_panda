@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/courses")
 @Tag(name = "Courses", description = "Course management and browsing APIs")
+@SecurityRequirement(name = "bearerAuth")
 public class CourseController {
 
     private final GetAllCoursesUseCase getAllCoursesUseCase;
@@ -43,9 +45,10 @@ public class CourseController {
      * 
      * @return List of all courses
      */
-    @Operation(summary = "Get all courses", description = "Retrieve a list of all courses")
+    @Operation(summary = "Get all courses", description = "Retrieve a list of all courses. Requires Authorization: Bearer token.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved courses", content = @Content(schema = @Schema(implementation = CoursesResponseDTO.class))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - missing or invalid JWT token"),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @GetMapping
@@ -70,9 +73,10 @@ public class CourseController {
      * @param id Course id
      * @return Course details
      */
-    @Operation(summary = "Get course by id", description = "Retrieve a specific course by its id")
+    @Operation(summary = "Get course by id", description = "Retrieve a specific course by its id. Requires Authorization: Bearer token.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved course", content = @Content(schema = @Schema(implementation = CourseDTO.class))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - missing or invalid JWT token"),
             @ApiResponse(responseCode = "404", description = "Course not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })

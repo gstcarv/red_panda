@@ -1,6 +1,7 @@
 package com.maplewood.infrastructure.exception;
 
 import com.maplewood.domain.course.exception.CourseNotFoundException;
+import com.maplewood.domain.student.exception.StudentNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -66,6 +67,26 @@ public class GlobalExceptionHandler {
         );
         
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * Handle StudentNotFoundException
+     */
+    @ExceptionHandler(StudentNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleStudentNotFoundException(
+            StudentNotFoundException ex, WebRequest request) {
+
+        log.warn("Student not found: {}", ex.getMessage());
+
+        ErrorResponse error = new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.NOT_FOUND.value(),
+                "Student Not Found",
+                ex.getMessage(),
+                request.getDescription(false).replace("uri=", "")
+        );
+
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
     /**
