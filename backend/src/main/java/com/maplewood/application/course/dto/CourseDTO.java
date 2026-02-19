@@ -1,5 +1,6 @@
 package com.maplewood.application.course.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.maplewood.application.coursesection.dto.CourseSectionDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,6 +25,8 @@ public class CourseDTO {
     private Integer hoursPerWeek;
     private GradeLevelDTO gradeLevel;
     private List<CourseSectionDTO> availableSections;
+    private CoursePrerequisiteDTO prerequisite;
+    private SemesterDTO semester;
 
     public CourseDTO(Integer id, String code, String name, Double credits, Integer hoursPerWeek, GradeLevelDTO gradeLevel) {
         this.id = id;
@@ -41,5 +44,25 @@ public class CourseDTO {
     public static class GradeLevelDTO {
         private Integer min;
         private Integer max;
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CoursePrerequisiteDTO {
+        private Integer id;
+        private String code;
+        private String name;
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SemesterDTO {
+        private Integer id;
+        private String name;
+        private Integer year;
+        @JsonProperty("order_in_year")
+        private Integer orderInYear;
     }
 }

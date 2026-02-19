@@ -15,4 +15,9 @@ public interface CourseSectionRepositoryPort {
      * Find all course sections for a specific course in a specific semester
      */
     List<CourseSection> findByCourseIdAndSemesterId(Integer courseId, Integer semesterId);
+
+    /**
+     * Find all course sections for multiple courses in a specific semester (batch loading)
+     */
+    List<CourseSection> findByCourseIdInAndSemesterId(List<Integer> courseIds, Integer semesterId);
 }

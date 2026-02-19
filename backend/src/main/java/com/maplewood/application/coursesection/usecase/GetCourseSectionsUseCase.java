@@ -2,8 +2,8 @@ package com.maplewood.application.coursesection.usecase;
 
 import com.maplewood.domain.coursesection.model.CourseSection;
 import com.maplewood.domain.coursesection.port.CourseSectionRepositoryPort;
-import com.maplewood.infrastructure.persistence.entity.SemesterJpaEntity;
-import com.maplewood.infrastructure.persistence.repository.SemesterRepository;
+import com.maplewood.domain.semester.model.Semester;
+import com.maplewood.domain.semester.port.SemesterRepositoryPort;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -20,14 +20,14 @@ import java.util.Optional;
 public class GetCourseSectionsUseCase {
 
     private final CourseSectionRepositoryPort courseSectionRepositoryPort;
-    private final SemesterRepository semesterRepository;
+    private final SemesterRepositoryPort semesterRepositoryPort;
 
     @Autowired
     public GetCourseSectionsUseCase(
             CourseSectionRepositoryPort courseSectionRepositoryPort,
-            SemesterRepository semesterRepository) {
+            SemesterRepositoryPort semesterRepositoryPort) {
         this.courseSectionRepositoryPort = courseSectionRepositoryPort;
-        this.semesterRepository = semesterRepository;
+        this.semesterRepositoryPort = semesterRepositoryPort;
     }
 
     @Transactional(readOnly = true)
@@ -35,7 +35,7 @@ public class GetCourseSectionsUseCase {
         log.debug("Executing GetCourseSectionsUseCase for course id: {}", courseId);
         
         // Find active semester
-        Optional<SemesterJpaEntity> activeSemesterOpt = semesterRepository.findByIsActiveTrue();
+        Optional<Semester> activeSemesterOpt = semesterRepositoryPort.findActiveSemester();
         if (activeSemesterOpt.isEmpty()) {
             log.warn("No active semester found");
             return List.of();

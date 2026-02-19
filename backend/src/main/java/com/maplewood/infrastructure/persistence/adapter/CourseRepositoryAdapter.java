@@ -41,6 +41,17 @@ public class CourseRepositoryAdapter implements CourseRepositoryPort {
     }
 
     @Override
+    public List<Course> findAllById(List<Integer> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return List.of();
+        }
+        return courseRepository.findAllById(ids)
+                .stream()
+                .map(this::toDomain)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public Course save(Course course) {
         CourseJpaEntity saved = courseRepository.save(toJpaEntity(course));
         return toDomain(saved);

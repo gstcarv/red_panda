@@ -14,6 +14,9 @@ import java.util.List;
  * Part of Application Layer
  * 
  * MapStruct generates implementation code at compile time - zero runtime overhead!
+ * 
+ * IMPORTANT: Mappers should NEVER call repositories or perform I/O operations.
+ * All data enrichment (like sections, prerequisites, semester) must be done in Use Cases.
  */
 @Mapper(componentModel = "spring")
 public abstract class CourseMapper {
@@ -28,6 +31,8 @@ public abstract class CourseMapper {
     @Mapping(target = "hoursPerWeek", source = "hoursPerWeek")
     @Mapping(target = "gradeLevel", expression = "java(toGradeLevelDto(course))")
     @Mapping(target = "availableSections", ignore = true)
+    @Mapping(target = "prerequisite", ignore = true)
+    @Mapping(target = "semester", ignore = true)
     public abstract CourseDTO toDTO(Course course);
 
     /**

@@ -17,4 +17,9 @@ public interface CourseSectionRepository extends JpaRepository<CourseSectionJpaE
      * Find all course sections for a specific course in a specific semester
      */
     List<CourseSectionJpaEntity> findByCourseIdAndSemesterId(Integer courseId, Integer semesterId);
+
+    /**
+     * Find all course sections for multiple courses in a specific semester (batch loading)
+     */
+    List<CourseSectionJpaEntity> findByCourseIdInAndSemesterId(List<Integer> courseIds, Integer semesterId);
 }

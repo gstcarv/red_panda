@@ -3,34 +3,62 @@ package com.maplewood.application.coursesection.mapper;
 import com.maplewood.application.coursesection.dto.CourseSectionDTO;
 import com.maplewood.domain.coursesection.model.CourseSection;
 import com.maplewood.domain.coursesection.model.CourseSection.MeetingTime;
-import com.maplewood.infrastructure.persistence.entity.TeacherJpaEntity;
-import com.maplewood.infrastructure.persistence.repository.TeacherRepository;
+import com.maplewood.domain.teacher.model.Teacher;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 
 /**
  * MapStruct mapper for converting between CourseSection domain entity and CourseSectionDTO
  * Part of Application Layer
+ * 
+ * IMPORTANT: Mappers should NEVER call repositories or perform I/O operations.
+ * All data enrichment (like teachers) must be done in Use Cases and passed as parameters.
  */
 @Mapper(componentModel = "spring")
 public abstract class CourseSectionMapper {
 
-    @Autowired
-    protected TeacherRepository teacherRepository;
-
     /**
      * Convert CourseSection domain entity to CourseSectionDTO
+     * Note: teacher field is ignored - use toDTOList with teachers map for batch loading
      */
-    @Mapping(target = "teacher", expression = "java(mapTeacher(section.getTeacherId()))")
+    @Mapping(target = "teacher", ignore = true)
     @Mapping(target = "meetingTimes", expression = "java(mapMeetingTimes(section.getMeetingTimes()))")
     public abstract CourseSectionDTO toDTO(CourseSection section);
 
     /**
-     * Convert list of CourseSection entities to list of CourseSectionDTOs
+     * Convert CourseSection to CourseSectionDTO with teacher enrichment
+     */
+    public CourseSectionDTO toDTO(CourseSection section, Map<Integer, Teacher> teachersById) {
+        CourseSectionDTO dto = toDTO(section);
+        if (section != null && section.getTeacherId() != null) {
+            Teacher teacher = teachersById.get(section.getTeacherId());
+            if (teacher != null) {
+                dto.setTeacher(new CourseSectionDTO.TeacherDTO(teacher.getId(), teacher.getFullName()));
+            } else {
+                dto.setTeacher(new CourseSectionDTO.TeacherDTO(section.getTeacherId(), "Unknown"));
+            }
+        }
+        return dto;
+    }
+
+    /**
+     * Convert list of CourseSection entities to list of CourseSectionDTOs with batch-loaded teachers
+     */
+    public List<CourseSectionDTO> toDTOList(List<CourseSection> sections, Map<Integer, Teacher> teachersById) {
+        if (sections == null) {
+            return null;
+        }
+        return sections.stream()
+                .map(section -> toDTO(section, teachersById))
+                .toList();
+    }
+
+    /**
+     * Convert list of CourseSection entities to list of CourseSectionDTOs (without teachers)
+     * Note: Use toDTOList with teachers map for proper teacher enrichment
      */
     public List<CourseSectionDTO> toDTOList(List<CourseSection> sections) {
         if (sections == null) {
@@ -39,24 +67,6 @@ public abstract class CourseSectionMapper {
         return sections.stream()
                 .map(this::toDTO)
                 .toList();
-    }
-
-    /**
-     * Map teacher ID to TeacherDTO by fetching teacher name from repository
-     */
-    protected CourseSectionDTO.TeacherDTO mapTeacher(Integer teacherId) {
-        if (teacherId == null) {
-            return null;
-        }
-        
-        Optional<TeacherJpaEntity> teacherOpt = teacherRepository.findById(teacherId);
-        if (teacherOpt.isEmpty()) {
-            return new CourseSectionDTO.TeacherDTO(teacherId, "Unknown");
-        }
-        
-        TeacherJpaEntity teacher = teacherOpt.get();
-        String fullName = teacher.getFirstName() + " " + teacher.getLastName();
-        return new CourseSectionDTO.TeacherDTO(teacherId, fullName);
     }
 
     /**

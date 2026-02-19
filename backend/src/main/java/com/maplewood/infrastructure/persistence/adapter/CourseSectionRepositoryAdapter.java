@@ -34,6 +34,17 @@ public class CourseSectionRepositoryAdapter implements CourseSectionRepositoryPo
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<CourseSection> findByCourseIdInAndSemesterId(List<Integer> courseIds, Integer semesterId) {
+        if (courseIds == null || courseIds.isEmpty()) {
+            return List.of();
+        }
+        return courseSectionRepository.findByCourseIdInAndSemesterId(courseIds, semesterId)
+                .stream()
+                .map(this::toDomain)
+                .collect(Collectors.toList());
+    }
+
     private CourseSection toDomain(CourseSectionJpaEntity entity) {
         List<MeetingTime> meetingTimes = null;
         if (entity.getMeetingTimes() != null) {

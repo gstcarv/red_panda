@@ -16,6 +16,11 @@ public interface CourseRepositoryPort {
     
     Optional<Course> findById(Integer id);
     
+    /**
+     * Find all courses by their IDs (batch loading)
+     */
+    List<Course> findAllById(List<Integer> ids);
+    
     Course save(Course course);
     
     void deleteById(Integer id);
