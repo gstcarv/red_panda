@@ -1,9 +1,10 @@
-package com.maplewood.infrastructure.web.controller;
+package com.maplewood.application.course.controller;
 
 import com.maplewood.application.course.dto.CourseDTO;
 import com.maplewood.application.course.dto.CoursesResponseDTO;
 import com.maplewood.application.course.mapper.CourseMapper;
 import com.maplewood.application.course.usecase.GetAllCoursesUseCase;
+import com.maplewood.application.course.usecase.GetCourseByIdUseCase;
 import com.maplewood.infrastructure.exception.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -20,7 +21,7 @@ import java.util.List;
 
 /**
  * REST Controller for course-related operations
- * Part of Infrastructure Layer - handles HTTP requests/responses
+ * Part of Application Layer - handles HTTP requests/responses
  */
 @Slf4j
 @RestController
@@ -29,11 +30,15 @@ import java.util.List;
 public class CourseController {
 
     private final GetAllCoursesUseCase getAllCoursesUseCase;
+    private final GetCourseByIdUseCase getCourseByIdUseCase;
     private final CourseMapper courseMapper;
 
     @Autowired
-    public CourseController(GetAllCoursesUseCase getAllCoursesUseCase, CourseMapper courseMapper) {
+    public CourseController(GetAllCoursesUseCase getAllCoursesUseCase,
+            GetCourseByIdUseCase getCourseByIdUseCase,
+            CourseMapper courseMapper) {
         this.getAllCoursesUseCase = getAllCoursesUseCase;
+        this.getCourseByIdUseCase = getCourseByIdUseCase;
         this.courseMapper = courseMapper;
     }
 
@@ -44,10 +49,8 @@ public class CourseController {
      */
     @Operation(summary = "Get all courses", description = "Retrieve a list of all courses")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully retrieved courses", 
-                    content = @Content(schema = @Schema(implementation = CoursesResponseDTO.class))),
-            @ApiResponse(responseCode = "500", description = "Internal server error",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved courses", content = @Content(schema = @Schema(implementation = CoursesResponseDTO.class))),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @GetMapping
     public ResponseEntity<CoursesResponseDTO> getAllCourses() {
@@ -62,6 +65,34 @@ public class CourseController {
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             log.error("Error retrieving courses", e);
+            throw e;
+        }
+    }
+
+    /**
+     * Get course by id
+     * 
+     * @param id Course id
+     * @return Course details
+     */
+    @Operation(summary = "Get course by id", description = "Retrieve a specific course by its id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved course", content = @Content(schema = @Schema(implementation = CourseDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Course not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    @GetMapping("/{id}")
+    public ResponseEntity<CourseDTO> getCourseById(@PathVariable Integer id) {
+        log.info("Received request to get course with id: {}", id);
+
+        try {
+            var course = getCourseByIdUseCase.execute(id);
+            CourseDTO courseDTO = courseMapper.toDTO(course);
+
+            log.debug("Successfully retrieved course with id: {}", id);
+            return ResponseEntity.ok(courseDTO);
+        } catch (Exception e) {
+            log.error("Error retrieving course with id: {}", id, e);
             throw e;
         }
     }
