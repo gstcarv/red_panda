@@ -10,6 +10,11 @@ import java.util.Optional;
 public interface StudentRepositoryPort {
 
     /**
+     * Find student by id.
+     */
+    Optional<Student> findById(Integer id);
+
+    /**
      * Find student by email.
      */
     Optional<Student> findByEmail(String email);

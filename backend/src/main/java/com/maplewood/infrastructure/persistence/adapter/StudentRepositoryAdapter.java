@@ -21,6 +21,11 @@ public class StudentRepositoryAdapter implements StudentRepositoryPort {
     }
 
     @Override
+    public Optional<Student> findById(Integer id) {
+        return studentRepository.findById(id).map(this::toDomain);
+    }
+
+    @Override
     public Optional<Student> findByEmail(String email) {
         return studentRepository.findByEmail(email).map(this::toDomain);
     }
