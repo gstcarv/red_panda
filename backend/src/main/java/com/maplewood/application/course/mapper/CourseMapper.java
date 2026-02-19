@@ -6,7 +6,6 @@ import com.maplewood.domain.course.model.CourseType;
 import com.maplewood.domain.course.model.SemesterOrder;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 
@@ -17,9 +16,7 @@ import java.util.List;
  * MapStruct generates implementation code at compile time - zero runtime overhead!
  */
 @Mapper(componentModel = "spring")
-public interface CourseMapper {
-
-    CourseMapper INSTANCE = Mappers.getMapper(CourseMapper.class);
+public abstract class CourseMapper {
 
     /**
      * Convert Course domain entity to CourseDTO
@@ -30,7 +27,8 @@ public interface CourseMapper {
     @Mapping(target = "credits", source = "credits")
     @Mapping(target = "hoursPerWeek", source = "hoursPerWeek")
     @Mapping(target = "gradeLevel", expression = "java(toGradeLevelDto(course))")
-    CourseDTO toDTO(Course course);
+    @Mapping(target = "availableSections", ignore = true)
+    public abstract CourseDTO toDTO(Course course);
 
     /**
      * Convert CourseDTO to Course domain entity
@@ -48,35 +46,39 @@ public interface CourseMapper {
     @Mapping(target = "specializationId", ignore = true)
     @Mapping(target = "prerequisiteId", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
-    Course toEntity(CourseDTO dto);
+    public abstract Course toEntity(CourseDTO dto);
 
     /**
      * Convert list of Course entities to list of CourseDTOs
      */
-    List<CourseDTO> toDTOList(List<Course> courses);
+    public List<CourseDTO> toDTOList(List<Course> courses) {
+        return courses.stream()
+                .map(this::toDTO)
+                .toList();
+    }
 
     /**
      * Convert list of CourseDTOs to list of Course entities
      */
-    List<Course> toEntityList(List<CourseDTO> dtos);
+    public abstract List<Course> toEntityList(List<CourseDTO> dtos);
 
-    default CourseDTO.GradeLevelDTO toGradeLevelDto(Course course) {
+    protected CourseDTO.GradeLevelDTO toGradeLevelDto(Course course) {
         return new CourseDTO.GradeLevelDTO(course.getGradeLevelMin(), course.getGradeLevelMax());
     }
 
-    default String map(CourseType value) {
+    protected String map(CourseType value) {
         return value == null ? null : value.getValue();
     }
 
-    default CourseType mapCourseType(String value) {
+    protected CourseType mapCourseType(String value) {
         return CourseType.fromValue(value);
     }
 
-    default Integer map(SemesterOrder value) {
+    protected Integer map(SemesterOrder value) {
         return value == null ? null : value.getValue();
     }
 
-    default SemesterOrder mapSemesterOrder(Integer value) {
+    protected SemesterOrder mapSemesterOrder(Integer value) {
         return SemesterOrder.fromValue(value);
     }
 }

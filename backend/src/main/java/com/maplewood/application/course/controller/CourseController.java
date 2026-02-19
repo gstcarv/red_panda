@@ -2,7 +2,6 @@ package com.maplewood.application.course.controller;
 
 import com.maplewood.application.course.dto.CourseDTO;
 import com.maplewood.application.course.dto.CoursesResponseDTO;
-import com.maplewood.application.course.mapper.CourseMapper;
 import com.maplewood.application.course.usecase.GetAllCoursesUseCase;
 import com.maplewood.application.course.usecase.GetCourseByIdUseCase;
 import com.maplewood.infrastructure.exception.ErrorResponse;
@@ -31,15 +30,12 @@ public class CourseController {
 
     private final GetAllCoursesUseCase getAllCoursesUseCase;
     private final GetCourseByIdUseCase getCourseByIdUseCase;
-    private final CourseMapper courseMapper;
 
     @Autowired
     public CourseController(GetAllCoursesUseCase getAllCoursesUseCase,
-            GetCourseByIdUseCase getCourseByIdUseCase,
-            CourseMapper courseMapper) {
+            GetCourseByIdUseCase getCourseByIdUseCase) {
         this.getAllCoursesUseCase = getAllCoursesUseCase;
         this.getCourseByIdUseCase = getCourseByIdUseCase;
-        this.courseMapper = courseMapper;
     }
 
     /**
@@ -57,8 +53,7 @@ public class CourseController {
         log.info("Received request to get all courses");
 
         try {
-            var courses = getAllCoursesUseCase.execute();
-            List<CourseDTO> courseDTOs = courseMapper.toDTOList(courses);
+            List<CourseDTO> courseDTOs = getAllCoursesUseCase.execute();
 
             log.debug("Successfully retrieved {} courses", courseDTOs.size());
             CoursesResponseDTO response = new CoursesResponseDTO(courseDTOs);
@@ -86,8 +81,7 @@ public class CourseController {
         log.info("Received request to get course with id: {}", id);
 
         try {
-            var course = getCourseByIdUseCase.execute(id);
-            CourseDTO courseDTO = courseMapper.toDTO(course);
+            CourseDTO courseDTO = getCourseByIdUseCase.execute(id);
 
             log.debug("Successfully retrieved course with id: {}", id);
             return ResponseEntity.ok(courseDTO);
