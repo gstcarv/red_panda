@@ -1,12 +1,18 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { mockFn } from 'vitest-mock-extended';
 import { ExploreCourses } from '@/pages/explore-courses';
 import { useCourses } from '@/hooks/courses/use-courses';
+import { useFilteredExploreCourses } from '@/hooks/courses/use-filtered-explore-courses';
+import { useExploreCoursesFilterStore } from '@/hooks/courses/use-explore-courses-filter-store';
 
 vi.mock('@/hooks/courses/use-courses', () => ({
   useCourses: vi.fn(),
+}));
+
+vi.mock('@/hooks/courses/use-filtered-explore-courses', () => ({
+  useFilteredExploreCourses: vi.fn(),
 }));
 
 vi.mock('@/hooks/use-error-handler', () => ({
@@ -16,10 +22,8 @@ vi.mock('@/hooks/use-error-handler', () => ({
 }));
 
 vi.mock('@/components/courses', () => ({
-  CoursesFilter: ({ onChange }: { onChange: (value: { search: string; onlyEligible: boolean }) => void }) => (
-    <button onClick={() => onChange({ search: 'math', onlyEligible: true })}>
-      Change filter
-    </button>
+  CoursesFilter: ({ onChange }: { onChange: (value: unknown) => void }) => (
+    <button onClick={() => onChange({})}>Change filter</button>
   ),
   CoursesList: ({
     courses,
@@ -42,7 +46,25 @@ vi.mock('@/components/courses', () => ({
 }));
 
 const mockUseCourses = vi.mocked(useCourses);
+const mockUseFilteredExploreCourses = vi.mocked(useFilteredExploreCourses);
 describe('ExploreCourses', () => {
+  beforeEach(() => {
+    useExploreCoursesFilterStore.setState({
+      filter: {
+        search: '',
+        fromTime: '',
+        untilTime: '',
+        weekdays: [],
+      },
+    });
+
+    mockUseFilteredExploreCourses.mockReturnValue({
+      filteredCourses: [{ id: 1 }],
+      getEligible: () => true,
+      getCourseCardClassName: () => undefined,
+    } as never);
+  });
+
   it('renders page title and passes fetched list state', () => {
     mockUseCourses.mockReturnValue({
       data: { data: { courses: [{ id: 1 }] } },
@@ -69,6 +91,11 @@ describe('ExploreCourses', () => {
       isLoading: false,
       isError: true,
       refetch,
+    } as never);
+    mockUseFilteredExploreCourses.mockReturnValue({
+      filteredCourses: [],
+      getEligible: () => true,
+      getCourseCardClassName: () => undefined,
     } as never);
 
     render(<ExploreCourses />);

@@ -16,6 +16,8 @@ export interface CoursesListProps {
   courses: Course[];
   /** Optional: determine eligibility per course for the card badge */
   getEligible?: (course: Course) => boolean;
+  /** Optional: compute per-course card classes */
+  getCourseCardClassName?: (course: Course) => string | undefined;
   emptyMessage?: string;
   className?: string;
   /** When true, shows skeleton placeholders instead of the list */
@@ -59,6 +61,7 @@ function CourseCardSkeleton() {
 export function CoursesList({
   courses,
   getEligible,
+  getCourseCardClassName,
   emptyMessage = 'No courses match your filters.',
   className,
   isLoading = false,
@@ -148,6 +151,7 @@ export function CoursesList({
             <CourseCard
               course={course}
               eligible={getEligible?.(course) ?? false}
+              className={getCourseCardClassName?.(course)}
               onClick={handleCourseSelect}
             />
           </li>

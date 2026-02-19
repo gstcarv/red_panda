@@ -29,7 +29,7 @@ export function evaluateCourseEligibility({
     student?: Student;
     isCourseHistoryLoading: boolean;
 }): CheckEligiblityReturn {
-    // Check in priority order: max_courses -> grade_level -> prereq -> time -> others
+    // Check in priority order: max_courses -> grade_level -> already_passed -> prereq -> time -> others
     // Return only the first error found (highest priority)
 
     // 1. max_courses
@@ -50,7 +50,21 @@ export function evaluateCourseEligibility({
         };
     }
 
-    // 3. prereq
+    // 3. already_passed
+    if (
+        !isCourseHistoryLoading &&
+        checkCourseAlreadyPassed(course, courseHistory)
+    ) {
+        return {
+            eligible: false,
+            validation: [{
+                type: 'other',
+                message: 'You have already passed this course.',
+            }]
+        };
+    }
+
+    // 4. prereq
     if (
         course.prerequisite &&
         !isCourseHistoryLoading &&
@@ -66,7 +80,7 @@ export function evaluateCourseEligibility({
         };
     }
 
-    // 4. time (conflict)
+    // 5. time (conflict)
     const hasTimeslotConflicts = checkForTimeslotConflict(course, enrollments);
     if (hasTimeslotConflicts.length) {
         return {
@@ -89,11 +103,12 @@ export function useCheckCourseEligibility(): UseCheckCourseEligibilityReturn {
         useCourseHistory();
     const { data: studentResponse } = useStudent();
 
-    const enrollments = enrollmentsResponse?.data.enrollments ?? [];
-    const courseHistory = courseHistoryResponse?.data.courseHistory ?? [];
     const student = studentResponse?.data.student;
 
     const evaluate = useCallback((course: Course) => {
+        const enrollments = enrollmentsResponse?.data.enrollments ?? [];
+        const courseHistory = courseHistoryResponse?.data.courseHistory ?? [];
+
         return evaluateCourseEligibility({
             course,
             enrollments,
@@ -101,7 +116,12 @@ export function useCheckCourseEligibility(): UseCheckCourseEligibilityReturn {
             student,
             isCourseHistoryLoading,
         });
-    }, [courseHistory, enrollments, isCourseHistoryLoading, student]);
+    }, [
+        courseHistoryResponse?.data.courseHistory,
+        enrollmentsResponse?.data.enrollments,
+        isCourseHistoryLoading,
+        student,
+    ]);
 
     return {
         evaluate,
@@ -143,6 +163,12 @@ function checkGradeLevelEligibility(
     }
 
     return null;
+}
+
+function checkCourseAlreadyPassed(course: Course, courseHistory: CourseHistory[]) {
+    return courseHistory.some((history) => {
+        return history.courseId === course.id && history.status === 'passed';
+    });
 }
 
 function checkCoursePrerequisite(

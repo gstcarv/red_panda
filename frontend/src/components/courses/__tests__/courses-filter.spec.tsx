@@ -2,16 +2,19 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 import { mockFn } from 'vitest-mock-extended';
-import {
-  CoursesFilter,
-  type CoursesFilterValues,
-} from '@/components/courses/courses-filter';
+import { CoursesFilter } from '@/components/courses/courses-filter';
+import type { ExploreCoursesFilterValues } from '@/hooks/courses/use-explore-courses-filter-store';
 
 describe('CoursesFilter', () => {
   it('updates search value based on latest typed character', async () => {
     const user = userEvent.setup();
-    const value: CoursesFilterValues = { search: 'Math', onlyEligible: false };
-    const onChange = mockFn<(next: CoursesFilterValues) => void>();
+    const value: ExploreCoursesFilterValues = {
+      search: 'Math',
+      fromTime: '',
+      untilTime: '',
+      weekdays: [],
+    };
+    const onChange = mockFn<(next: ExploreCoursesFilterValues) => void>();
 
     render(<CoursesFilter value={value} onChange={onChange} />);
 
@@ -19,17 +22,24 @@ describe('CoursesFilter', () => {
 
     expect(onChange).toHaveBeenLastCalledWith({
       search: 'Math1',
-      onlyEligible: false,
+      fromTime: '',
+      untilTime: '',
+      weekdays: [],
     });
   });
 
   it('clears search when clear button is clicked', async () => {
     const user = userEvent.setup();
-    const onChange = mockFn<(next: CoursesFilterValues) => void>();
+    const onChange = mockFn<(next: ExploreCoursesFilterValues) => void>();
 
     render(
       <CoursesFilter
-        value={{ search: 'Math 101', onlyEligible: false }}
+        value={{
+          search: 'Math 101',
+          fromTime: '',
+          untilTime: '',
+          weekdays: [],
+        }}
         onChange={onChange}
       />,
     );
@@ -38,22 +48,53 @@ describe('CoursesFilter', () => {
 
     expect(onChange).toHaveBeenLastCalledWith({
       search: '',
-      onlyEligible: false,
+      fromTime: '',
+      untilTime: '',
+      weekdays: [],
     });
   });
 
-  it('toggles only eligible filter', async () => {
+  it('updates from time value', async () => {
     const user = userEvent.setup();
-    const value: CoursesFilterValues = { search: '', onlyEligible: false };
-    const onChange = mockFn<(next: CoursesFilterValues) => void>();
+    const value: ExploreCoursesFilterValues = {
+      search: '',
+      fromTime: '',
+      untilTime: '',
+      weekdays: [],
+    };
+    const onChange = mockFn<(next: ExploreCoursesFilterValues) => void>();
 
     render(<CoursesFilter value={value} onChange={onChange} />);
 
-    await user.click(screen.getByRole('switch'));
+    await user.type(screen.getByLabelText('From time'), '09:00');
+
+    expect(onChange).toHaveBeenLastCalledWith({
+      search: '',
+      fromTime: '09:00',
+      untilTime: '',
+      weekdays: [],
+    });
+  });
+
+  it('toggles weekday filters', async () => {
+    const user = userEvent.setup();
+    const value: ExploreCoursesFilterValues = {
+      search: '',
+      fromTime: '',
+      untilTime: '',
+      weekdays: [],
+    };
+    const onChange = mockFn<(next: ExploreCoursesFilterValues) => void>();
+
+    render(<CoursesFilter value={value} onChange={onChange} />);
+
+    await user.click(screen.getByRole('button', { name: 'Mon' }));
 
     expect(onChange).toHaveBeenCalledWith({
       search: '',
-      onlyEligible: true,
+      fromTime: '',
+      untilTime: '',
+      weekdays: ['monday'],
     });
   });
 });

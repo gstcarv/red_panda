@@ -1,25 +1,24 @@
 import {
   CoursesFilter,
   CoursesList,
-  type CoursesFilterValues,
 } from '@/components/courses';
 import { PageTitle } from '@/components/ui/page-title';
 import { useCourses } from '@/hooks/courses/use-courses';
-import type { Course } from '@/types/course.type';
-import { useCallback, useState } from 'react';
-
-const DEFAULT_FILTER: CoursesFilterValues = {
-  search: '',
-  onlyEligible: false,
-};
+import { useFilteredExploreCourses } from '@/hooks/courses/use-filtered-explore-courses';
+import { useExploreCoursesFilterStore } from '@/hooks/courses/use-explore-courses-filter-store';
 
 export function ExploreCourses() {
-  const [filter, setFilter] = useState<CoursesFilterValues>(DEFAULT_FILTER);
+  const filter = useExploreCoursesFilterStore((state) => state.filter);
+  const setFilter = useExploreCoursesFilterStore((state) => state.setFilter);
 
   const { data, isLoading, isError, refetch } = useCourses();
+  const courses = data?.data.courses ?? [];
+  const { filteredCourses, getEligible, getCourseCardClassName } =
+    useFilteredExploreCourses({
+    courses,
+    filter,
+  });
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- placeholder until eligibility from API
-  const getEligible = useCallback((_course: Course) => false, []);
 
   return (
     <div className="flex flex-col gap-6 sm:gap-8">
@@ -33,8 +32,9 @@ export function ExploreCourses() {
 
       <section aria-label="Courses list">
         <CoursesList
-          courses={data?.data.courses ?? []}
+          courses={filteredCourses}
           getEligible={getEligible}
+          getCourseCardClassName={getCourseCardClassName}
           isLoading={isLoading}
           isError={isError}
           onRetry={() => refetch()}

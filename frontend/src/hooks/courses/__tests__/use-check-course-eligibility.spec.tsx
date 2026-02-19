@@ -364,6 +364,76 @@ describe("useCheckCourseEligibility", () => {
     expect(eligibility.validation).toBeUndefined();
   });
 
+  it("returns not eligible when the course is already passed", () => {
+    mockedUseEnrollments.mockReturnValue({
+      data: {
+        data: {
+          enrollments: [],
+        },
+      },
+      isLoading: false,
+      isError: false,
+    } as never);
+    mockedUseCourseHistory.mockReturnValue({
+      data: {
+        data: {
+          courseHistory: [
+            {
+              id: 99,
+              courseId: 3,
+              courseName: "Data Structures",
+              semester: {
+                id: 1,
+                name: "Fall",
+                year: 2024,
+                order_in_year: 1,
+              },
+              status: "passed",
+            },
+          ],
+        },
+      },
+      isLoading: false,
+      isError: false,
+    } as never);
+    mockedUseStudent.mockReturnValue({
+      data: {
+        data: {
+          student: {
+            id: 1,
+            firstName: "Jane",
+            lastName: "Student",
+            gradeLevel: 11,
+            email: "jane@example.com",
+            gpa: 3.6,
+            credits: {
+              earned: 24,
+              max: 44,
+            },
+            options: {
+              maxCoursesPerSemester: 5,
+            },
+          },
+        },
+      },
+      isLoading: false,
+      isError: false,
+    } as never);
+
+    const { result } = renderHook(() => useCheckCourseEligibility());
+    const eligibility = result.current.evaluate(
+      createCourse({ prerequisite: undefined }),
+    );
+
+    expect(eligibility.eligible).toBe(false);
+    expect(eligibility.validation).toEqual([
+      expect.objectContaining({
+        type: "other",
+        message: "You have already passed this course.",
+      }),
+    ]);
+  });
+
   it("returns conflict error when section time overlaps enrolled course", () => {
     mockedUseEnrollments.mockReturnValue({
       data: {

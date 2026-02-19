@@ -1,18 +1,17 @@
 import { useCallback } from 'react';
 import { Search, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Switch } from '@/components/ui/switch';
-
-export interface CoursesFilterValues {
-  search: string;
-  onlyEligible: boolean;
-}
+import {
+  WEEKDAY_FILTER_OPTIONS,
+  type ExploreCoursesFilterValues,
+} from '@/hooks/courses/use-explore-courses-filter-store';
 
 export interface CoursesFilterProps {
-  value: CoursesFilterValues;
-  onChange: (value: CoursesFilterValues) => void;
+  value: ExploreCoursesFilterValues;
+  onChange: (value: ExploreCoursesFilterValues) => void;
   className?: string;
 }
 
@@ -32,9 +31,31 @@ export function CoursesFilter({
     onChange({ ...value, search: '' });
   }, [onChange, value]);
 
-  const handleEligibleChange = useCallback(
-    (checked: boolean) => {
-      onChange({ ...value, onlyEligible: checked });
+  const handleFromTimeChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      onChange({ ...value, fromTime: e.target.value });
+    },
+    [onChange, value],
+  );
+
+  const handleUntilTimeChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      onChange({ ...value, untilTime: e.target.value });
+    },
+    [onChange, value],
+  );
+
+  const handleWeekdayToggle = useCallback(
+    (day: string) => {
+      const normalizedDay = day.trim().toLowerCase();
+      const isSelected = value.weekdays.includes(normalizedDay);
+
+      onChange({
+        ...value,
+        weekdays: isSelected
+          ? value.weekdays.filter((weekday) => weekday !== normalizedDay)
+          : [...value.weekdays, normalizedDay],
+      });
     },
     [onChange, value],
   );
@@ -76,17 +97,61 @@ export function CoursesFilter({
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-4 border-t border-border pt-4">
-          <label className="flex cursor-pointer items-center gap-2.5 whitespace-nowrap">
-            <Switch
-              checked={value.onlyEligible}
-              onCheckedChange={handleEligibleChange}
-              aria-label="Only courses I'm eligible for"
-            />
-            <span className="text-sm text-muted-foreground">
-              Only courses I'm eligible
-            </span>
-          </label>
+        <div className="flex flex-col gap-4 border-t border-border pt-4 md:flex-row md:items-end md:gap-4">
+          <div className="grid w-fit gap-3 md:grid-cols-2">
+            <div className="max-w-40 space-y-2">
+              <label
+                htmlFor="courses-from-time"
+                className="text-sm font-medium text-foreground"
+              >
+                From time
+              </label>
+              <Input
+                id="courses-from-time"
+                type="time"
+                value={value.fromTime}
+                onChange={handleFromTimeChange}
+                className="h-9"
+                aria-label="From time"
+              />
+            </div>
+            <div className="max-w-40 space-y-2">
+              <label
+                htmlFor="courses-until-time"
+                className="text-sm font-medium text-foreground"
+              >
+                Until time
+              </label>
+              <Input
+                id="courses-until-time"
+                type="time"
+                value={value.untilTime}
+                onChange={handleUntilTimeChange}
+                className="h-9"
+                aria-label="Until time"
+              />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <p className="text-sm font-medium text-foreground">Weekdays</p>
+            <div className="flex flex-wrap gap-2">
+              {WEEKDAY_FILTER_OPTIONS.map((option) => {
+                const isSelected = value.weekdays.includes(option.value);
+                return (
+                  <Button
+                    key={option.value}
+                    type="button"
+                    variant={isSelected ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => handleWeekdayToggle(option.value)}
+                    aria-pressed={isSelected}
+                  >
+                    {option.label}
+                  </Button>
+                );
+              })}
+            </div>
+          </div>
         </div>
       </CardContent>
     </Card>
