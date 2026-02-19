@@ -214,7 +214,7 @@ describe('useEnroll', () => {
 
     expect(invalidateQueriesSpy).toHaveBeenCalledWith(
       expect.objectContaining({
-        queryKey: buildStudentQueryKey(1),
+        queryKey: buildStudentQueryKey(),
       }),
     );
   });

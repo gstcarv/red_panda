@@ -23,12 +23,7 @@ function createWrapper() {
 
 describe("useCourseHistory", () => {
   it("builds a stable course history query key", () => {
-    expect(buildCourseHistoryQueryKey(1)).toEqual([
-      "students",
-      1,
-      "courses",
-      "history",
-    ]);
+    expect(buildCourseHistoryQueryKey()).toEqual(["me", "courses", "history"]);
   });
 
   it("loads course history data from api", async () => {
@@ -63,7 +58,6 @@ describe("useCourseHistory", () => {
     });
 
     expect(getCourseHistorySpy).toHaveBeenCalledTimes(1);
-    expect(getCourseHistorySpy).toHaveBeenCalledWith(1);
     expect(result.current.data?.data.courseHistory).toHaveLength(1);
     expect(result.current.data?.data.courseHistory[0].status).toBe("passed");
   });

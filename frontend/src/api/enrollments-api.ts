@@ -1,10 +1,6 @@
 import { api } from "@/config/api";
 import type { Enrollment } from "@/types/enrollments.type";
 
-export type GetEnrollmentsResponse = {
-    enrollments: Enrollment[];
-};
-
 export type EnrollParams = {
     studentId: number;
     courseId: number;
@@ -27,8 +23,4 @@ function unenroll(enrollmentId: string) {
     return api.delete<UnenrollResponse>(`/enrollments/${enrollmentId}`);
 }
 
-function getEnrollments() {
-    return api.get<GetEnrollmentsResponse>("/enrollments");
-}
-
-export { enroll, unenroll, getEnrollments };
+export { enroll, unenroll };

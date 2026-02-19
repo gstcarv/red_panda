@@ -6,7 +6,7 @@ import {
   type UseMutationOptions,
 } from '@tanstack/react-query';
 import type { Enrollment } from '@/types/enrollments.type';
-import type { GetEnrollmentsResponse } from '@/api/enrollments-api';
+import type { GetStudentEnrollmentsResponse } from '@/api/students-api';
 import { enroll } from '@/api/enrollments-api';
 import { buildCoursesQueryKey } from '@/hooks/courses/use-courses';
 import { buildEnrollmentsQueryKey } from '@/hooks/enrollments/use-enrollments';
@@ -28,7 +28,7 @@ function updateEnrollmentsCacheAfterEnroll({
   queryClient: ReturnType<typeof useQueryClient>;
   enrollment: Enrollment;
 }) {
-  queryClient.setQueryData<AxiosResponse<GetEnrollmentsResponse>>(
+  queryClient.setQueryData<AxiosResponse<GetStudentEnrollmentsResponse>>(
     buildEnrollmentsQueryKey(),
     (current) => {
       if (!current) {
@@ -92,7 +92,7 @@ export function useEnroll(
           queryKey: buildCoursesQueryKey(),
         }),
         queryClient.invalidateQueries({
-          queryKey: buildStudentQueryKey(CURRENT_STUDENT_ID),
+          queryKey: buildStudentQueryKey(),
         }),
       ]);
 

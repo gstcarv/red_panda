@@ -8,16 +8,6 @@ describe('enrollments api module', () => {
     vi.restoreAllMocks();
   });
 
-  it('requests enrollments collection endpoint', async () => {
-    const getMock = mockFn<typeof api.get>();
-    getMock.mockResolvedValue({ data: { enrollments: [] } } as never);
-    vi.spyOn(api, 'get').mockImplementation(getMock);
-
-    await enrollmentsApi.getEnrollments();
-
-    expect(getMock).toHaveBeenCalledWith('/enrollments');
-  });
-
   it('posts enrollment payload', async () => {
     const postMock = mockFn<typeof api.post>();
     postMock.mockResolvedValue({ data: {} } as never);

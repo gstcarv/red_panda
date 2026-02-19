@@ -9,10 +9,10 @@ import type {
 import type {
   EnrollParams,
   EnrollResponse,
-  GetEnrollmentsResponse,
 } from "@/api/enrollments-api";
 import type {
   GetStudentCourseHistoryResponse,
+  GetStudentEnrollmentsResponse,
   GetStudentProfileResponse,
 } from "@/api/students-api";
 
@@ -699,30 +699,21 @@ export const handlers = [
     return HttpResponse.json<Course>(details);
   }),
 
-  http.get("/enrollments", () => {
-    return HttpResponse.json<GetEnrollmentsResponse>({
+  http.get("/me/enrollments", () => {
+    return HttpResponse.json<GetStudentEnrollmentsResponse>({
       enrollments: mockEnrollments,
     });
   }),
 
-  http.get("/students/:studentId/courses/history", ({ params }) => {
-    const studentId = Number(params.studentId);
-    if (Number.isNaN(studentId)) return new HttpResponse(null, { status: 400 });
-
+  http.get("/me/courses/history", () => {
     return HttpResponse.json<GetStudentCourseHistoryResponse>({
       courseHistory: mockCourseHistory,
     });
   }),
 
-  http.get("/student/:id/profile", ({ params }) => {
-    const id = Number(params.id);
-    if (Number.isNaN(id)) return new HttpResponse(null, { status: 400 });
-
+  http.get("/me/profile", () => {
     return HttpResponse.json<GetStudentProfileResponse>({
-      student: {
-        ...mockStudent,
-        id,
-      },
+      student: mockStudent,
     });
   }),
 

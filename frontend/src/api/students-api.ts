@@ -1,5 +1,6 @@
 import { api } from "@/config/api";
 import type { CourseHistory } from "@/types/course-history.type";
+import type { Enrollment } from "@/types/enrollments.type";
 import type { Student } from "@/types/student.type";
 
 export type GetStudentCourseHistoryResponse = {
@@ -10,14 +11,24 @@ export type GetStudentProfileResponse = {
   student: Student;
 };
 
-function getStudentCourseHistory(studentId: number) {
-  return api.get<GetStudentCourseHistoryResponse>(
-    `/students/${studentId}/courses/history`,
-  );
+export type GetStudentEnrollmentsResponse = {
+  enrollments: Enrollment[];
+};
+
+function getStudentCourseHistory() {
+  return api.get<GetStudentCourseHistoryResponse>("/me/courses/history");
 }
 
-function getStudentProfile(studentId: number) {
-  return api.get<GetStudentProfileResponse>(`/student/${studentId}/profile`);
+function getStudentProfile() {
+  return api.get<GetStudentProfileResponse>("/me/profile");
 }
 
-export { getStudentCourseHistory, getStudentProfile };
+function getStudentEnrollments() {
+  return api.get<GetStudentEnrollmentsResponse>("/me/enrollments");
+}
+
+export {
+  getStudentCourseHistory,
+  getStudentProfile,
+  getStudentEnrollments,
+};
