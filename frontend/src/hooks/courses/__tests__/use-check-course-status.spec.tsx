@@ -87,6 +87,7 @@ describe('useCheckCourseStatus', () => {
     const { result } = renderHook(() => useCheckCourseStatus(createCourse({ id: 1 })));
 
     expect(result.current.status).toBe('passed');
+    expect(result.current.foundCourseHistory?.id).toBe(1);
     expect(result.current.enrolledSections).toEqual([section]);
   });
 
@@ -139,6 +140,7 @@ describe('useCheckCourseStatus', () => {
     const { result } = renderHook(() => useCheckCourseStatus(createCourse({ id: 1 })));
 
     expect(result.current.status).toBe('passed');
+    expect(result.current.foundCourseHistory?.id).toBe(11);
     expect(result.current.enrolledSections).toEqual([]);
   });
 
@@ -166,6 +168,7 @@ describe('useCheckCourseStatus', () => {
     const { result } = renderHook(() => useCheckCourseStatus(createCourse({ id: 1 })));
 
     expect(result.current.status).toBeUndefined();
+    expect(result.current.foundCourseHistory).toBeUndefined();
     expect(result.current.enrolledSections).toEqual([]);
   });
 

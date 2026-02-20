@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import type { CourseHistory } from '@/types/course-history.type';
 import type { Course, CourseSection } from '@/types/course.type';
 import { useEnrollments } from '../enrollments/use-enrollments';
 import { useCourseHistory } from './use-course-history';
@@ -7,6 +7,7 @@ export type CourseStudentStatus = 'enrolled' | 'passed' | 'failed';
 
 type CheckCourseStatusReturn = {
   status?: CourseStudentStatus;
+  foundCourseHistory?: CourseHistory;
   enrolledSections: CourseSection[];
   isLoading: boolean;
   isError: boolean;
@@ -31,12 +32,9 @@ export function useCheckCourseStatus(
   const courseHistory = courseHistoryResponse?.data.courseHistory;
   const selectedSemesterId = semesterId ?? null;
 
-  const enrolledSections = useMemo(() => {
-    if (!course) {
-      return [];
-    }
-
-    return (enrollments ?? [])
+  const enrolledSections: CourseSection[] = !course
+    ? []
+    : (enrollments ?? [])
       .filter((enrollment) => {
         if (enrollment.course.id !== course.id) {
           return false;
@@ -49,15 +47,11 @@ export function useCheckCourseStatus(
         return enrollment.semester.id === selectedSemesterId;
       })
       .map((enrollment) => enrollment.courseSection);
-  }, [course, enrollments, selectedSemesterId]);
 
-  const status = useMemo<CourseStudentStatus | undefined>(() => {
-    if (!course) {
-      return undefined;
-    }
-
-    const items = (courseHistory ?? []).filter((h) => {
-      if (h.courseId !== course.id) {
+  const filteredHistory: CourseHistory[] = !course
+    ? []
+    : (courseHistory ?? []).filter((historyItem) => {
+      if (historyItem.courseId !== course.id) {
         return false;
       }
 
@@ -65,21 +59,26 @@ export function useCheckCourseStatus(
         return true;
       }
 
-      return h.semester.id === selectedSemesterId;
+      return historyItem.semester.id === selectedSemesterId;
     });
 
-    if (items.find((h) => h.status === 'passed')) return 'passed';
+  const foundCourseHistory =
+    filteredHistory.find((historyItem) => historyItem.status === 'passed') ??
+    filteredHistory.find((historyItem) => historyItem.status === 'failed');
 
-    if (enrolledSections.length > 0) return 'enrolled';
+  let status: CourseStudentStatus | undefined;
 
-    if (items.find((h) => h.status === 'failed')) return 'failed';
-
-
-    return undefined;
-  }, [course, courseHistory, enrolledSections.length, selectedSemesterId]);
+  if (foundCourseHistory?.status === 'passed') {
+    status = 'passed';
+  } else if (enrolledSections.length > 0) {
+    status = 'enrolled';
+  } else if (foundCourseHistory?.status === 'failed') {
+    status = 'failed';
+  }
 
   return {
     status,
+    foundCourseHistory: status === 'enrolled' ? undefined : foundCourseHistory,
     enrolledSections,
     isLoading: isEnrollmentsLoading || isCourseHistoryLoading,
     isError: isEnrollmentsError || isCourseHistoryError,

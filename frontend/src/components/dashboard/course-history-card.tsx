@@ -98,7 +98,7 @@ export function CourseHistoryCard({
                   className="mb-2 border-none last:mb-0"
                 >
                   <AccordionTrigger
-                    className="rounded-lg border border-border bg-muted/35 px-4 py-3 hover:bg-muted/55 hover:no-underline data-[state=open]:bg-muted/65"
+                    className="cursor-pointer rounded-lg border border-border bg-muted/35 px-4 py-3 hover:bg-muted/55 hover:no-underline data-[state=open]:bg-muted/65"
                   >
                     <div className="flex min-w-0 flex-1 items-center justify-between gap-4">
                       <div className="min-w-0">

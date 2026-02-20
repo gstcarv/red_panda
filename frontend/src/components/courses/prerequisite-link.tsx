@@ -66,7 +66,9 @@ export function PrerequisiteLink({
     } satisfies Course;
   }, [prerequisite.code, prerequisite.id, prerequisite.name]);
 
-  const { status } = useCheckCourseStatus(prerequisiteCourseForStatus);
+  const { status, foundCourseHistory } = useCheckCourseStatus(
+    prerequisiteCourseForStatus,
+  );
   const statusUi = status ? getStatusUi(status) : null;
 
   const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
@@ -100,7 +102,7 @@ export function PrerequisiteLink({
         <Suspense fallback={null}>
           <LazyCourseDetailsModal
             courseId={selectedCourseId}
-            semesterId={selectedSemesterId}
+            semesterId={foundCourseHistory?.semester.id || selectedSemesterId}
             open={modalOpen}
             onOpenChange={handleModalClose}
           />
