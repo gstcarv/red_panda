@@ -10,7 +10,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Skeleton } from '@/components/ui/skeleton';
-import { CourseSectionModal } from '@/components/courses/course-section-modal';
+import { CourseDetailsModal } from '@/components/courses/course-section-modal';
 import { CourseStudentStatusTag } from '@/components/courses/course-student-status-tag';
 import { useScheduleFindCourseModal } from '@/hooks/schedule/use-schedule-find-course-modal';
 import type { SchedulerSlotSelection } from '@/types/scheduler.type';
@@ -98,7 +98,7 @@ export function ScheduleFindCourseModal({
           )}
         </DialogContent>
       </Dialog>
-      <CourseSectionModal
+      <CourseDetailsModal
         courseId={selectedCourseId}
         open={selectedCourseId !== null}
         onOpenChange={handleCourseDetailsOpenChange}

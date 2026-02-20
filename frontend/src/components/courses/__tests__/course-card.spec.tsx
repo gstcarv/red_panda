@@ -47,7 +47,7 @@ describe('CourseCard', () => {
 
     await user.click(cardButton);
 
-    expect(onClick).toHaveBeenCalledWith(21);
+    expect(onClick).toHaveBeenCalledWith(21, undefined);
 
     cardButton.focus();
     await user.keyboard('{Enter}');

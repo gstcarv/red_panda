@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { mockFn } from 'vitest-mock-extended';
-import { CourseSectionModal } from '@/components/courses/course-section-modal';
+import { CourseDetailsModal } from '@/components/courses/course-section-modal';
 import { useMediaQuery } from '@/lib/utils';
 import { useCourseById } from '@/hooks/courses/use-course-by-id';
 import { useCheckCourseStatus } from '@/hooks/courses/use-check-course-status';
@@ -95,8 +95,8 @@ vi.mock('@/components/ui/sheet', () => ({
   SheetTitle: ({ children }: { children: React.ReactNode }) => <h1>{children}</h1>,
 }));
 
-describe('CourseSectionModal', () => {
-  it('hides eligibility alert and sections when course status is passed', () => {
+describe('CourseDetailsModal', () => {
+  it('renders sections and hides eligibility alert when course status is passed', () => {
     sectionListSpy.mockClear();
     eligibilityAlertSpy.mockClear();
     mockUseMediaQuery.mockReturnValue(true);
@@ -112,16 +112,16 @@ describe('CourseSectionModal', () => {
       isError: false,
     });
 
-    render(<CourseSectionModal courseId={1} open onOpenChange={onOpenChangeSpy} />);
+    render(<CourseDetailsModal courseId={1} open onOpenChange={onOpenChangeSpy} />);
 
-    expect(screen.getByText('You’ve already passed this course.')).toBeInTheDocument();
     expect(screen.queryByTestId('eligibility-alert')).not.toBeInTheDocument();
-    expect(screen.queryByTestId('course-section-list')).not.toBeInTheDocument();
+    expect(screen.getByText('Section enrolled in this semester')).toBeInTheDocument();
+    expect(screen.getByTestId('course-section-list')).toBeInTheDocument();
     expect(eligibilityAlertSpy).not.toHaveBeenCalled();
-    expect(sectionListSpy).not.toHaveBeenCalled();
+    expect(sectionListSpy).toHaveBeenCalled();
   });
 
-  it('renders enrolled sections and eligibility alert when course is enrolled', () => {
+  it('renders enrolled sections and keeps eligibility alert path when course is enrolled', () => {
     sectionListSpy.mockClear();
     eligibilityAlertSpy.mockClear();
     mockUseMediaQuery.mockReturnValue(true);
@@ -138,9 +138,10 @@ describe('CourseSectionModal', () => {
       isError: false,
     });
 
-    render(<CourseSectionModal courseId={1} open onOpenChange={onOpenChangeSpy} />);
+    render(<CourseDetailsModal courseId={1} open onOpenChange={onOpenChangeSpy} />);
 
     expect(screen.getByTestId('eligibility-alert')).toBeInTheDocument();
+    expect(eligibilityAlertSpy).toHaveBeenCalledWith(1);
     expect(screen.getByText('Enrolled Section')).toBeInTheDocument();
 
     expect(sectionListSpy).toHaveBeenCalledWith(

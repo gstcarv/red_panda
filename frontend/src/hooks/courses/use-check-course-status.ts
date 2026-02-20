@@ -12,7 +12,10 @@ type CheckCourseStatusReturn = {
   isError: boolean;
 };
 
-export function useCheckCourseStatus(course: Course): CheckCourseStatusReturn {
+export function useCheckCourseStatus(
+  course?: Course | null,
+  semesterId?: number | null,
+): CheckCourseStatusReturn {
   const {
     data: enrollmentsResponse,
     isLoading: isEnrollmentsLoading,
@@ -26,15 +29,44 @@ export function useCheckCourseStatus(course: Course): CheckCourseStatusReturn {
 
   const enrollments = enrollmentsResponse?.data.enrollments;
   const courseHistory = courseHistoryResponse?.data.courseHistory;
+  const selectedSemesterId = semesterId ?? null;
 
   const enrolledSections = useMemo(() => {
+    if (!course) {
+      return [];
+    }
+
     return (enrollments ?? [])
-      .filter((enrollment) => enrollment.course.id === course.id)
+      .filter((enrollment) => {
+        if (enrollment.course.id !== course.id) {
+          return false;
+        }
+
+        if (selectedSemesterId === null) {
+          return true;
+        }
+
+        return enrollment.semester.id === selectedSemesterId;
+      })
       .map((enrollment) => enrollment.courseSection);
-  }, [enrollments, course.id]);
+  }, [course, enrollments, selectedSemesterId]);
 
   const status = useMemo<CourseStudentStatus | undefined>(() => {
-    const items = (courseHistory ?? []).filter((h) => h.courseId === course.id);
+    if (!course) {
+      return undefined;
+    }
+
+    const items = (courseHistory ?? []).filter((h) => {
+      if (h.courseId !== course.id) {
+        return false;
+      }
+
+      if (selectedSemesterId === null) {
+        return true;
+      }
+
+      return h.semester.id === selectedSemesterId;
+    });
 
     if (items.find((h) => h.status === 'passed')) return 'passed';
 
@@ -42,8 +74,9 @@ export function useCheckCourseStatus(course: Course): CheckCourseStatusReturn {
 
     if (items.find((h) => h.status === 'failed')) return 'failed';
 
+
     return undefined;
-  }, [course.id, courseHistory, enrolledSections.length]);
+  }, [course, courseHistory, enrolledSections.length, selectedSemesterId]);
 
   return {
     status,

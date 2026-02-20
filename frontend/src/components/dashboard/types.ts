@@ -24,5 +24,5 @@ export interface CourseHistoryCardProps {
   isLoading: boolean;
   history: CourseHistory[];
   metrics: DashboardMetrics;
-  onCourseClick?: (courseId: number) => void;
+  onCourseClick?: (courseId: number, semesterId: number, status: CourseHistory['status']) => void;
 }

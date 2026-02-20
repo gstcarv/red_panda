@@ -10,15 +10,19 @@ vi.mock('@/components/courses/course-student-status-tag', () => ({
 }));
 
 vi.mock('@/components/courses/course-section-modal', () => ({
-  CourseSectionModal: ({
+  CourseDetailsModal: ({
     open,
     courseId,
+    semesterId,
   }: {
     open: boolean;
     courseId: number | null;
+    semesterId?: number | null;
   }) =>
     open ? (
-      <div data-testid="course-details-modal">Course details for {courseId}</div>
+      <div data-testid="course-details-modal">
+        Course details for {courseId} on semester {semesterId}
+      </div>
     ) : null,
 }));
 
@@ -142,7 +146,7 @@ describe('Dashboard', () => {
     );
 
     expect(screen.getByTestId('course-details-modal')).toHaveTextContent(
-      'Course details for 3',
+      'Course details for 3 on semester 3',
     );
   });
 

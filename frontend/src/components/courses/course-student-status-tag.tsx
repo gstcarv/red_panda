@@ -19,10 +19,12 @@ type CourseStudentStatusTagProps =
   | {
       status: CourseStudentStatus;
       course?: never;
+      semesterId?: number | null;
     }
   | {
       course: Course;
       status?: undefined;
+      semesterId?: number | null;
     };
 
 function getStatusBadgeProps(status: CourseStudentStatus) {
@@ -62,10 +64,16 @@ function CourseStudentStatusBadge({ status }: { status: CourseStudentStatus }) {
   );
 }
 
-function CourseStudentStatusTagWithEligibility({ course }: { course: Course }) {
+function CourseStudentStatusTagWithEligibility({
+  course,
+  semesterId,
+}: {
+  course: Course;
+  semesterId?: number | null;
+}) {
   const { evaluate } = useCheckEnrollmentEligibility();
   const { eligible, validation } = evaluate(course);
-  const { status } = useCheckCourseStatus(course);
+  const { status } = useCheckCourseStatus(course, semesterId);
 
   if (status) {
     return <CourseStudentStatusBadge status={status} />;
@@ -110,6 +118,11 @@ export function CourseStudentStatusTag(props: CourseStudentStatusTagProps) {
     return <CourseStudentStatusBadge status={props.status} />;
   }
 
-  return <CourseStudentStatusTagWithEligibility course={props.course} />;
+  return (
+    <CourseStudentStatusTagWithEligibility
+      course={props.course}
+      semesterId={props.semesterId}
+    />
+  );
 }
 

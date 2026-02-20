@@ -136,7 +136,7 @@ export function CourseHistoryCard({
                           <button
                             key={item.id}
                             type="button"
-                            onClick={() => onCourseClick?.(item.courseId)}
+                            onClick={() => onCourseClick?.(item.courseId, item.semester.id, item.status)}
                             className="flex w-full cursor-pointer items-center justify-between rounded-lg border border-border p-3 text-left transition-colors hover:bg-accent/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                           >
                             <div className="min-w-0">

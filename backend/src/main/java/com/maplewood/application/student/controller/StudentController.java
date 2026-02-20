@@ -10,6 +10,7 @@ import com.maplewood.application.student.usecase.DeleteEnrollmentUseCase;
 import com.maplewood.application.student.usecase.GetMyCourseHistoryUseCase;
 import com.maplewood.application.student.usecase.GetMyEnrollmentsUseCase;
 import com.maplewood.application.student.usecase.GetMyProfileUseCase;
+import com.maplewood.domain.student.exception.InvalidAuthenticatedStudentException;
 import com.maplewood.infrastructure.exception.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -152,6 +153,6 @@ public class StudentController {
         if (principal instanceof String value) {
             return Integer.parseInt(value);
         }
-        throw new IllegalArgumentException("Unable to resolve authenticated student id");
+        throw new InvalidAuthenticatedStudentException();
     }
 }

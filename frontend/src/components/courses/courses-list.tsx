@@ -8,7 +8,7 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { CourseCard } from './course-card';
-import { CourseSectionModal } from './course-section-modal';
+import { CourseDetailsModal } from './course-section-modal';
 import { useCourseDetailsModal } from '@/hooks/courses/use-course-details-modal';
 import type { Course } from '@/types/course.type';
 
@@ -28,7 +28,7 @@ export interface CoursesListProps {
   /** Optional: controlled selected course ID */
   selectedCourseId?: number | null;
   /** Optional: callback when a course is selected */
-  onCourseSelect?: (courseId: number) => void;
+  onCourseSelect?: (courseId: number, semesterId?: number) => void;
   /** Optional: callback when modal closes */
   onModalClose?: (open: boolean) => void;
 }
@@ -71,12 +71,17 @@ export function CoursesList({
   onCourseSelect,
   onModalClose,
 }: CoursesListProps) {
-  const { selectedCourseId, modalOpen, handleCourseSelect, handleModalClose } =
-    useCourseDetailsModal({
-      selectedCourseId: controlledSelectedCourseId,
-      onCourseSelect,
-      onModalClose,
-    });
+  const {
+    selectedCourseId,
+    selectedSemesterId,
+    modalOpen,
+    handleCourseSelect,
+    handleModalClose,
+  } = useCourseDetailsModal({
+    selectedCourseId: controlledSelectedCourseId,
+    onCourseSelect,
+    onModalClose,
+  });
 
   if (isLoading) {
     return (
@@ -157,8 +162,10 @@ export function CoursesList({
           </li>
         ))}
       </ul>
-      <CourseSectionModal
+
+      <CourseDetailsModal
         courseId={selectedCourseId}
+        semesterId={selectedSemesterId}
         open={modalOpen}
         onOpenChange={handleModalClose}
       />

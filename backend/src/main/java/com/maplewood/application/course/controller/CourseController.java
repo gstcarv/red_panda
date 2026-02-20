@@ -73,7 +73,7 @@ public class CourseController {
      * @param id Course id
      * @return Course details
      */
-    @Operation(summary = "Get course by id", description = "Retrieve a specific course by its id. Requires Authorization: Bearer token.")
+    @Operation(summary = "Get course by id", description = "Retrieve a specific course by its id. Optional query param semesterId can be provided. Requires Authorization: Bearer token.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved course", content = @Content(schema = @Schema(implementation = CourseDTO.class))),
             @ApiResponse(responseCode = "401", description = "Unauthorized - missing or invalid JWT token"),
@@ -81,16 +81,18 @@ public class CourseController {
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @GetMapping("/{id}")
-    public ResponseEntity<CourseDTO> getCourseById(@PathVariable Integer id) {
-        log.info("Received request to get course with id: {}", id);
+    public ResponseEntity<CourseDTO> getCourseById(
+            @PathVariable Integer id,
+            @RequestParam(required = false) Integer semesterId) {
+        log.info("Received request to get course with id: {} and semesterId: {}", id, semesterId);
 
         try {
-            CourseDTO courseDTO = getCourseByIdUseCase.execute(id);
+            CourseDTO courseDTO = getCourseByIdUseCase.execute(id, semesterId);
 
-            log.debug("Successfully retrieved course with id: {}", id);
+            log.debug("Successfully retrieved course with id: {} and semesterId: {}", id, semesterId);
             return ResponseEntity.ok(courseDTO);
         } catch (Exception e) {
-            log.error("Error retrieving course with id: {}", id, e);
+            log.error("Error retrieving course with id: {} and semesterId: {}", id, semesterId, e);
             throw e;
         }
     }

@@ -8,7 +8,13 @@ import { useCheckCourseStatus } from '@/hooks/courses/use-check-course-status';
 import type { CoursePrerequisite } from '@/types/course.type';
 
 const courseSectionModalSpy = mockFn<
-  (props: { courseId?: number; open: boolean; onOpenChange: (open: boolean) => void }) => void
+  (props: {
+    courseId?: number;
+    semesterId?: number | null;
+    courseHistory?: unknown;
+    open: boolean;
+    onOpenChange: (open: boolean) => void;
+  }) => void
 >();
 
 vi.mock('@/hooks/courses/use-course-details-modal', () => ({
@@ -20,8 +26,10 @@ vi.mock('@/hooks/courses/use-check-course-status', () => ({
 }));
 
 vi.mock('@/components/courses/course-section-modal', () => ({
-  CourseSectionModal: (props: {
+  CourseDetailsModal: (props: {
     courseId?: number;
+    semesterId?: number | null;
+    courseHistory?: unknown;
     open: boolean;
     onOpenChange: (open: boolean) => void;
   }) => {
@@ -42,13 +50,14 @@ const prerequisite: CoursePrerequisite = {
 describe('PrerequisiteLink', () => {
   it('opens modal for prerequisite course when button is clicked', async () => {
     const user = userEvent.setup();
-    const onCourseSelect = mockFn<(courseId: number) => void>();
-    const handleCourseSelect = mockFn<(courseId: number) => void>();
+    const onCourseSelect = mockFn<(courseId: number, semesterId?: number) => void>();
+    const handleCourseSelect = mockFn<(courseId: number, semesterId?: number) => void>();
     const handleModalClose = mockFn<(open: boolean) => void>();
     courseSectionModalSpy.mockReset();
 
     mockedUseCourseDetailsModal.mockReturnValue({
       selectedCourseId: 99,
+      selectedSemesterId: 4,
       modalOpen: true,
       handleCourseSelect,
       handleModalClose,
@@ -72,18 +81,22 @@ describe('PrerequisiteLink', () => {
     expect(mockedUseCourseDetailsModal).toHaveBeenCalledWith({ onCourseSelect });
 
     expect(await screen.findByTestId('course-section-modal')).toBeInTheDocument();
-    expect(courseSectionModalSpy).toHaveBeenCalledWith({
-      courseId: 99,
-      open: true,
-      onOpenChange: handleModalClose,
-    });
+    expect(courseSectionModalSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        courseId: 99,
+        semesterId: 4,
+        open: true,
+        onOpenChange: handleModalClose,
+      }),
+    );
   });
 
   it('renders status indicator when prerequisite course has a student status', () => {
     mockedUseCourseDetailsModal.mockReturnValue({
       selectedCourseId: undefined,
+      selectedSemesterId: null,
       modalOpen: false,
-      handleCourseSelect: mockFn<(courseId: number) => void>(),
+      handleCourseSelect: mockFn<(courseId: number, semesterId?: number) => void>(),
       handleModalClose: mockFn<(open: boolean) => void>(),
     });
     mockedUseCheckCourseStatus.mockReturnValue({

@@ -12,7 +12,7 @@ import type {
   SchedulerSlotSelection,
 } from '@/types/scheduler.type';
 import { ScheduleFindCourseModal } from './schedule-find-course-modal';
-import { CourseSectionModal } from '@/components/courses/course-section-modal';
+import { CourseDetailsModal } from '@/components/courses/course-section-modal';
 
 const CALENDAR_BOTTOM_OFFSET = 40;
 
@@ -232,7 +232,7 @@ export function ScheduleCalendar({
         slot={selectedSlot}
         onOpenChange={handleFindCourseModalOpenChange}
       />
-      <CourseSectionModal
+      <CourseDetailsModal
         courseId={selectedCourseId}
         open={selectedCourseId !== null}
         onOpenChange={(open) => {

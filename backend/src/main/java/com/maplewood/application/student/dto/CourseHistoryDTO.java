@@ -13,4 +13,5 @@ public class CourseHistoryDTO {
     private String courseName;
     private SemesterSummaryDTO semester;
     private String status;
+    private EnrollmentSummaryDTO enrollment;
 }

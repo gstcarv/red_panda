@@ -1,5 +1,7 @@
 package com.maplewood.domain.course.model;
 
+import com.maplewood.domain.course.exception.InvalidCourseTypeException;
+
 public enum CourseType {
     CORE("core"),
     ELECTIVE("elective");
@@ -23,6 +25,6 @@ public enum CourseType {
                 return type;
             }
         }
-        throw new IllegalArgumentException("Unknown courseType: " + value);
+        throw new InvalidCourseTypeException(value);
     }
 }

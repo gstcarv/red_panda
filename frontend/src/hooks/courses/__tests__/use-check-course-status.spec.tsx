@@ -219,5 +219,44 @@ describe('useCheckCourseStatus', () => {
 
     expect(result.current.status).toBe('passed');
   });
+
+  it('uses provided semesterId to determine history status', () => {
+    mockedUseEnrollments.mockReturnValue({
+      data: {
+        data: {
+          enrollments: [],
+        },
+      },
+      isLoading: false,
+      isError: false,
+    } as never);
+
+    mockedUseCourseHistory.mockReturnValue({
+      data: {
+        data: {
+          courseHistory: [
+            {
+              id: 21,
+              courseId: 1,
+              courseName: 'Intro to Programming',
+              semester: {
+                id: 2,
+                name: 'Spring',
+                year: 2025,
+                order_in_year: 2,
+              },
+              status: 'passed',
+            },
+          ],
+        },
+      },
+      isLoading: false,
+      isError: false,
+    } as never);
+
+    const { result } = renderHook(() => useCheckCourseStatus(createCourse({ id: 1 }), 1));
+
+    expect(result.current.status).toBeUndefined();
+  });
 });
 

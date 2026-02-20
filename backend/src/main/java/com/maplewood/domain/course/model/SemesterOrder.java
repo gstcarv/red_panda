@@ -1,5 +1,7 @@
 package com.maplewood.domain.course.model;
 
+import com.maplewood.domain.course.exception.InvalidSemesterOrderException;
+
 public enum SemesterOrder {
     FALL(1),
     SPRING(2);
@@ -23,6 +25,6 @@ public enum SemesterOrder {
                 return order;
             }
         }
-        throw new IllegalArgumentException("Unknown semesterOrder: " + value);
+        throw new InvalidSemesterOrderException(value);
     }
 }

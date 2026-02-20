@@ -6,4 +6,7 @@ export interface CourseHistory {
   courseName: string;
   semester: Semester;
   status: 'passed' | 'failed';
+  enrollment?: {
+    sectionId: number;
+  } | null;
 }

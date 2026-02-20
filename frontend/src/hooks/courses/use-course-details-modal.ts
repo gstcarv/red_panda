@@ -2,16 +2,21 @@ import { useState } from 'react';
 
 type UseCourseDetailsModalParams = {
   selectedCourseId?: number | null;
-  onCourseSelect?: (courseId: number) => void;
+  selectedSemesterId?: number | null;
+  onCourseSelect?: (courseId: number, semesterId?: number) => void;
   onModalClose?: (open: boolean) => void;
 };
 
 export function useCourseDetailsModal({
   selectedCourseId: controlledSelectedCourseId,
+  selectedSemesterId: controlledSelectedSemesterId,
   onCourseSelect,
   onModalClose,
 }: UseCourseDetailsModalParams) {
   const [internalSelectedCourseId, setInternalSelectedCourseId] = useState<
+    number | null
+  >(null);
+  const [internalSelectedSemesterId, setInternalSelectedSemesterId] = useState<
     number | null
   >(null);
 
@@ -19,15 +24,20 @@ export function useCourseDetailsModal({
     controlledSelectedCourseId !== undefined
       ? controlledSelectedCourseId
       : internalSelectedCourseId;
+  const selectedSemesterId =
+    controlledSelectedSemesterId !== undefined
+      ? controlledSelectedSemesterId
+      : internalSelectedSemesterId;
   const modalOpen = selectedCourseId !== null;
 
-  const handleCourseSelect = (courseId: number) => {
+  const handleCourseSelect = (courseId: number, semesterId?: number) => {
     if (onCourseSelect) {
-      onCourseSelect(courseId);
+      onCourseSelect(courseId, semesterId);
       return;
     }
 
     setInternalSelectedCourseId(courseId);
+    setInternalSelectedSemesterId(semesterId ?? null);
   };
 
   const handleModalClose = (open: boolean) => {
@@ -38,11 +48,13 @@ export function useCourseDetailsModal({
 
     if (!open) {
       setInternalSelectedCourseId(null);
+      setInternalSelectedSemesterId(null);
     }
   };
 
   return {
     selectedCourseId,
+    selectedSemesterId,
     modalOpen,
     handleCourseSelect,
     handleModalClose,

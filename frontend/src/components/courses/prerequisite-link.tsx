@@ -9,14 +9,14 @@ import {
 import { cn } from '@/lib/utils';
 import type { Course, CoursePrerequisite } from '@/types/course.type';
 
-const LazyCourseSectionModal = lazy(async () => {
+const LazyCourseDetailsModal = lazy(async () => {
   const module = await import('@/components/courses/course-section-modal');
-  return { default: module.CourseSectionModal };
+  return { default: module.CourseDetailsModal };
 });
 
 type PrerequisiteLinkProps = {
   prerequisite: CoursePrerequisite;
-  onCourseSelect?: (courseId: number) => void;
+  onCourseSelect?: (courseId: number, semesterId?: number) => void;
   className?: string;
 };
 
@@ -45,8 +45,13 @@ export function PrerequisiteLink({
   onCourseSelect,
   className,
 }: PrerequisiteLinkProps) {
-  const { selectedCourseId, modalOpen, handleCourseSelect, handleModalClose } =
-    useCourseDetailsModal({ onCourseSelect });
+  const {
+    selectedCourseId,
+    selectedSemesterId,
+    modalOpen,
+    handleCourseSelect,
+    handleModalClose,
+  } = useCourseDetailsModal({ onCourseSelect });
   const [hasOpenedModal, setHasOpenedModal] = useState(false);
 
   const prerequisiteCourseForStatus = useMemo(() => {
@@ -93,8 +98,9 @@ export function PrerequisiteLink({
       </Button>
       {hasOpenedModal ? (
         <Suspense fallback={null}>
-          <LazyCourseSectionModal
+          <LazyCourseDetailsModal
             courseId={selectedCourseId}
+            semesterId={selectedSemesterId}
             open={modalOpen}
             onOpenChange={handleModalClose}
           />

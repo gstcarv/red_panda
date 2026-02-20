@@ -15,6 +15,7 @@ export interface CourseSectionListProps {
   course: Course;
   sections: CourseSection[];
   enrolledSections?: CourseSection[];
+  showEnrollmentAction?: boolean;
   onEnrollSuccess?: () => void;
 }
 
@@ -44,6 +45,7 @@ export function CourseSectionList({
   course,
   sections,
   enrolledSections = [],
+  showEnrollmentAction = true,
   onEnrollSuccess,
 }: CourseSectionListProps) {
   const { evaluate } = useCheckEnrollmentEligibility();
@@ -117,19 +119,21 @@ export function CourseSectionList({
                 )}
               </div>
             </div>
-            <div className="flex items-center gap-2 shrink-0">
-              <EnrollmentActionButton
-                courseId={courseId}
-                sectionId={section.id}
-                isFull={isFull}
-                eligible={eligible}
-                validation={validation}
-                onEnrollSuccess={onEnrollSuccess}
-                confirmTitle="Unenroll from section?"
-                confirmDescription="This action will remove your enrollment from this section."
-                className="h-8 px-3 text-xs"
-              />
-            </div>
+            {showEnrollmentAction ? (
+              <div className="flex items-center gap-2 shrink-0">
+                <EnrollmentActionButton
+                  courseId={courseId}
+                  sectionId={section.id}
+                  isFull={isFull}
+                  eligible={eligible}
+                  validation={validation}
+                  onEnrollSuccess={onEnrollSuccess}
+                  confirmTitle="Unenroll from section?"
+                  confirmDescription="This action will remove your enrollment from this section."
+                  className="h-8 px-3 text-xs"
+                />
+              </div>
+            ) : null}
           </div>
         );
       })}

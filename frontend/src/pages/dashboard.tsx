@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import { PageTitle } from '@/components/ui/page-title';
-import { CourseSectionModal } from '@/components/courses/course-section-modal';
+import { CourseDetailsModal } from '@/components/courses/course-section-modal';
 import {
   CourseHistoryCard,
   DashboardErrorState,
@@ -8,11 +9,35 @@ import {
 } from '@/components/dashboard';
 import { useCourseDetailsModal } from '@/hooks/courses/use-course-details-modal';
 import { useDashboard } from '@/hooks/dashboard/use-dashboard';
+import type { CourseHistory } from '@/types/course-history.type';
 
 export function Dashboard() {
   const { isLoading, isError, metrics, historyByMostRecent, retry } = useDashboard();
-  const { selectedCourseId, modalOpen, handleCourseSelect, handleModalClose } =
+  const [historyCourseStatus, setHistoryCourseStatus] = useState<CourseHistory['status']>();
+  const {
+    selectedCourseId,
+    selectedSemesterId,
+    modalOpen,
+    handleCourseSelect,
+    handleModalClose,
+  } =
     useCourseDetailsModal({});
+
+  const handleHistoryCourseClick = (
+    courseId: number,
+    semesterId: number,
+    status: CourseHistory['status'],
+  ) => {
+    setHistoryCourseStatus(status);
+    handleCourseSelect(courseId, semesterId);
+  };
+
+  const handleModalOpenChange = (open: boolean) => {
+    if (!open) {
+      setHistoryCourseStatus(undefined);
+    }
+    handleModalClose(open);
+  };
 
   if (isError) {
     return (
@@ -44,13 +69,15 @@ export function Dashboard() {
           isLoading={isLoading}
           history={historyByMostRecent}
           metrics={metrics}
-          onCourseClick={handleCourseSelect}
+          onCourseClick={handleHistoryCourseClick}
         />
       </section>
-      <CourseSectionModal
+      <CourseDetailsModal
         courseId={selectedCourseId}
+        semesterId={selectedSemesterId}
+        courseStatus={historyCourseStatus}
         open={modalOpen}
-        onOpenChange={handleModalClose}
+        onOpenChange={handleModalOpenChange}
       />
     </div>
   );

@@ -1,10 +1,14 @@
 package com.maplewood.infrastructure.exception;
 
 import com.maplewood.domain.course.exception.CourseNotFoundException;
+import com.maplewood.domain.course.exception.InvalidCourseTypeException;
+import com.maplewood.domain.course.exception.InvalidSemesterOrderException;
 import com.maplewood.domain.coursesection.exception.CourseSectionNotFoundException;
 import com.maplewood.domain.enrollment.exception.EnrollmentEligibilityException;
 import com.maplewood.domain.enrollment.exception.EnrollmentNotFoundException;
 import com.maplewood.domain.semester.exception.ActiveSemesterNotFoundException;
+import com.maplewood.domain.semester.exception.SemesterNotFoundException;
+import com.maplewood.domain.student.exception.InvalidAuthenticatedStudentException;
 import com.maplewood.domain.student.exception.StudentNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -154,6 +158,26 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Handle SemesterNotFoundException
+     */
+    @ExceptionHandler(SemesterNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleSemesterNotFoundException(
+            SemesterNotFoundException ex, WebRequest request) {
+
+        log.warn("Semester not found: {}", ex.getMessage());
+
+        ErrorResponse error = new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.NOT_FOUND.value(),
+                "Semester Not Found",
+                ex.getMessage(),
+                request.getDescription(false).replace("uri=", "")
+        );
+
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
+    /**
      * Handle CourseSectionNotFoundException
      */
     @ExceptionHandler(CourseSectionNotFoundException.class)
@@ -190,6 +214,27 @@ public class GlobalExceptionHandler {
                 request.getDescription(false).replace("uri=", "")
         );
         
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler({
+            InvalidCourseTypeException.class,
+            InvalidSemesterOrderException.class,
+            InvalidAuthenticatedStudentException.class
+    })
+    public ResponseEntity<ErrorResponse> handleInvalidRequestDomainExceptions(
+            RuntimeException ex, WebRequest request) {
+
+        log.warn("Invalid request: {}", ex.getMessage());
+
+        ErrorResponse error = new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                "Invalid Request",
+                ex.getMessage(),
+                request.getDescription(false).replace("uri=", "")
+        );
+
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 

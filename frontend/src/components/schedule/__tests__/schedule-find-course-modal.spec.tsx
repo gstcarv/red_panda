@@ -17,7 +17,7 @@ vi.mock('@/hooks/courses/use-available-courses-by-slot', () => ({
 const courseSectionModalSpy = vi.fn();
 
 vi.mock('@/components/courses/course-section-modal', () => ({
-  CourseSectionModal: (props: { courseId: number | null; open: boolean }) => {
+  CourseDetailsModal: (props: { courseId: number | null; open: boolean }) => {
     courseSectionModalSpy(props);
     return (
       <div data-testid="course-section-modal">

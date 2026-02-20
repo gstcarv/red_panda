@@ -18,29 +18,35 @@ import { CourseSectionList } from './course-section-list';
 import { CourseStudentStatusTag } from './course-student-status-tag';
 import { EligibilityAlert } from './eligibility-alert';
 import { useCourseById } from '@/hooks/courses/use-course-by-id';
-import { useCheckCourseStatus } from '@/hooks/courses/use-check-course-status';
+import {
+  useCheckCourseStatus,
+  type CourseStudentStatus,
+} from '@/hooks/courses/use-check-course-status';
 import { Skeleton } from '@/components/ui/skeleton';
 import { AlertCircle, BookOpen, Clock, GraduationCap } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { cn } from '@/lib/utils';
 import type { Course } from '@/types/course.type';
 import { PrerequisiteLink } from './prerequisite-link';
 
-export interface CourseSectionModalProps {
+export interface CourseDetailsModalProps {
   courseId: number | null;
+  semesterId?: number | null;
+  courseStatus?: CourseStudentStatus;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-export function CourseSectionModal({
+export function CourseDetailsModal({
   courseId,
+  semesterId = null,
+  courseStatus,
   open,
   onOpenChange,
-}: CourseSectionModalProps) {
+}: CourseDetailsModalProps) {
   const isDesktop = useMediaQuery('(min-width: 768px)');
   const [cachedCourse, setCachedCourse] = useState<Course | null>(null);
-  const { data, isLoading, isError } = useCourseById(courseId);
+  const { data, isLoading, isError } = useCourseById(courseId, semesterId);
 
   const courseData = data?.data;
 
@@ -64,16 +70,26 @@ export function CourseSectionModal({
   // Use cached course if available, otherwise use current data
   // This prevents flicker during close animation
   const course = cachedCourse || courseData;
-  // Use a dummy course with invalid ID when course is not loaded yet
-  const courseForHook = course ?? ({ id: -1 } as Course);
-  const { status, enrolledSections } = useCheckCourseStatus(courseForHook);
+  const { status: computedStatus, enrolledSections } = useCheckCourseStatus(
+    course,
+    semesterId,
+  );
+  const status = courseStatus ?? computedStatus;
+  const hasCompletedStatus = status === 'failed' || status === 'passed';
+
   const isEnrolled = status === 'enrolled';
-  const isPassed = status === 'passed';
 
   // Show enrolled sections if enrolled, otherwise show all available sections
-  const displayedSections = isEnrolled && course
-    ? enrolledSections
-    : course?.availableSections ?? [];
+  const displayedSections =
+    isEnrolled && course ? enrolledSections : (course?.availableSections ?? []);
+  const sectionsTitle =
+    hasCompletedStatus
+      ? 'Section enrolled in this semester'
+      : status === undefined
+      ? isEnrolled
+        ? 'Enrolled Section'
+        : 'Available Sections'
+      : 'Enrolled Section';
 
   const content = (
     <div className="space-y-4">
@@ -108,10 +124,18 @@ export function CourseSectionModal({
                 <p className="text-sm text-muted-foreground font-mono">
                   {course.code}
                 </p>
-                {!isPassed && <EligibilityAlert course={course} />}
+                {!hasCompletedStatus && <EligibilityAlert course={course} />}
               </div>
               <div className="flex items-center gap-2">
-                <CourseStudentStatusTag course={course} />
+                {status ? (
+                  <CourseStudentStatusTag status={status} />
+                ) : (
+                  <CourseStudentStatusTag
+                    course={course}
+                    semesterId={semesterId}
+                  />
+                )}
+
                 <Badge variant="secondary" className="text-xs">
                   {course.credits} {course.credits === 1 ? 'credit' : 'credits'}
                 </Badge>
@@ -131,6 +155,7 @@ export function CourseSectionModal({
               </div>
               <div className="flex items-center gap-2">
                 <GraduationCap className="h-4 w-4 text-muted-foreground shrink-0" />
+
                 <div>
                   <p className="font-medium">Grade Level</p>
                   <p className="text-muted-foreground text-xs">
@@ -150,37 +175,26 @@ export function CourseSectionModal({
             </div>
 
             {/* Sections */}
-            {isPassed ? (
-              <div className="rounded-lg border border-dashed px-4 py-6 text-sm text-muted-foreground">
-                You’ve already passed this course.
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-semibold">{sectionsTitle}</h3>
+                <Badge variant="outline" className="text-xs">
+                  {displayedSections.length} section
+                  {displayedSections.length !== 1 ? 's' : ''}
+                </Badge>
               </div>
-            ) : (
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <h3
-                    className={cn(
-                      'text-sm font-semibold',
-                      isEnrolled && 'text-purple-600 dark:text-purple-500',
-                    )}
-                  >
-                    {isEnrolled ? 'Enrolled Section' : 'Available Sections'}
-                  </h3>
-                  <Badge variant="outline" className="text-xs">
-                    {displayedSections.length} section
-                    {displayedSections.length !== 1 ? 's' : ''}
-                  </Badge>
-                </div>
-                <CourseSectionList
-                  courseId={courseId}
-                  course={course}
-                  sections={displayedSections}
-                  enrolledSections={isEnrolled ? enrolledSections : []}
-                  onEnrollSuccess={() => {
-                    onOpenChange(false);
-                  }}
-                />
-              </div>
-            )}
+
+              <CourseSectionList
+                courseId={courseId}
+                course={course}
+                sections={displayedSections}
+                enrolledSections={isEnrolled ? enrolledSections : []}
+                showEnrollmentAction={!hasCompletedStatus}
+                onEnrollSuccess={() => {
+                  onOpenChange(false);
+                }}
+              />
+            </div>
           </div>
         </>
       ) : null}

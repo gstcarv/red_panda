@@ -14,7 +14,7 @@ export interface CourseCardProps {
   course: Course;
   /** Passed from parent; badge is always shown (Eligible / Not eligible) */
   eligible?: boolean;
-  onClick?: (courseId: number) => void;
+  onClick?: (courseId: number, semesterId?: number) => void;
   className?: string;
   footerAction?: ReactNode;
 }
@@ -33,13 +33,13 @@ export function CourseCard({
         onClick && 'cursor-pointer',
         className,
       )}
-      onClick={() => onClick?.(course.id)}
+      onClick={() => onClick?.(course.id, course.semester?.id)}
       role={onClick ? 'button' : undefined}
       tabIndex={onClick ? 0 : undefined}
       onKeyDown={(e) => {
         if (onClick && (e.key === 'Enter' || e.key === ' ')) {
           e.preventDefault();
-          onClick(course.id);
+          onClick(course.id, course.semester?.id);
         }
       }}
     >
@@ -59,7 +59,11 @@ export function CourseCard({
               </span>
             </div>
           </div>
-          <CourseStudentStatusTag course={course} />
+
+          <CourseStudentStatusTag
+            course={course}
+            semesterId={course.semester?.id}
+          />
         </CardHeader>
 
         <CardContent className="flex-1 min-h-0 pb-4">

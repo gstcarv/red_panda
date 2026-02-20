@@ -36,7 +36,7 @@ vi.mock('@/components/courses/course-card', () => ({
 }));
 
 vi.mock('@/components/courses/course-section-modal', () => ({
-  CourseSectionModal: ({
+  CourseDetailsModal: ({
     courseId,
     open,
   }: {

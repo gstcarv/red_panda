@@ -109,6 +109,10 @@ export function useFilteredExploreCourses({
 
     return courses
       .filter((course) => {
+        if (passedCourseIds.has(course.id)) {
+          return false;
+        }
+
         if (normalizedSearch.length > 0) {
           const courseName = course.name.toLowerCase();
           const courseCode = course.code.toLowerCase();
@@ -131,15 +135,9 @@ export function useFilteredExploreCourses({
       .sort((courseA, courseB) => {
         const courseAIsEligible = eligibilityByCourseId.get(courseA.id) ?? false;
         const courseBIsEligible = eligibilityByCourseId.get(courseB.id) ?? false;
-        const courseAIsPassed = passedCourseIds.has(courseA.id);
-        const courseBIsPassed = passedCourseIds.has(courseB.id);
 
         if (courseAIsEligible !== courseBIsEligible) {
           return courseAIsEligible ? -1 : 1;
-        }
-
-        if (courseAIsPassed !== courseBIsPassed) {
-          return courseAIsPassed ? 1 : -1;
         }
 
         const nameOrder = courseA.name.localeCompare(courseB.name);
@@ -161,9 +159,7 @@ export function useFilteredExploreCourses({
     getEligible: (course: Course) => eligibilityByCourseId.get(course.id) ?? false,
     getCourseCardClassName: (course: Course) => {
       const isEligible = eligibilityByCourseId.get(course.id) ?? false;
-      const isPassed = passedCourseIds.has(course.id);
-
-      return !isEligible || isPassed ? 'opacity-55' : undefined;
+      return !isEligible ? 'opacity-55' : undefined;
     },
   };
 }

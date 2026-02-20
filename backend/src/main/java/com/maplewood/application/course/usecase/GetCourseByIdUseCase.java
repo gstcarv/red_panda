@@ -9,6 +9,7 @@ import com.maplewood.domain.course.port.CourseRepositoryPort;
 import com.maplewood.domain.coursesection.model.CourseSection;
 import com.maplewood.domain.coursesection.port.CourseSectionRepositoryPort;
 import com.maplewood.domain.semester.model.Semester;
+import com.maplewood.domain.semester.exception.SemesterNotFoundException;
 import com.maplewood.domain.semester.port.SemesterRepositoryPort;
 import com.maplewood.domain.teacher.model.Teacher;
 import com.maplewood.domain.teacher.port.TeacherRepositoryPort;
@@ -49,8 +50,8 @@ public class GetCourseByIdUseCase {
     }
 
     @Transactional(readOnly = true)
-    public CourseDTO execute(Integer id) {
-        log.debug("Executing GetCourseByIdUseCase for course id: {}", id);
+    public CourseDTO execute(Integer id, Integer semesterId) {
+        log.debug("Executing GetCourseByIdUseCase for course id: {} and semesterId: {}", id, semesterId);
         Optional<Course> course = courseRepositoryPort.findById(id);
         
         if (course.isEmpty()) {
@@ -66,21 +67,27 @@ public class GetCourseByIdUseCase {
             return courseDTO;
         }
 
-        // Fetch active semester once (used for both sections and DTO)
-        Optional<Semester> activeSemesterOpt = semesterRepositoryPort.findActiveSemester();
+        // Fetch requested semester when provided; otherwise fallback to active semester
+        Optional<Semester> selectedSemesterOpt = semesterId != null
+                ? semesterRepositoryPort.findById(semesterId)
+                : semesterRepositoryPort.findActiveSemester();
+        if (semesterId != null && selectedSemesterOpt.isEmpty()) {
+            throw new SemesterNotFoundException(semesterId);
+        }
+
         CourseDTO.SemesterDTO semesterDTO = null;
-        Integer semesterId = null;
-        if (activeSemesterOpt.isPresent()) {
-            Semester semester = activeSemesterOpt.get();
-            semesterId = semester.getId();
+        Integer resolvedSemesterId = null;
+        if (selectedSemesterOpt.isPresent()) {
+            Semester semester = selectedSemesterOpt.get();
+            resolvedSemesterId = semester.getId();
             semesterDTO = toSemesterDTO(semester);
         }
 
         // Enrich with sections (using the semester we already fetched)
         List<CourseSection> sections = List.of();
         Map<Integer, Teacher> teachersById = new HashMap<>();
-        if (semesterId != null) {
-            sections = courseSectionRepositoryPort.findByCourseIdAndSemesterId(domainCourse.getId(), semesterId);
+        if (resolvedSemesterId != null) {
+            sections = courseSectionRepositoryPort.findByCourseIdAndSemesterId(domainCourse.getId(), resolvedSemesterId);
             // Batch load teachers for sections
             if (!sections.isEmpty()) {
                 Set<Integer> teacherIds = sections.stream()

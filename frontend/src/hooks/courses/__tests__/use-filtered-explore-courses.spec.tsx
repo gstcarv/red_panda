@@ -63,7 +63,7 @@ function createCourse({
 }
 
 describe('useFilteredExploreCourses', () => {
-  it('sorts passed courses to the end', () => {
+  it('hides passed courses from explore list', () => {
     vi.mocked(useCourseHistory).mockReturnValue({
       data: {
         data: {
@@ -124,7 +124,7 @@ describe('useFilteredExploreCourses', () => {
       }),
     );
 
-    expect(result.current.filteredCourses.map((course) => course.id)).toEqual([3, 4, 2]);
+    expect(result.current.filteredCourses.map((course) => course.id)).toEqual([3, 4]);
     expect(result.current.getCourseCardClassName(courses[0])).toBe('opacity-55');
     expect(result.current.getCourseCardClassName(courses[1])).toBeUndefined();
     expect(result.current.getCourseCardClassName(courses[2])).toBeUndefined();
