@@ -1,5 +1,6 @@
 package com.maplewood.domain.teacher.model;
 
+import java.time.Instant;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,7 +26,7 @@ public class Teacher {
 
     private Integer maxDailyHours;
 
-    private String createdAt;
+    private Instant createdAt;
 
     /**
      * Get full name of the teacher

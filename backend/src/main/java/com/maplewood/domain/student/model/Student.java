@@ -1,5 +1,6 @@
 package com.maplewood.domain.student.model;
 
+import java.time.Instant;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,5 +29,5 @@ public class Student {
 
     private String status;
 
-    private String createdAt;
+    private Instant createdAt;
 }

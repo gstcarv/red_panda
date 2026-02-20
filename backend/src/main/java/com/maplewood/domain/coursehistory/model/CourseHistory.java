@@ -1,5 +1,6 @@
 package com.maplewood.domain.coursehistory.model;
 
+import java.time.Instant;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,5 +14,5 @@ public class CourseHistory {
     private Integer courseId;
     private Integer semesterId;
     private String status;
-    private String createdAt;
+    private Instant createdAt;
 }

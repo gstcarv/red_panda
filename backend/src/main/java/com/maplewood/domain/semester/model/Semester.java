@@ -1,5 +1,6 @@
 package com.maplewood.domain.semester.model;
 
+import java.time.Instant;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -30,5 +31,5 @@ public class Semester {
 
     private Boolean isActive;
 
-    private String createdAt;
+    private Instant createdAt;
 }

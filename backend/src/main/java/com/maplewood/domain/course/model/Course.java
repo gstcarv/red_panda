@@ -1,5 +1,6 @@
 package com.maplewood.domain.course.model;
 
+import java.time.Instant;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
@@ -37,5 +38,5 @@ public class Course {
 
     private SemesterOrder semesterOrder;
 
-    private String createdAt;
+    private Instant createdAt;
 }

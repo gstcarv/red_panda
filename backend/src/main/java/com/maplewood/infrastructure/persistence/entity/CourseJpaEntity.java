@@ -1,5 +1,6 @@
 package com.maplewood.infrastructure.persistence.entity;
 
+import java.time.Instant;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -55,5 +56,5 @@ public class CourseJpaEntity {
     private Integer semesterOrder;
 
     @Column(name = "created_at", columnDefinition = "DATETIME")
-    private String createdAt;
+    private Instant createdAt;
 }

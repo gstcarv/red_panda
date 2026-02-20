@@ -1,5 +1,6 @@
 package com.maplewood.domain.enrollment.model;
 
+import java.time.Instant;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,5 +23,5 @@ public class Enrollment {
 
     private Integer semesterId;
 
-    private String createdAt;
+    private Instant createdAt;
 }

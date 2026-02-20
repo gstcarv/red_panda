@@ -1,5 +1,6 @@
 package com.maplewood.infrastructure.persistence.entity;
 
+import java.time.Instant;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -41,7 +42,7 @@ public class CourseSectionJpaEntity {
     private Integer enrolledCount;
 
     @Column(name = "created_at", columnDefinition = "DATETIME")
-    private String createdAt;
+    private Instant createdAt;
 
     @OneToMany(mappedBy = "courseSectionId", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<CourseSectionMeetingTimeJpaEntity> meetingTimes;
