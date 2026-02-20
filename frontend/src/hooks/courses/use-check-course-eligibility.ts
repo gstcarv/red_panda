@@ -29,6 +29,12 @@ export function evaluateCourseEligibility({
     student?: Student;
     isCourseHistoryLoading: boolean;
 }): CheckEligiblityReturn {
+    if (checkCourseAlreadyEnrolled(course, enrollments)) {
+        return {
+            eligible: true
+        };
+    }
+
     // Check in priority order: max_courses -> grade_level -> already_passed -> prereq -> time -> others
     // Return only the first error found (highest priority)
 
@@ -169,6 +175,10 @@ function checkCourseAlreadyPassed(course: Course, courseHistory: CourseHistory[]
     return courseHistory.some((history) => {
         return history.courseId === course.id && history.status === 'passed';
     });
+}
+
+function checkCourseAlreadyEnrolled(course: Course, enrollments: Enrollment[]) {
+    return enrollments.some((enrollment) => enrollment.course.id === course.id);
 }
 
 function checkCoursePrerequisite(

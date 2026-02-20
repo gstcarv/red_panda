@@ -19,20 +19,22 @@ describe('enrollments api module', () => {
       sectionId: 3,
     });
 
-    expect(postMock).toHaveBeenCalledWith('/enrollments', {
+    expect(postMock).toHaveBeenCalledWith('/me/enrollments', {
       studentId: 1,
       courseId: 2,
       sectionId: 3,
     });
   });
 
-  it('deletes enrollment by id', async () => {
+  it('deletes enrollment by course id', async () => {
     const deleteMock = mockFn<typeof api.delete>();
     deleteMock.mockResolvedValue({ data: {} } as never);
     vi.spyOn(api, 'delete').mockImplementation(deleteMock);
 
-    await enrollmentsApi.unenroll('enroll-123');
+    await enrollmentsApi.unenroll(2);
 
-    expect(deleteMock).toHaveBeenCalledWith('/enrollments/enroll-123');
+    expect(deleteMock).toHaveBeenCalledWith('/me/enrollments', {
+      params: { courseId: 2 },
+    });
   });
 });

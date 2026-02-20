@@ -717,7 +717,7 @@ export const handlers = [
     });
   }),
 
-  http.post("/enrollments", async ({ request }) => {
+  http.post("/me/enrollments", async ({ request }) => {
     const body = (await request.json()) as EnrollParams;
 
     // Simulate error scenarios for testing
@@ -769,10 +769,18 @@ export const handlers = [
     return HttpResponse.json<EnrollResponse>({ enrollment });
   }),
 
-  http.delete("/enrollments/:id", ({ params }) => {
-    const enrollmentId = String(params.id);
+  http.delete("/me/enrollments", ({ request }) => {
+    const url = new URL(request.url);
+    const courseId = Number(url.searchParams.get("courseId"));
+    if (!Number.isFinite(courseId)) {
+      return HttpResponse.json(
+        { error: "Invalid courseId" },
+        { status: 400 },
+      );
+    }
+
     const enrollmentIndex = mockEnrollments.findIndex(
-      (value) => value.id === enrollmentId,
+      (value) => value.course.id === courseId,
     );
 
     if (enrollmentIndex === -1) {

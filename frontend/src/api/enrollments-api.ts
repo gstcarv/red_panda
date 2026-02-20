@@ -16,11 +16,13 @@ export type UnenrollResponse = {
 };
 
 function enroll(params: EnrollParams) {
-    return api.post<EnrollResponse>("/enrollments", params);
+    return api.post<EnrollResponse>("/me/enrollments", params);
 }
 
-function unenroll(enrollmentId: string) {
-    return api.delete<UnenrollResponse>(`/enrollments/${enrollmentId}`);
+function unenroll(courseId: number) {
+    return api.delete<UnenrollResponse>("/me/enrollments", {
+        params: { courseId },
+    });
 }
 
 export { enroll, unenroll };

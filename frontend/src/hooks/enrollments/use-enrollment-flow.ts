@@ -21,16 +21,13 @@ export function useEnrollmentFlow(
   );
 
   const { data: enrollmentsResponse } = useEnrollments();
-  const enrollments = enrollmentsResponse?.data.enrollments ?? [];
+  const enrollments = useMemo(
+    () => enrollmentsResponse?.data.enrollments ?? [],
+    [enrollmentsResponse],
+  );
 
   const enrolledSectionIds = useMemo(() => {
     return new Set(enrollments.map((enrollment) => enrollment.courseSection.id));
-  }, [enrollments]);
-
-  const enrollmentIdBySectionId = useMemo(() => {
-    return new Map(
-      enrollments.map((enrollment) => [enrollment.courseSection.id, enrollment.id]),
-    );
   }, [enrollments]);
 
   const isSectionEnrolled = useCallback(
@@ -54,9 +51,9 @@ export function useEnrollmentFlow(
   });
 
   const unenrollMutation = useUnenroll({
-    onMutate: (enrollmentId) => {
+    onMutate: (courseId) => {
       const sectionId = enrollments.find(
-        (enrollment) => enrollment.id === enrollmentId,
+        (enrollment) => enrollment.course.id === courseId,
       )?.courseSection.id;
 
       if (sectionId) {
@@ -85,22 +82,16 @@ export function useEnrollmentFlow(
     [enrollMutation, isSectionEnrolled],
   );
 
-  const unenrollFromSection = useCallback(
-    (sectionId: number) => {
-      const enrollmentId = enrollmentIdBySectionId.get(sectionId);
-
-      if (!enrollmentId) {
-        return;
-      }
-
-      unenrollMutation.mutate(enrollmentId);
+  const unenrollFromCourse = useCallback(
+    (courseId: number) => {
+      unenrollMutation.mutate(courseId);
     },
-    [enrollmentIdBySectionId, unenrollMutation],
+    [unenrollMutation],
   );
 
   return {
     enrollInSection,
-    unenrollFromSection,
+    unenrollFromCourse,
     enrollingSectionId,
     unenrollingSectionId,
     isSectionEnrolled,

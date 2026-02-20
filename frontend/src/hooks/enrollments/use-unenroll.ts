@@ -13,18 +13,16 @@ import { buildStudentQueryKey } from '@/hooks/students/use-student';
 type UnenrollMutationData = Awaited<ReturnType<typeof unenroll>>;
 
 type UseUnenrollOptions = Omit<
-  UseMutationOptions<UnenrollMutationData, unknown, string>,
+  UseMutationOptions<UnenrollMutationData, unknown, number>,
   'mutationFn'
 >;
 
-const CURRENT_STUDENT_ID = 1;
-
 function updateEnrollmentsCacheAfterUnenroll({
   queryClient,
-  enrollmentId,
+  courseId,
 }: {
   queryClient: ReturnType<typeof useQueryClient>;
-  enrollmentId: string;
+  courseId: number;
 }) {
   queryClient.setQueryData<AxiosResponse<GetStudentEnrollmentsResponse>>(
     buildEnrollmentsQueryKey(),
@@ -34,7 +32,7 @@ function updateEnrollmentsCacheAfterUnenroll({
       }
 
       const nextEnrollments = current.data.enrollments.filter(
-        (enrollment) => enrollment.id !== enrollmentId,
+        (enrollment) => enrollment.course.id !== courseId,
       );
 
       return {
@@ -55,11 +53,11 @@ export function useUnenroll(options?: UseUnenrollOptions) {
 
   return useMutation({
     ...mutationOptions,
-    mutationFn: (enrollmentId: string) => unenroll(enrollmentId),
-    onSuccess: async (data, enrollmentId, onMutateResult, context) => {
+    mutationFn: (courseId: number) => unenroll(courseId),
+    onSuccess: async (data, courseId, onMutateResult, context) => {
       updateEnrollmentsCacheAfterUnenroll({
         queryClient,
-        enrollmentId,
+        courseId,
       });
 
       await Promise.all([
@@ -74,7 +72,7 @@ export function useUnenroll(options?: UseUnenrollOptions) {
         }),
       ]);
 
-      await onSuccess?.(data, enrollmentId, onMutateResult, context);
+      await onSuccess?.(data, courseId, onMutateResult, context);
     },
   });
 }

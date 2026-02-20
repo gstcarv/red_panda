@@ -59,7 +59,7 @@ describe("useCheckCourseEligibility", () => {
     mockedUseEnrollments.mockReturnValue({
       data: {
         data: {
-          enrollments: [1, 2, 3, 4, 5].map((id) => ({
+          enrollments: [11, 12, 13, 14, 15].map((id) => ({
             id: `enroll-${id}`,
             course: createCourse({
               id,
@@ -523,7 +523,7 @@ describe("useCheckCourseEligibility", () => {
     mockedUseEnrollments.mockReturnValue({
       data: {
         data: {
-          enrollments: [1, 2, 3, 4, 5].map((id) => ({
+          enrollments: [11, 12, 13, 14, 15].map((id) => ({
             id: `enroll-${id}`,
             course: createCourse({ id }),
             courseSection: {

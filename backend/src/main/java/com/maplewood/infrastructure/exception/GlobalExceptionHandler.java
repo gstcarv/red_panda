@@ -1,6 +1,9 @@
 package com.maplewood.infrastructure.exception;
 
 import com.maplewood.domain.course.exception.CourseNotFoundException;
+import com.maplewood.domain.coursesection.exception.CourseSectionNotFoundException;
+import com.maplewood.domain.enrollment.exception.EnrollmentNotFoundException;
+import com.maplewood.domain.semester.exception.ActiveSemesterNotFoundException;
 import com.maplewood.domain.student.exception.StudentNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -82,6 +85,66 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now(),
                 HttpStatus.NOT_FOUND.value(),
                 "Student Not Found",
+                ex.getMessage(),
+                request.getDescription(false).replace("uri=", "")
+        );
+
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
+    /**
+     * Handle EnrollmentNotFoundException
+     */
+    @ExceptionHandler(EnrollmentNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleEnrollmentNotFoundException(
+            EnrollmentNotFoundException ex, WebRequest request) {
+
+        log.warn("Enrollment not found: {}", ex.getMessage());
+
+        ErrorResponse error = new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.NOT_FOUND.value(),
+                "Enrollment Not Found",
+                ex.getMessage(),
+                request.getDescription(false).replace("uri=", "")
+        );
+
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
+    /**
+     * Handle ActiveSemesterNotFoundException
+     */
+    @ExceptionHandler(ActiveSemesterNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleActiveSemesterNotFoundException(
+            ActiveSemesterNotFoundException ex, WebRequest request) {
+
+        log.warn("Active semester not found: {}", ex.getMessage());
+
+        ErrorResponse error = new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.NOT_FOUND.value(),
+                "Active Semester Not Found",
+                ex.getMessage(),
+                request.getDescription(false).replace("uri=", "")
+        );
+
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
+    /**
+     * Handle CourseSectionNotFoundException
+     */
+    @ExceptionHandler(CourseSectionNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleCourseSectionNotFoundException(
+            CourseSectionNotFoundException ex, WebRequest request) {
+
+        log.warn("Course section not found: {}", ex.getMessage());
+
+        ErrorResponse error = new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.NOT_FOUND.value(),
+                "Course Section Not Found",
                 ex.getMessage(),
                 request.getDescription(false).replace("uri=", "")
         );

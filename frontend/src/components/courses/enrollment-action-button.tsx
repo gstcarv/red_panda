@@ -158,7 +158,7 @@ export function EnrollmentActionButton({
           title={confirmTitle}
           description={confirmDescription}
           onConfirm={() => {
-            unenrollMutation.mutate(enrollment.id);
+            unenrollMutation.mutate(enrollment.course.id);
             setIsConfirmOpen(false);
           }}
           confirmLabel={isPending ? 'Unenrolling...' : confirmButtonLabel}

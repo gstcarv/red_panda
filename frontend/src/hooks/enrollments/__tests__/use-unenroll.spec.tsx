@@ -33,7 +33,7 @@ describe('useUnenroll', () => {
     vi.restoreAllMocks();
   });
 
-  it('calls unenroll endpoint with enrollment id', async () => {
+  it('calls unenroll endpoint with course id', async () => {
     const { wrapper } = createWrapper();
     const unenrollSpy = vi
       .spyOn(enrollmentsApi, 'unenroll')
@@ -43,14 +43,14 @@ describe('useUnenroll', () => {
       wrapper,
     });
 
-    await result.current.mutateAsync('enroll-1');
+    await result.current.mutateAsync(10);
 
-    expect(unenrollSpy).toHaveBeenCalledWith('enroll-1');
+    expect(unenrollSpy).toHaveBeenCalledWith(10);
   });
 
   it('forwards lifecycle callbacks passed from UI', async () => {
     const { wrapper } = createWrapper();
-    const onMutate = mockFn<(enrollmentId: string) => void>();
+    const onMutate = mockFn<(courseId: number) => void>();
     const onSuccess = mockFn<() => void>();
     const onError = mockFn<(error: unknown) => void>();
     const onSettled = mockFn<() => void>();
@@ -72,10 +72,10 @@ describe('useUnenroll', () => {
       },
     );
 
-    await result.current.mutateAsync('enroll-1');
+    await result.current.mutateAsync(10);
 
     expect(onMutate).toHaveBeenCalledTimes(1);
-    expect(onMutate.mock.calls[0][0]).toBe('enroll-1');
+    expect(onMutate.mock.calls[0][0]).toBe(10);
     expect(onSuccess).toHaveBeenCalledTimes(1);
     expect(onError).not.toHaveBeenCalled();
     expect(onSettled).toHaveBeenCalledTimes(1);
@@ -117,7 +117,10 @@ describe('useUnenroll', () => {
     };
     const enrollmentTwo: Enrollment = {
       id: 'e-2',
-      course,
+      course: {
+        ...course,
+        id: 11,
+      },
       courseSection: section,
       semester: {
         id: 2,
@@ -139,14 +142,14 @@ describe('useUnenroll', () => {
       wrapper,
     });
 
-    await result.current.mutateAsync('e-1');
+    await result.current.mutateAsync(10);
 
     const cacheData = queryClient.getQueryData<{
       data: { enrollments: Enrollment[] };
     }>(buildEnrollmentsQueryKey());
 
     expect(cacheData?.data.enrollments).toHaveLength(1);
-    expect(cacheData?.data.enrollments[0].id).toBe('e-2');
+    expect(cacheData?.data.enrollments[0].course.id).toBe(11);
   });
 
   it('invalidates student profile query after successful unenrollment', async () => {
@@ -161,7 +164,7 @@ describe('useUnenroll', () => {
       wrapper,
     });
 
-    await result.current.mutateAsync('enroll-1');
+    await result.current.mutateAsync(10);
 
     expect(invalidateQueriesSpy).toHaveBeenCalledWith(
       expect.objectContaining({
