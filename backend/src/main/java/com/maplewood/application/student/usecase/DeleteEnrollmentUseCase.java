@@ -13,9 +13,11 @@ import com.maplewood.domain.course.port.CourseRepositoryPort;
 import com.maplewood.domain.coursesection.exception.CourseSectionNotFoundException;
 import com.maplewood.domain.coursesection.model.CourseSection;
 import com.maplewood.domain.coursesection.port.CourseSectionRepositoryPort;
+import com.maplewood.domain.enrollment.exception.EnrollmentEligibilityException;
 import com.maplewood.domain.enrollment.exception.EnrollmentNotFoundException;
 import com.maplewood.domain.enrollment.model.Enrollment;
 import com.maplewood.domain.enrollment.port.EnrollmentRepositoryPort;
+import com.maplewood.domain.enrollment.service.EnrollmentEligibilityService;
 import com.maplewood.domain.semester.exception.ActiveSemesterNotFoundException;
 import com.maplewood.domain.semester.model.Semester;
 import com.maplewood.domain.semester.port.SemesterRepositoryPort;
@@ -37,6 +39,7 @@ public class DeleteEnrollmentUseCase {
     private final CourseSectionRepositoryPort courseSectionRepositoryPort;
     private final SemesterRepositoryPort semesterRepositoryPort;
     private final TeacherRepositoryPort teacherRepositoryPort;
+    private final EnrollmentEligibilityService enrollmentEligibilityService;
     private final CourseMapper courseMapper;
     private final CourseSectionMapper courseSectionMapper;
 
@@ -46,6 +49,7 @@ public class DeleteEnrollmentUseCase {
             CourseSectionRepositoryPort courseSectionRepositoryPort,
             SemesterRepositoryPort semesterRepositoryPort,
             TeacherRepositoryPort teacherRepositoryPort,
+            EnrollmentEligibilityService enrollmentEligibilityService,
             CourseMapper courseMapper,
             CourseSectionMapper courseSectionMapper
     ) {
@@ -54,6 +58,7 @@ public class DeleteEnrollmentUseCase {
         this.courseSectionRepositoryPort = courseSectionRepositoryPort;
         this.semesterRepositoryPort = semesterRepositoryPort;
         this.teacherRepositoryPort = teacherRepositoryPort;
+        this.enrollmentEligibilityService = enrollmentEligibilityService;
         this.courseMapper = courseMapper;
         this.courseSectionMapper = courseSectionMapper;
     }
@@ -66,6 +71,13 @@ public class DeleteEnrollmentUseCase {
         Enrollment enrollment = enrollmentRepositoryPort.findByStudentIdAndCourseIdAndSemesterId(
                         studentId, courseId, activeSemester.getId())
                 .orElseThrow(() -> new EnrollmentNotFoundException(studentId, courseId, activeSemester.getId()));
+
+        if (!enrollmentEligibilityService.canUnroll(enrollment, activeSemester)) {
+            throw new EnrollmentEligibilityException(
+                    "other",
+                    "Unroll is only allowed for enrollments in the active semester."
+            );
+        }
 
         enrollmentRepositoryPort.deleteById(enrollment.getId());
 

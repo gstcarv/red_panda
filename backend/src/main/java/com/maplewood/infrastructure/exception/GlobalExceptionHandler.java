@@ -2,6 +2,7 @@ package com.maplewood.infrastructure.exception;
 
 import com.maplewood.domain.course.exception.CourseNotFoundException;
 import com.maplewood.domain.coursesection.exception.CourseSectionNotFoundException;
+import com.maplewood.domain.enrollment.exception.EnrollmentEligibilityException;
 import com.maplewood.domain.enrollment.exception.EnrollmentNotFoundException;
 import com.maplewood.domain.semester.exception.ActiveSemesterNotFoundException;
 import com.maplewood.domain.student.exception.StudentNotFoundException;
@@ -110,6 +111,26 @@ public class GlobalExceptionHandler {
         );
 
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
+    /**
+     * Handle EnrollmentEligibilityException
+     */
+    @ExceptionHandler(EnrollmentEligibilityException.class)
+    public ResponseEntity<ErrorResponse> handleEnrollmentEligibilityException(
+            EnrollmentEligibilityException ex, WebRequest request) {
+
+        log.warn("Enrollment eligibility failed [{}]: {}", ex.getType(), ex.getMessage());
+
+        ErrorResponse error = new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                "Enrollment Not Eligible",
+                ex.getMessage(),
+                request.getDescription(false).replace("uri=", "")
+        );
+
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
     /**
