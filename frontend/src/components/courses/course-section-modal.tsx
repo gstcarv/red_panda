@@ -82,6 +82,11 @@ export function CourseDetailsModal({
   // Show enrolled sections if enrolled, otherwise show all available sections
   const displayedSections =
     isEnrolled && course ? enrolledSections : (course?.availableSections ?? []);
+  const semesterBadgeLabel =
+    course?.semester != null
+      ? `${course.semester.name} ${course.semester.year}`
+      : null;
+  const modalTitle = 'Course Details';
   const sectionsTitle =
     hasCompletedStatus
       ? 'Section enrolled in this semester'
@@ -206,7 +211,14 @@ export function CourseDetailsModal({
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="max-w-3xl max-h-[90vh] flex flex-col">
           <DialogHeader className="shrink-0">
-            <DialogTitle>Course Details</DialogTitle>
+            <div className="flex items-center gap-2">
+              <DialogTitle>{modalTitle}</DialogTitle>
+              {semesterBadgeLabel ? (
+                <Badge variant="outline" className="text-xs">
+                  {semesterBadgeLabel}
+                </Badge>
+              ) : null}
+            </div>
             <DialogDescription>
               {course && isEnrolled
                 ? 'View course information and enrolled section'
@@ -223,7 +235,14 @@ export function CourseDetailsModal({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="bottom" className="h-[90vh] overflow-y-auto">
         <SheetHeader>
-          <SheetTitle>Course Details</SheetTitle>
+          <div className="flex items-center gap-2">
+            <SheetTitle>{modalTitle}</SheetTitle>
+            {semesterBadgeLabel ? (
+              <Badge variant="outline" className="text-xs">
+                {semesterBadgeLabel}
+              </Badge>
+            ) : null}
+          </div>
           <SheetDescription>
             {course && isEnrolled
               ? 'View course information and enrolled section'
