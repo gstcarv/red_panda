@@ -1,22 +1,25 @@
-import type { CourseHistory } from "@/types/course-history.type";
-import type { Course, CourseAvailabilityError } from "@/types/course.type";
-import type { Enrollment } from "@/types/enrollments.type";
-import type { Student } from "@/types/student.type";
-import { useEnrollments } from "../enrollments/use-enrollments";
-import { useCourseHistory } from "./use-course-history";
-import { useStudent } from "../students/use-student";
 import { useCallback } from "react";
+import type { Course } from "@/types/course.type";
+import type {
+    Enrollment,
+    EnrollmentAvailabilityError,
+} from "@/types/enrollments.type";
+import type { CourseHistory } from "@/types/course-history.type";
+import type { Student } from "@/types/student.type";
+import { useEnrollments } from "./use-enrollments";
+import { useCourseHistory } from "../courses/use-course-history";
+import { useStudent } from "../students/use-student";
 
-type CheckEligiblityReturn = {
+type CheckEligibilityReturn = {
     eligible: boolean
-    validation?: CourseAvailabilityError[]
+    validation?: EnrollmentAvailabilityError[]
 }
 
-type UseCheckCourseEligibilityReturn = {
-    evaluate: (course: Course) => CheckEligiblityReturn;
+type UseCheckEnrollmentEligibilityReturn = {
+    evaluate: (course: Course) => CheckEligibilityReturn;
 }
 
-export function evaluateCourseEligibility({
+export function evaluateEnrollmentEligibility({
     course,
     enrollments,
     courseHistory,
@@ -28,7 +31,7 @@ export function evaluateCourseEligibility({
     courseHistory: CourseHistory[];
     student?: Student;
     isCourseHistoryLoading: boolean;
-}): CheckEligiblityReturn {
+}): CheckEligibilityReturn {
     if (checkCourseAlreadyEnrolled(course, enrollments)) {
         return {
             eligible: true
@@ -37,8 +40,6 @@ export function evaluateCourseEligibility({
 
     // Check in priority order: max_courses -> grade_level -> already_passed -> prereq -> time -> others
     // Return only the first error found (highest priority)
-
-    // 1. max_courses
     const enrollmentLimitError = checkEnrollmentLimit(enrollments, student);
     if (enrollmentLimitError) {
         return {
@@ -47,7 +48,6 @@ export function evaluateCourseEligibility({
         };
     }
 
-    // 2. grade_level
     const gradeLevelError = checkGradeLevelEligibility(course, student);
     if (gradeLevelError) {
         return {
@@ -56,7 +56,6 @@ export function evaluateCourseEligibility({
         };
     }
 
-    // 3. already_passed
     if (
         !isCourseHistoryLoading &&
         checkCourseAlreadyPassed(course, courseHistory)
@@ -70,7 +69,6 @@ export function evaluateCourseEligibility({
         };
     }
 
-    // 4. prereq
     if (
         course.prerequisite &&
         !isCourseHistoryLoading &&
@@ -86,7 +84,6 @@ export function evaluateCourseEligibility({
         };
     }
 
-    // 5. time (conflict)
     const hasTimeslotConflicts = checkForTimeslotConflict(course, enrollments);
     if (hasTimeslotConflicts.length) {
         return {
@@ -103,7 +100,7 @@ export function evaluateCourseEligibility({
     };
 }
 
-export function useCheckCourseEligibility(): UseCheckCourseEligibilityReturn {
+export function useCheckEnrollmentEligibility(): UseCheckEnrollmentEligibilityReturn {
     const { data: enrollmentsResponse } = useEnrollments();
     const { data: courseHistoryResponse, isLoading: isCourseHistoryLoading } =
         useCourseHistory();
@@ -115,7 +112,7 @@ export function useCheckCourseEligibility(): UseCheckCourseEligibilityReturn {
         const enrollments = enrollmentsResponse?.data.enrollments ?? [];
         const courseHistory = courseHistoryResponse?.data.courseHistory ?? [];
 
-        return evaluateCourseEligibility({
+        return evaluateEnrollmentEligibility({
             course,
             enrollments,
             courseHistory,
@@ -137,7 +134,7 @@ export function useCheckCourseEligibility(): UseCheckCourseEligibilityReturn {
 function checkEnrollmentLimit(
     enrollments: Enrollment[],
     student?: Student,
-): CourseAvailabilityError | null {
+): EnrollmentAvailabilityError | null {
     const maxCoursesPerSemester = student?.options?.maxCoursesPerSemester ?? 5;
 
     if (enrollments.length >= maxCoursesPerSemester) {
@@ -152,7 +149,7 @@ function checkEnrollmentLimit(
 function checkGradeLevelEligibility(
     course: Course,
     student: Student | undefined
-): CourseAvailabilityError | null {
+): EnrollmentAvailabilityError | null {
     if (!student || !course.gradeLevel) {
         return null;
     }
@@ -160,7 +157,7 @@ function checkGradeLevelEligibility(
     const studentGradeLevel = student.gradeLevel;
     const { min, max } = course.gradeLevel;
     const gradeRangeLabel = min === max ? `${min}` : `${min}-${max}`;
-    
+
     if (studentGradeLevel < min || studentGradeLevel > max) {
         return {
             type: 'grade_level',
@@ -197,13 +194,11 @@ function checkCoursePrerequisite(
 }
 
 function checkForTimeslotConflict(course: Course, enrollments: Enrollment[]) {
-
     const courseSections = course.availableSections
 
     function convertToNumber(time: string) {
         return Number(time.replace(":", ""))
     }
-
 
     const enrollmentConflicts = enrollments.filter(enrollment => {
         return enrollment.courseSection.meetingTimes.some((enrollmentMeeting) => {

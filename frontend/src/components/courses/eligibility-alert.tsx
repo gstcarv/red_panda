@@ -1,6 +1,6 @@
 import { AlertTriangle } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { useCheckCourseEligibility } from '@/hooks/courses/use-check-course-eligibility';
+import { useCheckEnrollmentEligibility } from '@/hooks/enrollments/use-check-enrollment-eligibility';
 import { useCheckCourseStatus } from '@/hooks/courses/use-check-course-status';
 import type { Course } from '@/types/course.type';
 import { EligibilityErrorMessage } from './eligibility-error-message';
@@ -10,7 +10,7 @@ interface EligibilityAlertProps {
 }
 
 export function EligibilityAlert({ course }: EligibilityAlertProps) {
-  const { evaluate } = useCheckCourseEligibility();
+  const { evaluate } = useCheckEnrollmentEligibility();
   const { eligible, validation } = evaluate(course);
   const { status } = useCheckCourseStatus(course);
 

@@ -1,9 +1,9 @@
 import type { ReactNode } from 'react';
-import type { CourseAvailabilityError } from '@/types/course.type';
+import type { EnrollmentAvailabilityError } from '@/types/enrollments.type';
 import { PrerequisiteLink } from './prerequisite-link';
 
 type EligibilityErrorMessageProps = {
-  error: CourseAvailabilityError;
+  error: EnrollmentAvailabilityError;
   onCourseSelect?: (courseId: number) => void;
   className?: string;
 };

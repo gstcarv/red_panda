@@ -1,4 +1,4 @@
-import * as enrollmentsApi from '@/api/enrollments-api';
+import * as studentsApi from '@/api/students-api';
 import type { Course, CourseSection } from '@/types/course.type';
 import type { Enrollment } from '@/types/enrollments.type';
 import { buildEnrollmentsQueryKey } from '@/hooks/enrollments/use-enrollments';
@@ -36,7 +36,7 @@ describe('useUnenroll', () => {
   it('calls unenroll endpoint with course id', async () => {
     const { wrapper } = createWrapper();
     const unenrollSpy = vi
-      .spyOn(enrollmentsApi, 'unenroll')
+      .spyOn(studentsApi, 'unenroll')
       .mockResolvedValue({ data: {} } as never);
 
     const { result } = renderHook(() => useUnenroll(), {
@@ -55,7 +55,7 @@ describe('useUnenroll', () => {
     const onError = mockFn<(error: unknown) => void>();
     const onSettled = mockFn<() => void>();
 
-    vi.spyOn(enrollmentsApi, 'unenroll').mockResolvedValue({
+    vi.spyOn(studentsApi, 'unenroll').mockResolvedValue({
       data: {} as never,
     } as never);
 
@@ -134,7 +134,7 @@ describe('useUnenroll', () => {
       data: { enrollments: [enrollmentOne, enrollmentTwo] },
     });
 
-    vi.spyOn(enrollmentsApi, 'unenroll').mockResolvedValue({
+    vi.spyOn(studentsApi, 'unenroll').mockResolvedValue({
       data: { enrollment: enrollmentOne },
     } as never);
 
@@ -156,7 +156,7 @@ describe('useUnenroll', () => {
     const { queryClient, wrapper } = createWrapper();
     const invalidateQueriesSpy = vi.spyOn(queryClient, 'invalidateQueries');
 
-    vi.spyOn(enrollmentsApi, 'unenroll').mockResolvedValue({
+    vi.spyOn(studentsApi, 'unenroll').mockResolvedValue({
       data: {},
     } as never);
 

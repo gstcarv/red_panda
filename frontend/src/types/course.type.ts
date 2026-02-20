@@ -37,9 +37,3 @@ export interface CourseSection {
   capacity: number;
   enrolledCount: number;
 }
-
-export interface CourseAvailabilityError {
-  type: 'prerequisite' | 'conflict' | 'max_courses' | 'grade_level' | 'other';
-  message: string;
-  prerequisite?: CoursePrerequisite;
-}

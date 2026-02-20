@@ -4,8 +4,8 @@ import { useFilteredExploreCourses } from '@/hooks/courses/use-filtered-explore-
 import type { Course } from '@/types/course.type';
 import { useCourseHistory } from '@/hooks/courses/use-course-history';
 
-vi.mock('@/hooks/courses/use-check-course-eligibility', () => ({
-  useCheckCourseEligibility: () => ({
+vi.mock('@/hooks/enrollments/use-check-enrollment-eligibility', () => ({
+  useCheckEnrollmentEligibility: () => ({
     evaluate: (course: Course) => ({
       eligible: course.id !== 2,
     }),

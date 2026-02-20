@@ -1,4 +1,4 @@
-import * as enrollmentsApi from '@/api/enrollments-api';
+import * as studentsApi from '@/api/students-api';
 import type { Course, CourseSection } from '@/types/course.type';
 import type { Enrollment } from '@/types/enrollments.type';
 import { buildEnrollmentsQueryKey } from '@/hooks/enrollments/use-enrollments';
@@ -64,7 +64,7 @@ describe('useEnroll', () => {
   it('sends enrollment payload with selected course id', async () => {
     const { wrapper } = createWrapper();
     const enrollSpy = vi
-      .spyOn(enrollmentsApi, 'enroll')
+      .spyOn(studentsApi, 'enroll')
       .mockResolvedValue({ data: { enrollment: mockEnrollment } } as never);
 
     const { result } = renderHook(() => useEnroll(20), {
@@ -87,7 +87,7 @@ describe('useEnroll', () => {
     const onError = mockFn<(error: unknown) => void>();
     const onSettled = mockFn<() => void>();
 
-    vi.spyOn(enrollmentsApi, 'enroll').mockResolvedValue({
+    vi.spyOn(studentsApi, 'enroll').mockResolvedValue({
       data: { enrollment: mockEnrollment },
     } as never);
 
@@ -115,7 +115,7 @@ describe('useEnroll', () => {
 
   it('rejects when no course is selected', async () => {
     const { wrapper } = createWrapper();
-    const enrollSpy = vi.spyOn(enrollmentsApi, 'enroll');
+    const enrollSpy = vi.spyOn(studentsApi, 'enroll');
 
     const { result } = renderHook(() => useEnroll(null), {
       wrapper,
@@ -178,7 +178,7 @@ describe('useEnroll', () => {
       data: { enrollments: [initialEnrollment] },
     });
 
-    vi.spyOn(enrollmentsApi, 'enroll').mockResolvedValue({
+    vi.spyOn(studentsApi, 'enroll').mockResolvedValue({
       data: { enrollment: returnedEnrollment },
     } as never);
 
@@ -202,7 +202,7 @@ describe('useEnroll', () => {
     const { queryClient, wrapper } = createWrapper();
     const invalidateQueriesSpy = vi.spyOn(queryClient, 'invalidateQueries');
 
-    vi.spyOn(enrollmentsApi, 'enroll').mockResolvedValue({
+    vi.spyOn(studentsApi, 'enroll').mockResolvedValue({
       data: { enrollment: mockEnrollment },
     } as never);
 

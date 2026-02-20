@@ -14,7 +14,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import type { CourseAvailabilityError } from '@/types/course.type';
+import type { EnrollmentAvailabilityError } from '@/types/enrollments.type';
 import { EligibilityErrorMessage } from './eligibility-error-message';
 
 type EnrollmentActionButtonProps = {
@@ -22,7 +22,7 @@ type EnrollmentActionButtonProps = {
   sectionId: number;
   isFull?: boolean;
   eligible?: boolean;
-  validation?: CourseAvailabilityError[];
+  validation?: EnrollmentAvailabilityError[];
   onEnrollSuccess?: () => void;
   onUnenrollSuccess?: () => void;
   onError?: (error: unknown) => void;

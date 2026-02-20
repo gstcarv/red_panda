@@ -25,7 +25,7 @@ function createSection(overrides: Partial<CourseSection> = {}): CourseSection {
 }
 
 const enrollmentActionButtonSpy = vi.fn();
-const useCheckCourseEligibilitySpy = mockFn<
+const useCheckEnrollmentEligibilitySpy = mockFn<
   () => {
     evaluate: () => {
       eligible: boolean;
@@ -38,8 +38,8 @@ vi.mock('@formkit/auto-animate/react', () => ({
   useAutoAnimate: () => [vi.fn()],
 }));
 
-vi.mock('@/hooks/courses/use-check-course-eligibility', () => ({
-  useCheckCourseEligibility: () => useCheckCourseEligibilitySpy(),
+vi.mock('@/hooks/enrollments/use-check-enrollment-eligibility', () => ({
+  useCheckEnrollmentEligibility: () => useCheckEnrollmentEligibilitySpy(),
 }));
 
 vi.mock('@/components/courses/enrollment-action-button', () => ({
@@ -71,7 +71,7 @@ function createCourse(overrides: Partial<Course> = {}): Course {
 
 describe('CourseSectionList', () => {
   it('renders section schedule and enrollment status', () => {
-    useCheckCourseEligibilitySpy.mockReturnValue({
+    useCheckEnrollmentEligibilitySpy.mockReturnValue({
       evaluate: () => ({
         eligible: true,
         validation: [],
@@ -92,7 +92,7 @@ describe('CourseSectionList', () => {
   });
 
   it('shows an empty state when no sections are available', () => {
-    useCheckCourseEligibilitySpy.mockReturnValue({
+    useCheckEnrollmentEligibilitySpy.mockReturnValue({
       evaluate: () => ({
         eligible: true,
         validation: [],
@@ -110,7 +110,7 @@ describe('CourseSectionList', () => {
 
   it('passes course/section identifiers to EnrollmentActionButton', () => {
     enrollmentActionButtonSpy.mockClear();
-    useCheckCourseEligibilitySpy.mockReturnValue({
+    useCheckEnrollmentEligibilitySpy.mockReturnValue({
       evaluate: () => ({
         eligible: true,
         validation: [],
@@ -135,7 +135,7 @@ describe('CourseSectionList', () => {
 
   it('marks full sections in action props and badge', () => {
     enrollmentActionButtonSpy.mockClear();
-    useCheckCourseEligibilitySpy.mockReturnValue({
+    useCheckEnrollmentEligibilitySpy.mockReturnValue({
       evaluate: () => ({
         eligible: true,
         validation: [],

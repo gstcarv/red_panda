@@ -9,7 +9,7 @@ import type {
 import type {
   EnrollParams,
   EnrollResponse,
-} from "@/api/enrollments-api";
+} from "@/api/students-api";
 import type {
   GetStudentCourseHistoryResponse,
   GetStudentEnrollmentsResponse,

@@ -1,9 +1,9 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { mockFn } from 'vitest-mock-extended';
 import { api } from '@/config/api';
-import * as enrollmentsApi from '@/api/enrollments-api';
+import * as studentsApi from '@/api/students-api';
 
-describe('enrollments api module', () => {
+describe('students api enrollments endpoints', () => {
   afterEach(() => {
     vi.restoreAllMocks();
   });
@@ -13,7 +13,7 @@ describe('enrollments api module', () => {
     postMock.mockResolvedValue({ data: {} } as never);
     vi.spyOn(api, 'post').mockImplementation(postMock);
 
-    await enrollmentsApi.enroll({
+    await studentsApi.enroll({
       studentId: 1,
       courseId: 2,
       sectionId: 3,
@@ -31,7 +31,7 @@ describe('enrollments api module', () => {
     deleteMock.mockResolvedValue({ data: {} } as never);
     vi.spyOn(api, 'delete').mockImplementation(deleteMock);
 
-    await enrollmentsApi.unenroll(2);
+    await studentsApi.unenroll(2);
 
     expect(deleteMock).toHaveBeenCalledWith('/me/enrollments', {
       params: { courseId: 2 },

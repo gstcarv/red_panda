@@ -3,7 +3,7 @@ import { useCourses } from '@/hooks/courses/use-courses';
 import { useEnrollments } from '@/hooks/enrollments/use-enrollments';
 import { useCourseHistory } from '@/hooks/courses/use-course-history';
 import { useStudent } from '@/hooks/students/use-student';
-import { evaluateCourseEligibility } from '@/hooks/courses/use-check-course-eligibility';
+import { evaluateEnrollmentEligibility } from '@/hooks/enrollments/use-check-enrollment-eligibility';
 import type { Course } from '@/types/course.type';
 
 const SLOT_INTERVAL_IN_MINUTES = 60;
@@ -68,7 +68,7 @@ export function useAvailableCoursesBySlot() {
     const bySlot = new Map<string, Course[]>();
 
     for (const course of courses ?? []) {
-      const { eligible } = evaluateCourseEligibility({
+      const { eligible } = evaluateEnrollmentEligibility({
         course,
         enrollments: enrollments ?? [],
         courseHistory: courseHistory ?? [],

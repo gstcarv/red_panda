@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useCheckCourseEligibility } from '@/hooks/courses/use-check-course-eligibility';
+import { useCheckEnrollmentEligibility } from '@/hooks/enrollments/use-check-enrollment-eligibility';
 import { useCourseHistory } from '@/hooks/courses/use-course-history';
 import type { Course } from '@/types/course.type';
 import type { ExploreCoursesFilterValues } from './use-explore-courses-filter-store';
@@ -71,7 +71,7 @@ export function useFilteredExploreCourses({
   courses,
   filter,
 }: UseFilteredExploreCoursesArgs) {
-  const { evaluate } = useCheckCourseEligibility();
+  const { evaluate } = useCheckEnrollmentEligibility();
   const { data: courseHistoryResponse } = useCourseHistory();
 
   const passedCourseIds = useMemo(() => {

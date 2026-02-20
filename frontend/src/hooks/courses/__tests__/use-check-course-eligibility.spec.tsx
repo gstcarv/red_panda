@@ -1,6 +1,6 @@
 import { renderHook } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
-import { useCheckCourseEligibility } from "@/hooks/courses/use-check-course-eligibility";
+import { useCheckEnrollmentEligibility } from "@/hooks/enrollments/use-check-enrollment-eligibility";
 import { useCourseHistory } from "@/hooks/courses/use-course-history";
 import { useEnrollments } from "@/hooks/enrollments/use-enrollments";
 import { useStudent } from "@/hooks/students/use-student";
@@ -54,7 +54,7 @@ function createCourse(overrides: Partial<Course> = {}): Course {
   };
 }
 
-describe("useCheckCourseEligibility", () => {
+describe("useCheckEnrollmentEligibility", () => {
   it("returns max courses error when student already has five enrollments", () => {
     mockedUseEnrollments.mockReturnValue({
       data: {
@@ -117,7 +117,7 @@ describe("useCheckCourseEligibility", () => {
       isError: false,
     } as never);
 
-    const { result } = renderHook(() => useCheckCourseEligibility());
+    const { result } = renderHook(() => useCheckEnrollmentEligibility());
     const eligibility = result.current.evaluate(createCourse());
 
     expect(eligibility.eligible).toBe(false);
@@ -171,7 +171,7 @@ describe("useCheckCourseEligibility", () => {
       isError: false,
     } as never);
 
-    const { result } = renderHook(() => useCheckCourseEligibility());
+    const { result } = renderHook(() => useCheckEnrollmentEligibility());
     const eligibility = result.current.evaluate(
       createCourse({ prerequisite: undefined }),
     );
@@ -229,7 +229,7 @@ describe("useCheckCourseEligibility", () => {
       isError: false,
     } as never);
 
-    const { result } = renderHook(() => useCheckCourseEligibility());
+    const { result } = renderHook(() => useCheckEnrollmentEligibility());
     const eligibility = result.current.evaluate(
       createCourse({
         prerequisite: undefined,
@@ -290,7 +290,7 @@ describe("useCheckCourseEligibility", () => {
       isError: false,
     } as never);
 
-    const { result } = renderHook(() => useCheckCourseEligibility());
+    const { result } = renderHook(() => useCheckEnrollmentEligibility());
     const eligibility = result.current.evaluate(createCourse());
 
     expect(eligibility.eligible).toBe(false);
@@ -357,7 +357,7 @@ describe("useCheckCourseEligibility", () => {
       isError: false,
     } as never);
 
-    const { result } = renderHook(() => useCheckCourseEligibility());
+    const { result } = renderHook(() => useCheckEnrollmentEligibility());
     const eligibility = result.current.evaluate(createCourse());
 
     expect(eligibility.eligible).toBe(true);
@@ -420,7 +420,7 @@ describe("useCheckCourseEligibility", () => {
       isError: false,
     } as never);
 
-    const { result } = renderHook(() => useCheckCourseEligibility());
+    const { result } = renderHook(() => useCheckEnrollmentEligibility());
     const eligibility = result.current.evaluate(
       createCourse({ prerequisite: undefined }),
     );
@@ -508,7 +508,7 @@ describe("useCheckCourseEligibility", () => {
       isError: false,
     } as never);
 
-    const { result } = renderHook(() => useCheckCourseEligibility());
+    const { result } = renderHook(() => useCheckEnrollmentEligibility());
     const eligibility = result.current.evaluate(createCourse());
 
     expect(eligibility.eligible).toBe(false);
@@ -578,7 +578,7 @@ describe("useCheckCourseEligibility", () => {
       isError: false,
     } as never);
 
-    const { result } = renderHook(() => useCheckCourseEligibility());
+    const { result } = renderHook(() => useCheckEnrollmentEligibility());
     const eligibility = result.current.evaluate(createCourse());
 
     expect(eligibility.eligible).toBe(false);

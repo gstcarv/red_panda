@@ -15,6 +15,20 @@ export type GetStudentEnrollmentsResponse = {
   enrollments: Enrollment[];
 };
 
+export type EnrollParams = {
+  studentId: number;
+  courseId: number;
+  sectionId: number;
+};
+
+export type EnrollResponse = {
+  enrollment: Enrollment;
+};
+
+export type UnenrollResponse = {
+  enrollment: Enrollment;
+};
+
 function getStudentCourseHistory() {
   return api.get<GetStudentCourseHistoryResponse>("/me/courses/history");
 }
@@ -27,8 +41,20 @@ function getStudentEnrollments() {
   return api.get<GetStudentEnrollmentsResponse>("/me/enrollments");
 }
 
+function enroll(params: EnrollParams) {
+  return api.post<EnrollResponse>("/me/enrollments", params);
+}
+
+function unenroll(courseId: number) {
+  return api.delete<UnenrollResponse>("/me/enrollments", {
+    params: { courseId },
+  });
+}
+
 export {
+  enroll,
   getStudentCourseHistory,
   getStudentProfile,
   getStudentEnrollments,
+  unenroll,
 };

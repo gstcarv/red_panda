@@ -6,8 +6,7 @@ import {
   type UseMutationOptions,
 } from '@tanstack/react-query';
 import type { Enrollment } from '@/types/enrollments.type';
-import type { GetStudentEnrollmentsResponse } from '@/api/students-api';
-import { enroll } from '@/api/enrollments-api';
+import { enroll, type GetStudentEnrollmentsResponse } from '@/api/students-api';
 import { buildCoursesQueryKey } from '@/hooks/courses/use-courses';
 import { buildEnrollmentsQueryKey } from '@/hooks/enrollments/use-enrollments';
 import { buildStudentQueryKey } from '@/hooks/students/use-student';

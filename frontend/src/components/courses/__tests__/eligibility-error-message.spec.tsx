@@ -2,7 +2,8 @@ import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { mockFn } from 'vitest-mock-extended';
 import { EligibilityErrorMessage } from '@/components/courses/eligibility-error-message';
-import type { CourseAvailabilityError, CoursePrerequisite } from '@/types/course.type';
+import type { CoursePrerequisite } from '@/types/course.type';
+import type { EnrollmentAvailabilityError } from '@/types/enrollments.type';
 
 type PrerequisiteLinkProps = {
   prerequisite: CoursePrerequisite;
@@ -27,7 +28,7 @@ describe('EligibilityErrorMessage', () => {
       code: 'MATH101',
       name: 'Algebra I',
     };
-    const error: CourseAvailabilityError = {
+    const error: EnrollmentAvailabilityError = {
       type: 'prerequisite',
       message: 'Missing prerequisite',
       prerequisite,
@@ -46,7 +47,7 @@ describe('EligibilityErrorMessage', () => {
 
   it('renders plain error message when error is not prerequisite', () => {
     prerequisiteLinkSpy.mockReset();
-    const error: CourseAvailabilityError = {
+    const error: EnrollmentAvailabilityError = {
       type: 'conflict',
       message: 'This course conflicts with your current schedule',
     };

@@ -6,7 +6,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { useCheckCourseEligibility } from '@/hooks/courses/use-check-course-eligibility';
+import { useCheckEnrollmentEligibility } from '@/hooks/enrollments/use-check-enrollment-eligibility';
 import {
   useCheckCourseStatus,
   type CourseStudentStatus,
@@ -63,7 +63,7 @@ function CourseStudentStatusBadge({ status }: { status: CourseStudentStatus }) {
 }
 
 function CourseStudentStatusTagWithEligibility({ course }: { course: Course }) {
-  const { evaluate } = useCheckCourseEligibility();
+  const { evaluate } = useCheckEnrollmentEligibility();
   const { eligible, validation } = evaluate(course);
   const { status } = useCheckCourseStatus(course);
 

@@ -4,7 +4,7 @@ import { mockFn } from 'vitest-mock-extended';
 import { EligibilityAlert } from '@/components/courses/eligibility-alert';
 import type { Course } from '@/types/course.type';
 
-const useCheckCourseEligibilitySpy = mockFn<
+const useCheckEnrollmentEligibilitySpy = mockFn<
   () => {
     evaluate: () => {
       eligible: boolean;
@@ -22,8 +22,8 @@ const useCheckCourseStatusSpy = mockFn<
   }
 >();
 
-vi.mock('@/hooks/courses/use-check-course-eligibility', () => ({
-  useCheckCourseEligibility: () => useCheckCourseEligibilitySpy(),
+vi.mock('@/hooks/enrollments/use-check-enrollment-eligibility', () => ({
+  useCheckEnrollmentEligibility: () => useCheckEnrollmentEligibilitySpy(),
 }));
 
 vi.mock('@/hooks/courses/use-check-course-status', () => ({
@@ -51,7 +51,7 @@ describe('EligibilityAlert', () => {
       isLoading: false,
       isError: false,
     });
-    useCheckCourseEligibilitySpy.mockReturnValue({
+    useCheckEnrollmentEligibilitySpy.mockReturnValue({
       evaluate: () => ({
         eligible: false,
         validation: [{ type: 'conflict', message: 'Schedule conflict' }],
@@ -72,7 +72,7 @@ describe('EligibilityAlert', () => {
       isLoading: false,
       isError: false,
     });
-    useCheckCourseEligibilitySpy.mockReturnValue({
+    useCheckEnrollmentEligibilitySpy.mockReturnValue({
       evaluate: () => ({
         eligible: false,
         validation: [{ type: 'conflict', message: 'This course conflicts with your current schedule' }],
@@ -97,7 +97,7 @@ describe('EligibilityAlert', () => {
       isLoading: false,
       isError: false,
     });
-    useCheckCourseEligibilitySpy.mockReturnValue({
+    useCheckEnrollmentEligibilitySpy.mockReturnValue({
       evaluate: () => ({
         eligible: false,
         validation: [

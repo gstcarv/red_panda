@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { EnrollmentActionButton } from '@/components/courses/enrollment-action-button';
 import type { CourseSection, Course } from '@/types/course.type';
 import { cn } from '@/lib/utils';
-import { useCheckCourseEligibility } from '@/hooks/courses/use-check-course-eligibility';
+import { useCheckEnrollmentEligibility } from '@/hooks/enrollments/use-check-enrollment-eligibility';
 
 dayjs.extend(customParseFormat);
 
@@ -46,7 +46,7 @@ export function CourseSectionList({
   enrolledSections = [],
   onEnrollSuccess,
 }: CourseSectionListProps) {
-  const { evaluate } = useCheckCourseEligibility();
+  const { evaluate } = useCheckEnrollmentEligibility();
   const { eligible, validation } = evaluate(course);
   const enrolledSectionIds = new Set(enrolledSections.map((s) => s.id));
   const [containerRef] = useAutoAnimate({ duration: 300 });

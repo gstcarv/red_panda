@@ -2,11 +2,12 @@ import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { mockFn } from 'vitest-mock-extended';
 import { CourseStudentStatusTag } from '@/components/courses/course-student-status-tag';
-import type { Course, CourseAvailabilityError } from '@/types/course.type';
+import type { Course } from '@/types/course.type';
+import type { EnrollmentAvailabilityError } from '@/types/enrollments.type';
 
 type EligibilityResult = {
   eligible: boolean;
-  validation?: CourseAvailabilityError[];
+  validation?: EnrollmentAvailabilityError[];
 };
 
 const useCheckCourseEligibilitySpy = mockFn<
@@ -25,11 +26,11 @@ const useCheckCourseStatusSpy = mockFn<
 >();
 
 const eligibilityErrorMessageSpy = mockFn<
-  (props: { error: CourseAvailabilityError }) => void
+  (props: { error: EnrollmentAvailabilityError }) => void
 >();
 
-vi.mock('@/hooks/courses/use-check-course-eligibility', () => ({
-  useCheckCourseEligibility: () => useCheckCourseEligibilitySpy(),
+vi.mock('@/hooks/enrollments/use-check-enrollment-eligibility', () => ({
+  useCheckEnrollmentEligibility: () => useCheckCourseEligibilitySpy(),
 }));
 
 vi.mock('@/hooks/courses/use-check-course-status', () => ({
@@ -37,7 +38,7 @@ vi.mock('@/hooks/courses/use-check-course-status', () => ({
 }));
 
 vi.mock('@/components/courses/eligibility-error-message', () => ({
-  EligibilityErrorMessage: (props: { error: CourseAvailabilityError }) => {
+  EligibilityErrorMessage: (props: { error: EnrollmentAvailabilityError }) => {
     eligibilityErrorMessageSpy(props);
     return <span data-testid="eligibility-error-message">{props.error.message}</span>;
   },
@@ -124,11 +125,11 @@ describe('CourseStudentStatusTag', () => {
 
   it('shows first validation reason in tooltip content when not eligible', () => {
     eligibilityErrorMessageSpy.mockReset();
-    const firstError: CourseAvailabilityError = {
+    const firstError: EnrollmentAvailabilityError = {
       type: 'max_courses',
       message: 'You have reached the maximum limit',
     };
-    const secondError: CourseAvailabilityError = {
+    const secondError: EnrollmentAvailabilityError = {
       type: 'conflict',
       message: 'Schedule conflict',
     };
