@@ -37,7 +37,7 @@ public class AuthController {
             @ApiResponse(responseCode = "400", description = "Invalid request", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "404", description = "Student not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
-    @PostMapping({"/login", "/api/login"})
+    @PostMapping({ "/api/login" })
     public ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody LoginRequestDTO request) {
         log.info("Received login request for email: {}", request.email());
         return ResponseEntity.ok(loginUseCase.execute(request.email()));

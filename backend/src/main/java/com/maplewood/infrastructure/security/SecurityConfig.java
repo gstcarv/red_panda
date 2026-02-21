@@ -32,7 +32,15 @@ public class SecurityConfig {
                         // Login endpoints - no auth required
                         .requestMatchers("/login", "/api/login").permitAll()
                         // Swagger / OpenAPI docs (springdoc.api-docs.path=/api)
-                        .requestMatchers("/api", "/api/swagger-ui/**", "/api/swagger-ui.html").permitAll()
+                        .requestMatchers(
+                                "/api",
+                                "/api/swagger-config",
+                                "/api/swagger-ui/**",
+                                "/api/swagger-ui.html",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/v3/api-docs/**",
+                                "/webjars/**").permitAll()
                         // Actuator health
                         .requestMatchers("/actuator/**").permitAll()
                         // All other API endpoints require Authorization: Bearer token

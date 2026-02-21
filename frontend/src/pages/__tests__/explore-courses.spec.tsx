@@ -5,7 +5,7 @@ import { mockFn } from 'vitest-mock-extended';
 import { ExploreCourses } from '@/pages/explore-courses';
 import { useCourses } from '@/hooks/courses/use-courses';
 import { useFilteredExploreCourses } from '@/hooks/courses/use-filtered-explore-courses';
-import { useExploreCoursesFilterStore } from '@/hooks/courses/use-explore-courses-filter-store';
+import { useExploreCoursesFilterStore } from '@/stores/explore-courses-filter-store';
 
 vi.mock('@/hooks/courses/use-courses', () => ({
   useCourses: vi.fn(),

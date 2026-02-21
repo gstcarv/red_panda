@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useCheckEnrollmentEligibility } from '@/hooks/enrollments/use-check-enrollment-eligibility';
 import { useCourseHistory } from '@/hooks/courses/use-course-history';
 import type { Course } from '@/types/course.type';
-import type { ExploreCoursesFilterValues } from './use-explore-courses-filter-store';
+import type { ExploreCoursesFilterValues } from '@/stores/explore-courses-filter-store';
 
 type UseFilteredExploreCoursesArgs = {
   courses: Course[];

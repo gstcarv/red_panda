@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 import { mockFn } from 'vitest-mock-extended';
 import { CoursesFilter } from '@/components/courses/courses-filter';
-import type { ExploreCoursesFilterValues } from '@/hooks/courses/use-explore-courses-filter-store';
+import type { ExploreCoursesFilterValues } from '@/stores/explore-courses-filter-store';
 
 describe('CoursesFilter', () => {
   it('updates search value based on latest typed character', async () => {

@@ -1,12 +1,14 @@
 import type { ReactNode } from 'react';
-import { Link } from 'react-router-dom';
-import { User } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { LogOut, User } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 import { NavTabs } from '@/components/layout/nav-tabs';
 import { useStudent } from '@/hooks/students/use-student';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useAuthStore } from '@/stores/auth-store';
 
 export interface BaseLayoutProps {
   children: ReactNode;
@@ -26,7 +28,9 @@ export function BaseLayout({
   className,
   mainClassName,
 }: BaseLayoutProps) {
+  const navigate = useNavigate();
   const { data, isLoading } = useStudent();
+  const logout = useAuthStore((state) => state.logout);
   const student = data?.data.student;
 
   const studentName = student
@@ -41,6 +45,11 @@ export function BaseLayout({
     (student?.credits?.max ?? 0) > 0 &&
     (student?.credits?.earned ?? 0) >= (student?.credits?.max ?? 0);
   const disabledPaths = hasGraduated ? ['/courses', '/schedule'] : [];
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login', { replace: true });
+  };
 
   return (
     <div
@@ -95,6 +104,16 @@ export function BaseLayout({
             >
               <User className="size-4" />
             </div>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={handleLogout}
+              aria-label="Logout"
+            >
+              <LogOut className="size-4" />
+              <span className="hidden sm:inline">Logout</span>
+            </Button>
           </div>
         </div>
 

@@ -34,7 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequestMapping("/api/me")
-@Tag(name = "Students", description = "Student profile APIs")
+@Tag(name = "Students", description = "Current student APIs")
 @SecurityRequirement(name = "bearerAuth")
 public class StudentController {
 

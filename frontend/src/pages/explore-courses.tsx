@@ -5,7 +5,7 @@ import {
 import { PageTitle } from '@/components/ui/page-title';
 import { useCourses } from '@/hooks/courses/use-courses';
 import { useFilteredExploreCourses } from '@/hooks/courses/use-filtered-explore-courses';
-import { useExploreCoursesFilterStore } from '@/hooks/courses/use-explore-courses-filter-store';
+import { useExploreCoursesFilterStore } from '@/stores/explore-courses-filter-store';
 
 export function ExploreCourses() {
   const filter = useExploreCoursesFilterStore((state) => state.filter);

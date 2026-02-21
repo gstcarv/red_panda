@@ -25,7 +25,9 @@ describe('courses api module', () => {
 
     await coursesApi.getCourseById(42);
 
-    expect(getMock).toHaveBeenCalledWith('/courses/42');
+    expect(getMock).toHaveBeenCalledWith('/courses/42', {
+      params: undefined,
+    });
   });
 
 });

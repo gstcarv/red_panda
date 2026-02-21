@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import {
   WEEKDAY_FILTER_OPTIONS,
   type ExploreCoursesFilterValues,
-} from '@/hooks/courses/use-explore-courses-filter-store';
+} from '@/stores/explore-courses-filter-store';
 
 export interface CoursesFilterProps {
   value: ExploreCoursesFilterValues;
