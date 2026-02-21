@@ -21,10 +21,7 @@ export function Schedule() {
         aria-label="Weekly calendar"
         className="lg:sticky lg:top-6 lg:self-start"
       >
-        <ScheduleCalendar
-          events={events}
-          activeCourseId={activeCourseId}
-        />
+        <ScheduleCalendar events={events} activeCourseId={activeCourseId} />
       </section>
     </div>
   );

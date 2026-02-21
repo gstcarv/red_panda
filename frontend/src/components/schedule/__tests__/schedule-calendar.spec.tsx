@@ -2,6 +2,7 @@ import { act, render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { ScheduleCalendar } from '@/components/schedule/schedule-calendar';
 import { useAvailableCoursesBySlot } from '@/hooks/courses/use-available-courses-by-slot';
+import { useActiveSemester } from '@/hooks/semester/use-active-semester';
 
 const schedulerSpy = vi.fn();
 const findCourseModalSpy = vi.fn();
@@ -45,10 +46,21 @@ vi.mock('@/hooks/courses/use-available-courses-by-slot', () => ({
   useAvailableCoursesBySlot: vi.fn(),
 }));
 
+vi.mock('@/hooks/semester/use-active-semester', () => ({
+  useActiveSemester: vi.fn(),
+}));
+
 const mockedUseAvailableCoursesBySlot = vi.mocked(useAvailableCoursesBySlot);
+const mockedUseActiveSemester = vi.mocked(useActiveSemester);
 
 describe('ScheduleCalendar', () => {
   function setupAvailableSlots() {
+    mockedUseActiveSemester.mockReturnValue({
+      id: 2,
+      name: 'Spring',
+      year: 2025,
+      order_in_year: 2,
+    });
     mockedUseAvailableCoursesBySlot.mockReturnValue({
       coursesBySlot: new Map([
         [

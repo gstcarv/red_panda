@@ -48,7 +48,7 @@ describe('BaseLayout', () => {
     expect(screen.getByText('Page Content')).toBeInTheDocument();
   });
 
-  it('renders student name and credits when profile is loaded', () => {
+  it('renders student name, grade and active semester when profile is loaded', () => {
     mockedUseStudent.mockReturnValue({
       data: {
         data: {
@@ -65,6 +65,12 @@ describe('BaseLayout', () => {
             },
             options: {
               maxCoursesPerSemester: 5,
+            },
+            activeSemester: {
+              id: 2,
+              name: 'Spring',
+              year: 2025,
+              order_in_year: 2,
             },
           },
         },
@@ -84,8 +90,10 @@ describe('BaseLayout', () => {
     );
 
     expect(screen.getByText('Jane Doe')).toBeInTheDocument();
+
     expect(screen.getByText('Grade 11')).toBeInTheDocument();
-    expect(screen.getByText('27 credits')).toBeInTheDocument();
+
+    expect(screen.getByText('Spring 2025')).toBeInTheDocument();
   });
 
   it('renders student name skeleton while profile is loading', () => {

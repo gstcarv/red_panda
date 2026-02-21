@@ -37,8 +37,9 @@ export function BaseLayout({
     ? `${student.firstName} ${student.lastName}`
     : 'User Name';
 
-  const creditsLabel =
-    student?.credits?.earned != null ? `${student.credits.earned} credits` : null;
+  const activeSemesterLabel = student?.activeSemester
+    ? `${student.activeSemester.name} ${student.activeSemester.year}`
+    : null;
   const gradeLabel =
     student?.gradeLevel != null ? `Grade ${student.gradeLevel}` : null;
   const hasGraduated =
@@ -83,9 +84,9 @@ export function BaseLayout({
                 {gradeLabel}
               </Badge>
             ) : null}
-            {creditsLabel ? (
+            {activeSemesterLabel ? (
               <Badge variant="secondary" className="hidden sm:inline-flex">
-                {creditsLabel}
+                {activeSemesterLabel}
               </Badge>
             ) : null}
             {isLoading ? (

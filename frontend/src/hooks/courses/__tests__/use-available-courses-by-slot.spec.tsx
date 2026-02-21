@@ -203,4 +203,119 @@ describe('useAvailableCoursesBySlot', () => {
       expect.objectContaining({ id: 1 }),
     ]);
   });
+
+  it('does not include already enrolled courses in available slot hints', async () => {
+    vi.spyOn(enrollmentsHook, 'useEnrollments').mockReturnValue({
+      data: {
+        data: {
+          enrollments: [
+            {
+              id: 'enr-1',
+              course: {
+                id: 1,
+                code: 'MATH101',
+                name: 'Algebra I',
+                credits: 3,
+                hoursPerWeek: 4,
+                gradeLevel: { min: 9, max: 10 },
+                availableSections: [],
+              },
+              courseSection: {
+                id: 10,
+                teacher: { id: 1, name: 'Dr. Smith' },
+                meetingTimes: [
+                  {
+                    dayOfWeek: 'Monday',
+                    startTime: '09:00',
+                    endTime: '10:00',
+                  },
+                ],
+                capacity: 30,
+                enrolledCount: 10,
+              },
+              semester: {
+                id: 2,
+                name: 'Spring',
+                year: 2025,
+                order_in_year: 2,
+              },
+            },
+          ],
+        },
+      },
+      isLoading: false,
+      isError: false,
+    } as never);
+    vi.spyOn(courseHistoryHook, 'useCourseHistory').mockReturnValue({
+      data: { data: { courseHistory: [] } },
+      isLoading: false,
+      isError: false,
+    } as never);
+    vi.spyOn(studentHook, 'useStudent').mockReturnValue({
+      data: {
+        data: {
+          student: {
+            id: 1,
+            firstName: 'Alex',
+            lastName: 'Johnson',
+            gradeLevel: 10,
+            email: 'alex@example.com',
+            gpa: 3.8,
+            credits: {
+              earned: 30,
+              max: 44,
+            },
+            options: {
+              maxCoursesPerSemester: 5,
+            },
+          },
+        },
+      },
+      isLoading: false,
+      isError: false,
+    } as never);
+    vi.spyOn(coursesHook, 'useCourses').mockReturnValue({
+      data: {
+        data: {
+          courses: [
+            {
+              id: 1,
+              code: 'MATH101',
+              name: 'Algebra I',
+              credits: 3,
+              hoursPerWeek: 4,
+              gradeLevel: { min: 9, max: 10 },
+              availableSections: [
+                {
+                  id: 1,
+                  teacher: { id: 1, name: 'Dr. Smith' },
+                  meetingTimes: [
+                    {
+                      dayOfWeek: 'Monday',
+                      startTime: '09:00',
+                      endTime: '10:00',
+                    },
+                  ],
+                  capacity: 30,
+                  enrolledCount: 10,
+                },
+              ],
+            },
+          ],
+        },
+      },
+      isLoading: false,
+      isError: false,
+    } as never);
+
+    const { result } = renderHook(() => useAvailableCoursesBySlot(), {
+      wrapper: createWrapper(),
+    });
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    expect(result.current.coursesBySlot.get('monday|09:00')).toBeUndefined();
+  });
 });

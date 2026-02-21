@@ -12,4 +12,10 @@ export interface Student {
     options: {
         maxCoursesPerSemester: number;
     };
+    activeSemester?: {
+        id: number;
+        name: string;
+        year: number;
+        order_in_year: number;
+    } | null;
 }

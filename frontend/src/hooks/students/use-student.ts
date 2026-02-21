@@ -1,8 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
 import { getStudentProfile } from "@/api/students-api";
+import { useQuery } from "@tanstack/react-query";
 
 export function buildStudentQueryKey() {
-  return ["me", "profile"] as const;
+  return ["student", "me", "profile"] as const;
 }
 
 export function useStudent() {

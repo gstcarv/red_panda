@@ -16,4 +16,5 @@ public class StudentProfileDTO {
     private Double gpa;
     private CreditsDTO credits;
     private OptionsDTO options;
+    private SemesterSummaryDTO activeSemester;
 }

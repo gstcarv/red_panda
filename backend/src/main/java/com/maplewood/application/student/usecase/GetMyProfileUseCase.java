@@ -2,9 +2,12 @@ package com.maplewood.application.student.usecase;
 
 import com.maplewood.application.student.dto.CreditsDTO;
 import com.maplewood.application.student.dto.OptionsDTO;
+import com.maplewood.application.student.dto.SemesterSummaryDTO;
 import com.maplewood.application.student.dto.StudentProfileDTO;
 import com.maplewood.application.student.dto.StudentProfileResponseDTO;
 import com.maplewood.domain.coursehistory.port.CourseHistoryRepositoryPort;
+import com.maplewood.domain.semester.model.Semester;
+import com.maplewood.domain.semester.port.SemesterRepositoryPort;
 import com.maplewood.domain.student.exception.StudentNotFoundException;
 import com.maplewood.domain.student.model.StudentAcademicMetrics;
 import com.maplewood.domain.student.model.Student;
@@ -20,13 +23,16 @@ public class GetMyProfileUseCase {
 
     private final StudentRepositoryPort studentRepositoryPort;
     private final CourseHistoryRepositoryPort courseHistoryRepositoryPort;
+    private final SemesterRepositoryPort semesterRepositoryPort;
 
     public GetMyProfileUseCase(
             StudentRepositoryPort studentRepositoryPort,
-            CourseHistoryRepositoryPort courseHistoryRepositoryPort
+            CourseHistoryRepositoryPort courseHistoryRepositoryPort,
+            SemesterRepositoryPort semesterRepositoryPort
     ) {
         this.studentRepositoryPort = studentRepositoryPort;
         this.courseHistoryRepositoryPort = courseHistoryRepositoryPort;
+        this.semesterRepositoryPort = semesterRepositoryPort;
     }
 
     @Transactional(readOnly = true)
@@ -34,6 +40,9 @@ public class GetMyProfileUseCase {
         Student student = studentRepositoryPort.findById(studentId)
                 .orElseThrow(() -> new StudentNotFoundException("id: " + studentId));
         StudentAcademicMetrics studentAcademicMetrics = courseHistoryRepositoryPort.findStudentAcademicMetrics(studentId);
+        SemesterSummaryDTO activeSemester = semesterRepositoryPort.findActiveSemester()
+                .map(this::toSemesterSummary)
+                .orElse(null);
 
         StudentProfileDTO profile = new StudentProfileDTO(
                 student.getId(),
@@ -43,9 +52,19 @@ public class GetMyProfileUseCase {
                 student.getEmail(),
                 studentAcademicMetrics.getGpa(),
                 new CreditsDTO(studentAcademicMetrics.getCreditsEarned(), CREDITS_MAX),
-                new OptionsDTO(MAX_COURSES_PER_SEMESTER)
+                new OptionsDTO(MAX_COURSES_PER_SEMESTER),
+                activeSemester
         );
 
         return new StudentProfileResponseDTO(profile);
+    }
+
+    private SemesterSummaryDTO toSemesterSummary(Semester semester) {
+        return new SemesterSummaryDTO(
+                semester.getId(),
+                semester.getName(),
+                semester.getYear(),
+                semester.getOrderInYear()
+        );
     }
 }

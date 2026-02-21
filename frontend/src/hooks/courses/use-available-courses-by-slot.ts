@@ -66,8 +66,16 @@ export function useAvailableCoursesBySlot() {
 
   const coursesBySlot = useMemo(() => {
     const bySlot = new Map<string, Course[]>();
+    const enrolledCourseIds = new Set(
+      (enrollments ?? []).map((enrollment) => enrollment.course.id),
+    );
 
     for (const course of courses ?? []) {
+      // Slot hints should only represent courses not yet enrolled.
+      if (enrolledCourseIds.has(course.id)) {
+        continue;
+      }
+
       const { eligible } = evaluateEnrollmentEligibility({
         course,
         enrollments: enrollments ?? [],

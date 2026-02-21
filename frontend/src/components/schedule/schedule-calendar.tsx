@@ -13,6 +13,7 @@ import type {
 } from '@/types/scheduler.type';
 import { ScheduleFindCourseModal } from './schedule-find-course-modal';
 import { CourseDetailsModal } from '@/components/courses/course-section-modal';
+import { useActiveSemester } from '@/hooks/semester/use-active-semester';
 
 const CALENDAR_BOTTOM_OFFSET = 40;
 
@@ -122,6 +123,7 @@ export function ScheduleCalendar({
   activeCourseId = null,
 }: ScheduleCalendarProps) {
   const { coursesBySlot } = useAvailableCoursesBySlot();
+  const semester = useActiveSemester();
   const calendarContainerRef = useRef<HTMLElement | null>(null);
   const [calendarHeight, setCalendarHeight] = useState(720);
   const [selectedSlot, setSelectedSlot] = useState<SchedulerSlotSelection | null>(
@@ -234,6 +236,7 @@ export function ScheduleCalendar({
       />
       <CourseDetailsModal
         courseId={selectedCourseId}
+        semesterId={semester?.id}
         open={selectedCourseId !== null}
         onOpenChange={(open) => {
           if (!open) {
