@@ -22,6 +22,7 @@ import com.maplewood.domain.semester.exception.ActiveSemesterNotFoundException;
 import com.maplewood.domain.semester.model.Semester;
 import com.maplewood.domain.semester.port.SemesterRepositoryPort;
 import com.maplewood.domain.student.exception.StudentNotFoundException;
+import com.maplewood.domain.student.model.StudentAcademicMetrics;
 import com.maplewood.domain.student.model.Student;
 import com.maplewood.domain.student.port.StudentRepositoryPort;
 import com.maplewood.domain.teacher.model.Teacher;
@@ -109,6 +110,10 @@ public class CreateEnrollmentUseCase {
                 activeSemester.getId()
         );
         List<CourseHistory> courseHistory = courseHistoryRepositoryPort.findByStudentId(studentId);
+        StudentAcademicMetrics studentAcademicMetrics = courseHistoryRepositoryPort.findStudentAcademicMetrics(studentId);
+        Double earnedCredits = studentAcademicMetrics.getCreditsEarned() == null
+                ? 0.0
+                : studentAcademicMetrics.getCreditsEarned().doubleValue();
         List<CourseSection> currentEnrollmentSections = findCurrentEnrollmentSections(
                 currentSemesterEnrollments,
                 activeSemester.getId()
@@ -122,7 +127,8 @@ public class CreateEnrollmentUseCase {
                 currentSemesterEnrollments,
                 courseHistory,
                 currentEnrollmentSections,
-                null
+                null,
+                earnedCredits
         );
 
         Enrollment enrollment = enrollmentRepositoryPort.save(

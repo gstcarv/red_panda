@@ -13,12 +13,14 @@ export interface NavTabsProps {
   onLinkClick?: () => void;
   className?: string;
   variant?: 'horizontal' | 'vertical';
+  disabledPaths?: ReadonlyArray<string>;
 }
 
 export function NavTabs({
   onLinkClick,
   className,
   variant = 'horizontal',
+  disabledPaths = [],
 }: NavTabsProps) {
   const location = useLocation();
   const isVertical = variant === 'vertical';
@@ -37,6 +39,26 @@ export function NavTabs({
     >
       {NAV_ITEMS.map(({ to, label, icon: Icon }) => {
         const isActive = location.pathname === to;
+        const isDisabled = disabledPaths.includes(to);
+
+        if (isDisabled) {
+          return (
+            <button
+              key={to}
+              type="button"
+              disabled
+              className={cn(
+                'flex items-center gap-2 text-sm font-medium whitespace-nowrap opacity-50 cursor-not-allowed',
+                isVertical ? 'rounded-md px-4 py-3' : 'rounded-none pb-3 -mb-px',
+              )}
+              aria-label={`${label} (disabled)`}
+            >
+              <Icon className="size-4 shrink-0" aria-hidden />
+              {label}
+            </button>
+          );
+        }
+
         return (
           <Link
             key={to}

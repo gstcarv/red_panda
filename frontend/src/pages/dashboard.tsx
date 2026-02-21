@@ -5,6 +5,7 @@ import {
   CourseHistoryCard,
   DashboardErrorState,
   DashboardSummaryCards,
+  GraduationSuccessBanner,
   GraduationProgressCard,
 } from '@/components/dashboard';
 import { useCourseDetailsModal } from '@/hooks/courses/use-course-details-modal';
@@ -38,6 +39,10 @@ export function Dashboard() {
     }
     handleModalClose(open);
   };
+  const hasGraduated =
+    !isLoading &&
+    metrics.requiredCredits > 0 &&
+    metrics.earnedCredits >= metrics.requiredCredits;
 
   if (isError) {
     return (
@@ -57,6 +62,13 @@ export function Dashboard() {
         title="Student Dashboard"
         description="Track your GPA, credits and overall graduation progress."
       />
+
+      {hasGraduated ? (
+        <GraduationSuccessBanner
+          earnedCredits={metrics.earnedCredits}
+          requiredCredits={metrics.requiredCredits}
+        />
+      ) : null}
 
       <DashboardSummaryCards isLoading={isLoading} metrics={metrics} />
 

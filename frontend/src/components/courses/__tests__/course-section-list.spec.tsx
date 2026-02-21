@@ -88,7 +88,6 @@ describe('CourseSectionList', () => {
 
     expect(screen.getByText('Jane Doe')).toBeInTheDocument();
     expect(screen.getByText('Mon 8:00 AM-9:30 AM')).toBeInTheDocument();
-    expect(screen.getByText('18 spots')).toBeInTheDocument();
   });
 
   it('shows an empty state when no sections are available', () => {
@@ -133,7 +132,7 @@ describe('CourseSectionList', () => {
     );
   });
 
-  it('marks full sections in action props and badge', () => {
+  it('marks full sections in action props', () => {
     enrollmentActionButtonSpy.mockClear();
     useCheckEnrollmentEligibilitySpy.mockReturnValue({
       evaluate: () => ({
@@ -150,7 +149,6 @@ describe('CourseSectionList', () => {
       />,
     );
 
-    expect(screen.getAllByText('Full')).toHaveLength(1);
     expect(screen.getByRole('button', { name: 'action-10-full' })).toBeInTheDocument();
     expect(enrollmentActionButtonSpy).toHaveBeenCalledWith(
       expect.objectContaining({

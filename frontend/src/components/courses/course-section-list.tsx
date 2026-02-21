@@ -1,8 +1,7 @@
-import { Clock, Users, User } from 'lucide-react';
+import { Clock, User } from 'lucide-react';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
-import { Badge } from '@/components/ui/badge';
 import { EnrollmentActionButton } from '@/components/courses/enrollment-action-button';
 import type { CourseSection, Course } from '@/types/course.type';
 import { cn } from '@/lib/utils';
@@ -65,7 +64,6 @@ export function CourseSectionList({
     <div ref={containerRef} className="space-y-2">
       {sections.map((section) => {
         const isFull = section.enrolledCount >= section.capacity;
-        const spotsAvailable = section.capacity - section.enrolledCount;
         const isEnrolled = enrolledSectionIds.has(section.id);
 
         return (
@@ -100,23 +98,6 @@ export function CourseSectionList({
                     </span>
                   </div>
                 ))}
-              </div>
-              <div className="flex items-center gap-2 text-xs text-muted-foreground pl-5">
-                <div className="flex items-center gap-1">
-                  <Users className="h-3 w-3" />
-                  <span>
-                    {section.enrolledCount}/{section.capacity}
-                  </span>
-                </div>
-                {isFull ? (
-                  <Badge variant="destructive" className="text-xs h-5 px-1.5">
-                    Full
-                  </Badge>
-                ) : (
-                  <Badge variant="secondary" className="text-xs h-5 px-1.5">
-                    {spotsAvailable} spot{spotsAvailable !== 1 ? 's' : ''}
-                  </Badge>
-                )}
               </div>
             </div>
             {showEnrollmentAction ? (

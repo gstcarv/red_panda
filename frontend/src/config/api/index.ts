@@ -3,7 +3,7 @@ import { env } from "@/config/env";
 
 // TODO: Replace with token from auth storage (localStorage/sessionStorage) when implementing login
 const MOCK_TOKEN =
-  "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJkb3JvdGh5Lm1pdGNoZWxsMTFAc3R1ZGVudC5tYXBsZXdvb2QuZWR1IiwiZW1haWwiOiJkb3JvdGh5Lm1pdGNoZWxsMTFAc3R1ZGVudC5tYXBsZXdvb2QuZWR1IiwidXNlcklkIjoyMDMsImlhdCI6MTc3MTQ2NzI0MywiZXhwIjoxNzcyMzMxMjQzfQ._hBUvaS434CDC7SbrHgr3D6eyS0jliNWPoc_amRX8g13ymBO2tZZID404VW2BAlT";
+  "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJydXRoLndyaWdodDEyQHN0dWRlbnQubWFwbGV3b29kLmVkdSIsImVtYWlsIjoicnV0aC53cmlnaHQxMkBzdHVkZW50Lm1hcGxld29vZC5lZHUiLCJ1c2VySWQiOjM1MCwiaWF0IjoxNzcxNjMyNDQ3LCJleHAiOjE3NzI0OTY0NDd9.qKVDvgho39zQZ_4xZ8EwFSX5xINEiA5Q3Xlit1FeF4xC7RJavZM5l4errtrKZSzf";
 
 export const api = axios.create({
   baseURL: env.VITE_API_BASE_URL,

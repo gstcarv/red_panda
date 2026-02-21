@@ -16,6 +16,7 @@ import java.util.Objects;
 public class EnrollmentEligibilityService {
 
     private static final int DEFAULT_MAX_COURSES_PER_SEMESTER = 5;
+    private static final double REQUIRED_GRADUATION_CREDITS = 30.0;
     private static final String PASSED_STATUS = "passed";
 
     public boolean canUnroll(Enrollment enrollment, Semester activeSemester) {
@@ -34,7 +35,8 @@ public class EnrollmentEligibilityService {
             List<Enrollment> currentSemesterEnrollments,
             List<CourseHistory> courseHistory,
             List<CourseSection> currentEnrollmentSections,
-            Integer maxCoursesPerSemester
+            Integer maxCoursesPerSemester,
+            Double earnedCredits
     ) {
         if (!isCurrentSemesterEnrollment(targetSection, activeSemester)) {
             throw new EnrollmentEligibilityException(
@@ -56,6 +58,12 @@ public class EnrollmentEligibilityService {
                     "other",
                     "You have already passed this course."
             );
+        }
+
+        if (hasReachedGraduationCredits(earnedCredits)) {
+            throw new EnrollmentEligibilityException(
+                    "other",
+                    "You have already reached the required graduation credits.");
         }
 
         if (!isStudentGradeLevelEligible(student, course)) {
@@ -89,6 +97,13 @@ public class EnrollmentEligibilityService {
         }
 
         return true;
+    }
+
+    private boolean hasReachedGraduationCredits(Double earnedCredits) {
+        if (earnedCredits == null) {
+            return false;
+        }
+        return earnedCredits >= REQUIRED_GRADUATION_CREDITS;
     }
 
     private boolean isCurrentSemesterEnrollment(CourseSection targetSection, Semester activeSemester) {

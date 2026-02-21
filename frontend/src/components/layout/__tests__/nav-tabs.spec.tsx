@@ -33,4 +33,16 @@ describe('NavTabs', () => {
 
     expect(onLinkClick).toHaveBeenCalledTimes(1);
   });
+
+  it('renders schedule and explore as disabled when paths are blocked', () => {
+    render(
+      <MemoryRouter>
+        <NavTabs disabledPaths={['/courses', '/schedule']} />
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByRole('button', { name: /Explore Courses \(disabled\)/i })).toBeDisabled();
+    expect(screen.getByRole('button', { name: /Schedule \(disabled\)/i })).toBeDisabled();
+    expect(screen.getByRole('link', { name: /Painel/i })).toBeInTheDocument();
+  });
 });

@@ -327,6 +327,56 @@ describe('Dashboard', () => {
     expect(container.querySelectorAll('.animate-pulse').length).toBeGreaterThan(0);
   });
 
+  it('shows graduation success banner when required credits are reached', () => {
+    const studentRefetch = vi.fn().mockResolvedValue({});
+    const historyRefetch = vi.fn().mockResolvedValue({});
+
+    mockedUseStudent.mockReturnValue({
+      data: {
+        data: {
+          student: {
+            id: 1,
+            firstName: 'Alex',
+            lastName: 'Johnson',
+            gradeLevel: 11,
+            email: 'alex@example.com',
+            gpa: 3.7,
+            credits: {
+              earned: 30,
+              max: 30,
+            },
+            options: {
+              maxCoursesPerSemester: 5,
+            },
+          },
+        },
+      },
+      isLoading: false,
+      isError: false,
+      refetch: studentRefetch,
+    } as never);
+
+    mockedUseCourseHistory.mockReturnValue({
+      data: {
+        data: {
+          courseHistory: [],
+        },
+      },
+      isLoading: false,
+      isError: false,
+      refetch: historyRefetch,
+    } as never);
+
+    render(<Dashboard />);
+
+    expect(screen.getByText('Graduation successful')).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        'You reached 30/30 credits and completed your graduation requirement.',
+      ),
+    ).toBeInTheDocument();
+  });
+
   it('renders error state and retries both queries', async () => {
     const user = userEvent.setup();
     const { studentRefetch, historyRefetch } = mockLoadedState();

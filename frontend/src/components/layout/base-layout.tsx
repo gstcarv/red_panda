@@ -37,6 +37,10 @@ export function BaseLayout({
     student?.credits?.earned != null ? `${student.credits.earned} credits` : null;
   const gradeLabel =
     student?.gradeLevel != null ? `Grade ${student.gradeLevel}` : null;
+  const hasGraduated =
+    (student?.credits?.max ?? 0) > 0 &&
+    (student?.credits?.earned ?? 0) >= (student?.credits?.max ?? 0);
+  const disabledPaths = hasGraduated ? ['/courses', '/schedule'] : [];
 
   return (
     <div
@@ -95,7 +99,7 @@ export function BaseLayout({
         </div>
 
         <div className="nav-tabs-bar container mx-auto border-b border-border overflow-x-auto px-4 sm:px-0">
-          <NavTabs />
+          <NavTabs disabledPaths={disabledPaths} />
         </div>
       </header>
 

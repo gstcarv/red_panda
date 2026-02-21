@@ -1,5 +1,6 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { BaseLayout } from './components/layout/base-layout';
+import { GraduationAccessGuard } from './components/layout/graduation-access-guard';
 import { Dashboard } from './pages/dashboard';
 import { Schedule } from './pages/schedule';
 import { ExploreCourses } from './pages/explore-courses';
@@ -14,8 +15,22 @@ function App() {
         <BaseLayout>
           <Routes>
             <Route path="/" element={<Dashboard />} />
-            <Route path="/schedule" element={<Schedule />} />
-            <Route path="/courses" element={<ExploreCourses />} />
+            <Route
+              path="/schedule"
+              element={
+                <GraduationAccessGuard>
+                  <Schedule />
+                </GraduationAccessGuard>
+              }
+            />
+            <Route
+              path="/courses"
+              element={
+                <GraduationAccessGuard>
+                  <ExploreCourses />
+                </GraduationAccessGuard>
+              }
+            />
           </Routes>
         </BaseLayout>
       </BrowserRouter>
