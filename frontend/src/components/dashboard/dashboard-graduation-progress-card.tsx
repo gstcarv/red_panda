@@ -1,7 +1,4 @@
-import {
-  Card,
-  CardContent,
-} from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { DashboardMetrics } from '@/types/dashboard.type';
 
@@ -21,9 +18,7 @@ export function DashboardGraduationProgressCard({
   return (
     <Card>
       <CardContent className="flex items-center gap-3">
-        <span className="shrink-0 text-sm font-medium text-foreground">
-          Graduation Progress
-        </span>
+        <span className="shrink-0 text-sm font-medium text-foreground">Graduation Progress</span>
         {isLoading ? (
           <Skeleton className="h-4 w-48" />
         ) : (

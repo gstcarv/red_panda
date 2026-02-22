@@ -12,9 +12,7 @@ describe('useExploreCoursesFilterStore', () => {
   it('toggles weekdays using normalized values', () => {
     useExploreCoursesFilterStore.getState().toggleWeekday(' Monday ');
 
-    expect(useExploreCoursesFilterStore.getState().filter.weekdays).toEqual([
-      'monday',
-    ]);
+    expect(useExploreCoursesFilterStore.getState().filter.weekdays).toEqual(['monday']);
 
     useExploreCoursesFilterStore.getState().toggleWeekday('MONDAY');
 
@@ -31,8 +29,6 @@ describe('useExploreCoursesFilterStore', () => {
 
     useExploreCoursesFilterStore.getState().resetFilter();
 
-    expect(useExploreCoursesFilterStore.getState().filter).toEqual(
-      DEFAULT_EXPLORE_COURSES_FILTER,
-    );
+    expect(useExploreCoursesFilterStore.getState().filter).toEqual(DEFAULT_EXPLORE_COURSES_FILTER);
   });
 });

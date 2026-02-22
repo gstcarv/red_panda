@@ -5,10 +5,7 @@ import {
   type SchedulerEventClickArg,
 } from '@/components/ui/scheduler';
 import { useSchedulerSlotCourses } from '@/hooks/schedule/use-scheduler-slot-courses';
-import type {
-  SchedulerEvent,
-  SchedulerSlotSelection,
-} from '@/types/scheduler.type';
+import type { SchedulerEvent, SchedulerSlotSelection } from '@/types/scheduler.type';
 import { ScheduleFindCourseModal } from './schedule-find-course-modal';
 import { CourseDetailsModal } from '@/components/courses/course-details-modal';
 import { useActiveSemester } from '@/hooks/semester/use-active-semester';
@@ -116,17 +113,12 @@ type ScheduleCalendarProps = {
   activeCourseId?: number | null;
 };
 
-export function ScheduleCalendar({
-  events,
-  activeCourseId = null,
-}: ScheduleCalendarProps) {
+export function ScheduleCalendar({ events, activeCourseId = null }: ScheduleCalendarProps) {
   const { coursesBySlot } = useSchedulerSlotCourses();
   const semester = useActiveSemester();
   const calendarContainerRef = useRef<HTMLElement | null>(null);
   const [calendarHeight, setCalendarHeight] = useState(720);
-  const [selectedSlot, setSelectedSlot] = useState<SchedulerSlotSelection | null>(
-    null,
-  );
+  const [selectedSlot, setSelectedSlot] = useState<SchedulerSlotSelection | null>(null);
   const [isFindCourseModalOpen, setIsFindCourseModalOpen] = useState(false);
   const [selectedCourseId, setSelectedCourseId] = useState<number | null>(null);
 
@@ -138,9 +130,7 @@ export function ScheduleCalendar({
 
       const viewportHeight = window.visualViewport?.height ?? window.innerHeight;
       const topOffset = calendarContainerRef.current.getBoundingClientRect().top;
-      const availableHeight = Math.floor(
-        viewportHeight - topOffset - CALENDAR_BOTTOM_OFFSET,
-      );
+      const availableHeight = Math.floor(viewportHeight - topOffset - CALENDAR_BOTTOM_OFFSET);
 
       setCalendarHeight(Math.max(360, availableHeight));
     };

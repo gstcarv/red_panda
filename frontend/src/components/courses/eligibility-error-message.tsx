@@ -17,14 +17,10 @@ export function EligibilityErrorMessage({
     return (
       <span className={className}>
         Missing prerequisite:{' '}
-        <PrerequisiteLink
-          prerequisite={error.prerequisite}
-          onCourseSelect={onCourseSelect}
-        />
+        <PrerequisiteLink prerequisite={error.prerequisite} onCourseSelect={onCourseSelect} />
       </span>
     );
   }
 
   return <span className={className}>{error.message}</span>;
 }
-

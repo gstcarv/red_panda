@@ -1,11 +1,11 @@
 @import 'tailwindcss';
-@import "tw-animate-css";
-@import "shadcn/tailwind.css";
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
 
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  font-family: "Outfit", system-ui, sans-serif;
+  font-family: 'Outfit', system-ui, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -49,9 +49,9 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
-  --page-background: #F8F7FA;
-  --nav-active: #7B52D9;
-  --nav-inactive: #6C757D;
+  --page-background: #f8f7fa;
+  --nav-active: #7b52d9;
+  --nav-inactive: #6c757d;
 }
 
 @theme inline {

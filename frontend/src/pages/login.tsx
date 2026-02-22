@@ -25,8 +25,7 @@ export function Login() {
       : !isEmailValid
         ? 'Please enter a valid email address (example: you@example.com).'
         : null;
-  const shouldShowEmailError =
-    (hasTouchedEmail || hasSubmitted) && !!emailError;
+  const shouldShowEmailError = (hasTouchedEmail || hasSubmitted) && !!emailError;
 
   const { mutate, isPending } = useLogin({
     onSuccess: (response) => {

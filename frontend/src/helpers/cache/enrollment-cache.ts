@@ -16,26 +16,23 @@ function addEnrollment({
   queryClient: QueryClient;
   enrollment: Enrollment;
 }) {
-  queryClient.setQueryData<GetStudentEnrollmentsResponse>(
-    buildEnrollmentQueryKey(),
-    (current) => {
-      if (!current) {
-        return current;
-      }
+  queryClient.setQueryData<GetStudentEnrollmentsResponse>(buildEnrollmentQueryKey(), (current) => {
+    if (!current) {
+      return current;
+    }
 
-      const alreadyExists = current.enrollments.some(
-        (value) => value.courseSection.id === enrollment.courseSection.id,
-      );
+    const alreadyExists = current.enrollments.some(
+      (value) => value.courseSection.id === enrollment.courseSection.id,
+    );
 
-      if (alreadyExists) {
-        return current;
-      }
+    if (alreadyExists) {
+      return current;
+    }
 
-      return merge({}, current, {
-        enrollments: [...current.enrollments, enrollment],
-      });
-    },
-  );
+    return merge({}, current, {
+      enrollments: [...current.enrollments, enrollment],
+    });
+  });
 }
 
 function removeEnrollmentByCourseId({
@@ -45,30 +42,23 @@ function removeEnrollmentByCourseId({
   queryClient: QueryClient;
   courseId: number;
 }) {
-  queryClient.setQueryData<GetStudentEnrollmentsResponse>(
-    buildEnrollmentQueryKey(),
-    (current) => {
-      if (!current) {
-        return current;
-      }
+  queryClient.setQueryData<GetStudentEnrollmentsResponse>(buildEnrollmentQueryKey(), (current) => {
+    if (!current) {
+      return current;
+    }
 
-      const nextEnrollments = current.enrollments.filter(
-        (enrollment) => enrollment.course.id !== courseId,
-      );
+    const nextEnrollments = current.enrollments.filter(
+      (enrollment) => enrollment.course.id !== courseId,
+    );
 
-      return {
-        ...current,
-        enrollments: nextEnrollments,
-      };
-    },
-  );
+    return {
+      ...current,
+      enrollments: nextEnrollments,
+    };
+  });
 }
 
-function invalidate({
-  queryClient,
-}: {
-  queryClient: QueryClient;
-}) {
+function invalidate({ queryClient }: { queryClient: QueryClient }) {
   return queryClient.invalidateQueries({
     queryKey: buildEnrollmentQueryKey(),
   });

@@ -1,8 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
-import { getStudentCourseHistory } from "@/api/students-api";
+import { useQuery } from '@tanstack/react-query';
+import { getStudentCourseHistory } from '@/api/students-api';
 
 export function buildCourseHistoryQueryKey() {
-  return ["me", "courses", "history"] as const;
+  return ['me', 'courses', 'history'] as const;
 }
 
 export function useCourseHistory() {

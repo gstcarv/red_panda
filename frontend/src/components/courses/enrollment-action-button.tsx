@@ -8,12 +8,7 @@ import { useCourseHistory } from '@/hooks/courses/use-course-history';
 import { useErrorHandler } from '@/hooks/use-error-handler';
 import { FeedbackDialog } from '@/components/ui/feedback-dialog';
 import { ConfirmationDialog } from '@/components/ui/confirmation-dialog';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import type { EnrollmentAvailabilityError } from '@/types/enrollments.type';
 import { EligibilityErrorMessage } from './eligibility-error-message';
 
@@ -62,18 +57,12 @@ export function EnrollmentActionButton({
     description: '',
   });
   const enrollments = enrollmentsResponse?.enrollments ?? [];
-  const enrollment = enrollments.find(
-    (value) => value.courseSection.id === sectionId,
-  );
+  const enrollment = enrollments.find((value) => value.courseSection.id === sectionId);
   const isEnrolled = Boolean(enrollment);
   const courseHistory = courseHistoryResponse?.courseHistory ?? [];
   const isPassed =
     courseId != null &&
-    Boolean(
-      courseHistory.find(
-        (h) => h.courseId === courseId && h.status === 'passed',
-      ),
-    );
+    Boolean(courseHistory.find((h) => h.courseId === courseId && h.status === 'passed'));
 
   const enrollMutation = useEnroll(courseId, {
     onSuccess: () => {
@@ -111,13 +100,7 @@ export function EnrollmentActionButton({
 
   if (isPassed) {
     return (
-      <Button
-        type="button"
-        variant="outline"
-        size={size}
-        className={className}
-        disabled
-      >
+      <Button type="button" variant="outline" size={size} className={className} disabled>
         <CheckCircle2 className="h-3.5 w-3.5 mr-1.5 text-green-600" />
         Passed
       </Button>
@@ -127,13 +110,7 @@ export function EnrollmentActionButton({
   if (isEnrolled) {
     if (!enrollment) {
       return (
-        <Button
-          type="button"
-          variant="outline"
-          size={size}
-          className={className}
-          disabled
-        >
+        <Button type="button" variant="outline" size={size} className={className} disabled>
           Enrolled
         </Button>
       );
@@ -224,9 +201,7 @@ export function EnrollmentActionButton({
       <>
         <TooltipProvider>
           <Tooltip>
-            <TooltipTrigger className="inline-flex">
-              {button}
-            </TooltipTrigger>
+            <TooltipTrigger className="inline-flex">{button}</TooltipTrigger>
             <TooltipContent>
               {validation && validation.length > 0 && (
                 <EligibilityErrorMessage error={validation[0]} />

@@ -44,9 +44,7 @@ describe('useEnroll', () => {
     courseSection: {
       id: 100,
       teacher: { id: 1, name: 'Prof. Mock' },
-      meetingTimes: [
-        { dayOfWeek: 'Monday', startTime: '09:00', endTime: '10:00' },
-      ],
+      meetingTimes: [{ dayOfWeek: 'Monday', startTime: '09:00', endTime: '10:00' }],
       capacity: 30,
       enrolledCount: 10,
     },
@@ -117,11 +115,8 @@ describe('useEnroll', () => {
       wrapper,
     });
 
-    await expect(result.current.mutateAsync(50)).rejects.toThrow(
-      'No course selected',
-    );
+    await expect(result.current.mutateAsync(50)).rejects.toThrow('No course selected');
 
     expect(enrollSpy).not.toHaveBeenCalled();
   });
-
 });

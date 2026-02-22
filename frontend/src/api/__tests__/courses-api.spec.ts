@@ -29,5 +29,4 @@ describe('courses api module', () => {
       params: undefined,
     });
   });
-
 });

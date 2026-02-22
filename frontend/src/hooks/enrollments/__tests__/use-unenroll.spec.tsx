@@ -31,9 +31,7 @@ describe('useUnenroll', () => {
 
   it('calls unenroll endpoint with course id', async () => {
     const { wrapper } = createWrapper();
-    const unenrollSpy = vi
-      .spyOn(studentsApi, 'unenroll')
-      .mockResolvedValue({} as never);
+    const unenrollSpy = vi.spyOn(studentsApi, 'unenroll').mockResolvedValue({} as never);
 
     const { result } = renderHook(() => useUnenroll(), {
       wrapper,
@@ -76,5 +74,4 @@ describe('useUnenroll', () => {
     expect(onError).not.toHaveBeenCalled();
     expect(onSettled).toHaveBeenCalledTimes(1);
   });
-
 });

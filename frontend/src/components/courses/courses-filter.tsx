@@ -15,11 +15,7 @@ export interface CoursesFilterProps {
   className?: string;
 }
 
-export function CoursesFilter({
-  value,
-  onChange,
-  className,
-}: CoursesFilterProps) {
+export function CoursesFilter({ value, onChange, className }: CoursesFilterProps) {
   const handleSearchChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       onChange({ ...value, search: e.target.value });
@@ -64,10 +60,7 @@ export function CoursesFilter({
     <Card className={cn('overflow-hidden', className)}>
       <CardContent className="flex flex-col gap-5">
         <div className="flex flex-col gap-2 w-full min-w-0 lg:max-w-[50%]">
-          <label
-            htmlFor="courses-search"
-            className="text-sm font-medium text-foreground"
-          >
+          <label htmlFor="courses-search" className="text-sm font-medium text-foreground">
             Search
           </label>
           <div className="relative w-full">
@@ -100,10 +93,7 @@ export function CoursesFilter({
         <div className="flex flex-col gap-4 border-t border-border pt-4 md:flex-row md:items-end md:gap-4">
           <div className="grid w-fit gap-3 md:grid-cols-2">
             <div className="max-w-40 space-y-2">
-              <label
-                htmlFor="courses-from-time"
-                className="text-sm font-medium text-foreground"
-              >
+              <label htmlFor="courses-from-time" className="text-sm font-medium text-foreground">
                 From time
               </label>
               <Input
@@ -116,10 +106,7 @@ export function CoursesFilter({
               />
             </div>
             <div className="max-w-40 space-y-2">
-              <label
-                htmlFor="courses-until-time"
-                className="text-sm font-medium text-foreground"
-              >
+              <label htmlFor="courses-until-time" className="text-sm font-medium text-foreground">
                 Until time
               </label>
               <Input

@@ -1,8 +1,4 @@
-import {
-  useMutation,
-  useQueryClient,
-  type UseMutationOptions,
-} from '@tanstack/react-query';
+import { useMutation, useQueryClient, type UseMutationOptions } from '@tanstack/react-query';
 import { enroll } from '@/api/students-api';
 import { enrollmentsCache } from '@/helpers/cache/enrollment-cache';
 
@@ -10,11 +6,7 @@ type EnrollMutationData = Awaited<ReturnType<typeof enroll>>;
 
 type UseEnrollOptions = Omit<UseMutationOptions<EnrollMutationData, unknown, number>, 'mutationFn'>;
 
-
-export function useEnroll(
-  selectedCourseId: number | null,
-  options?: UseEnrollOptions,
-) {
+export function useEnroll(selectedCourseId: number | null, options?: UseEnrollOptions) {
   const queryClient = useQueryClient();
   const { onSuccess, ...mutationOptions } = options ?? {};
 

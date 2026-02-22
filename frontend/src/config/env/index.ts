@@ -1,5 +1,5 @@
-import { createEnv } from "@t3-oss/env-core";
-import { z } from "zod";
+import { createEnv } from '@t3-oss/env-core';
+import { z } from 'zod';
 
 export const env = createEnv({
   /**
@@ -13,14 +13,14 @@ export const env = createEnv({
    * isn't built with invalid env vars. To expose them to the client, prefix them with
    * `VITE_`.
    */
-  clientPrefix: "VITE_",
+  clientPrefix: 'VITE_',
   client: {
-    VITE_API_BASE_URL: z.url().optional().default("http://localhost:8080"),
+    VITE_API_BASE_URL: z.url().optional().default('http://localhost:8080'),
     VITE_ENABLE_MSW: z
       .string()
       .optional()
-      .default("false")
-      .transform((val) => val === "true"),
+      .default('false')
+      .transform((val) => val === 'true'),
   },
 
   /**

@@ -100,9 +100,7 @@ describe('SchedulerList', () => {
       },
     } as never);
 
-    render(
-      <SchedulerList />,
-    );
+    render(<SchedulerList />);
 
     expect(screen.getAllByTestId('schedule-course-card')).toHaveLength(2);
     expect(screen.getByText('Algebra I')).toBeInTheDocument();
@@ -117,9 +115,7 @@ describe('SchedulerList', () => {
       },
     } as never);
 
-    render(
-      <SchedulerList onCourseHoverChange={onCourseHoverChange} />,
-    );
+    render(<SchedulerList onCourseHoverChange={onCourseHoverChange} />);
 
     const card = screen.getByTestId('schedule-course-card');
     fireEvent.mouseEnter(card);

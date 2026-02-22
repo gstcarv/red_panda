@@ -27,9 +27,7 @@ describe('ValidUsersDialog', () => {
   it('shows empty state when no users are provided', async () => {
     const user = userEvent.setup();
 
-    render(
-      <ValidUsersDialog users={[]} onSelectUser={mockFn<(email: string) => void>()} />,
-    );
+    render(<ValidUsersDialog users={[]} onSelectUser={mockFn<(email: string) => void>()} />);
 
     await user.click(screen.getByRole('button', { name: /show valid users/i }));
 

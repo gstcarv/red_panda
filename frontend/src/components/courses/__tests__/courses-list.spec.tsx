@@ -36,16 +36,8 @@ vi.mock('@/components/courses/course-card', () => ({
 }));
 
 vi.mock('@/components/courses/course-details-modal', () => ({
-  CourseDetailsModal: ({
-    courseId,
-    open,
-  }: {
-    courseId: number | null;
-    open: boolean;
-  }) => (
-    <div data-testid="course-section-modal">
-      {open ? `open:${courseId}` : 'closed'}
-    </div>
+  CourseDetailsModal: ({ courseId, open }: { courseId: number | null; open: boolean }) => (
+    <div data-testid="course-section-modal">{open ? `open:${courseId}` : 'closed'}</div>
   ),
 }));
 
@@ -59,10 +51,7 @@ describe('CoursesList', () => {
   it('renders loading state with aria busy list', () => {
     render(<CoursesList courses={[]} isLoading />);
 
-    expect(screen.getByLabelText('Loading courses')).toHaveAttribute(
-      'aria-busy',
-      'true',
-    );
+    expect(screen.getByLabelText('Loading courses')).toHaveAttribute('aria-busy', 'true');
   });
 
   it('renders error state and allows retry', async () => {

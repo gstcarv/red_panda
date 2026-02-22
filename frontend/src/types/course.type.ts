@@ -28,7 +28,7 @@ export interface CourseSection {
   teacher: {
     id: number;
     name: string;
-  },
+  };
   meetingTimes: Array<{
     dayOfWeek: string;
     startTime: string;

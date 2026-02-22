@@ -93,10 +93,7 @@ function passesSearchFilter(course: Course, normalizedSearch: string) {
   const courseName = course.name.toLowerCase();
   const courseCode = course.code.toLowerCase();
 
-  return (
-    courseName.includes(normalizedSearch) ||
-    courseCode.includes(normalizedSearch)
-  );
+  return courseName.includes(normalizedSearch) || courseCode.includes(normalizedSearch);
 }
 
 function passesMeetingTimeFilter(course: Course, meetingTimeFilter: MeetingTimeFilter) {
@@ -134,10 +131,7 @@ function sortCoursesByEligibilityAndName(
   });
 }
 
-export function useFilterCourses({
-  courses,
-  filter,
-}: UseFilterCoursesArgs) {
+export function useFilterCourses({ courses, filter }: UseFilterCoursesArgs) {
   const { evaluate } = useCheckEnrollmentEligibility();
   const { data: courseHistoryResponse } = useCourseHistory();
 

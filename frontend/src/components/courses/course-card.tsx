@@ -1,11 +1,6 @@
 import type { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from '@/components/ui/card';
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import type { Course } from '@/types/course.type';
 import { CourseStudentStatusTag } from './course-student-status-tag';
 import { PrerequisiteLink } from './prerequisite-link';
@@ -51,19 +46,14 @@ export function CourseCard({
             </h3>
             <p className="text-sm text-muted-foreground">{course.code}</p>
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-xs text-muted-foreground">
-                {course.hoursPerWeek}h/week
-              </span>
+              <span className="text-xs text-muted-foreground">{course.hoursPerWeek}h/week</span>
               <span className="text-xs text-muted-foreground">
                 Grades {course.gradeLevel.min}–{course.gradeLevel.max}
               </span>
             </div>
           </div>
 
-          <CourseStudentStatusTag
-            course={course}
-            semesterId={course.semester?.id}
-          />
+          <CourseStudentStatusTag course={course} semesterId={course.semester?.id} />
         </CardHeader>
 
         <CardContent className="flex-1 min-h-0 pb-4">

@@ -35,11 +35,7 @@ export function buildSlotKey(weekDay: string, startTime: string) {
   return `${weekDay.trim().toLowerCase()}|${startTime}`;
 }
 
-function addCourseToSlot(
-  bySlot: Map<string, Course[]>,
-  slotKey: string,
-  course: Course,
-) {
+function addCourseToSlot(bySlot: Map<string, Course[]>, slotKey: string, course: Course) {
   const existingCourses = bySlot.get(slotKey);
 
   if (!existingCourses) {
@@ -108,10 +104,7 @@ export function useSchedulerSlotCourses() {
             slotStart < endInMinutes;
             slotStart += SLOT_INTERVAL_IN_MINUTES
           ) {
-            const slotKey = buildSlotKey(
-              normalizedWeekDay,
-              formatMinutesToTime(slotStart),
-            );
+            const slotKey = buildSlotKey(normalizedWeekDay, formatMinutesToTime(slotStart));
             addCourseToSlot(bySlot, slotKey, course);
           }
         }
@@ -123,14 +116,8 @@ export function useSchedulerSlotCourses() {
 
   return {
     ...coursesQuery,
-    isLoading:
-      coursesQuery.isLoading ||
-      courseHistoryQuery.isLoading ||
-      studentQuery.isLoading,
-    isError:
-      coursesQuery.isError ||
-      courseHistoryQuery.isError ||
-      studentQuery.isError,
+    isLoading: coursesQuery.isLoading || courseHistoryQuery.isLoading || studentQuery.isLoading,
+    isError: coursesQuery.isError || courseHistoryQuery.isError || studentQuery.isError,
     coursesBySlot,
   };
 }

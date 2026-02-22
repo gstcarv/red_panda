@@ -11,12 +11,7 @@ export interface PageTitleProps {
   className?: string;
 }
 
-export function PageTitle({
-  title,
-  description,
-  action,
-  className,
-}: PageTitleProps) {
+export function PageTitle({ title, description, action, className }: PageTitleProps) {
   return (
     <header
       className={cn(
@@ -29,9 +24,7 @@ export function PageTitle({
           {title}
         </h1>
         {description ? (
-          <p className="mt-1.5 text-sm text-muted-foreground max-w-2xl">
-            {description}
-          </p>
+          <p className="mt-1.5 text-sm text-muted-foreground max-w-2xl">{description}</p>
         ) : null}
       </div>
       {action ? <div className="mt-2 shrink-0 sm:mt-0">{action}</div> : null}

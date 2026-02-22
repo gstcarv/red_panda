@@ -1,10 +1,5 @@
 import { AlertCircle, BookOpen } from 'lucide-react';
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from '@/components/ui/card';
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { CourseCard } from './course-card';
@@ -68,17 +63,12 @@ export function CoursesList({
   onModalClose,
 }: CoursesListProps) {
   const { evaluate } = useCheckEnrollmentEligibility();
-  const {
-    selectedCourseId,
-    selectedSemesterId,
-    modalOpen,
-    handleCourseSelect,
-    handleModalClose,
-  } = useCourseDetailsModal({
-    selectedCourseId: controlledSelectedCourseId,
-    onCourseSelect,
-    onModalClose,
-  });
+  const { selectedCourseId, selectedSemesterId, modalOpen, handleCourseSelect, handleModalClose } =
+    useCourseDetailsModal({
+      selectedCourseId: controlledSelectedCourseId,
+      onCourseSelect,
+      onModalClose,
+    });
   const classNameByCourseId = useMemo(() => {
     const map = new Map<number, string | undefined>();
 
@@ -117,9 +107,7 @@ export function CoursesList({
           <div className="flex size-12 items-center justify-center rounded-full bg-destructive/10 text-destructive mb-4">
             <AlertCircle className="size-6" aria-hidden />
           </div>
-          <p className="text-sm font-medium text-foreground">
-            Failed to load courses
-          </p>
+          <p className="text-sm font-medium text-foreground">Failed to load courses</p>
           <p className="mt-1 text-sm text-muted-foreground max-w-sm">
             Something went wrong. Please try again.
           </p>
@@ -154,10 +142,7 @@ export function CoursesList({
       <p className="mb-4 text-sm text-muted-foreground">
         {courses.length} {courses.length === 1 ? 'course' : 'courses'} found
       </p>
-      <ul
-        className="grid grid-cols-1 gap-4 sm:gap-5 md:grid-cols-2 xl:grid-cols-3"
-        role="list"
-      >
+      <ul className="grid grid-cols-1 gap-4 sm:gap-5 md:grid-cols-2 xl:grid-cols-3" role="list">
         {courses.map((course) => (
           <li key={course.id} className="h-full">
             <CourseCard

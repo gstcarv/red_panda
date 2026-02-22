@@ -1,8 +1,5 @@
 import { useMemo, useState } from 'react';
-import {
-  buildSlotKey,
-  useSchedulerSlotCourses,
-} from './use-scheduler-slot-courses';
+import { buildSlotKey, useSchedulerSlotCourses } from './use-scheduler-slot-courses';
 import { useEnrollments } from '@/hooks/enrollments/use-enrollments';
 import type { Course } from '@/types/course.type';
 import type { SchedulerSlotSelection } from '@/types/scheduler.type';
@@ -28,8 +25,7 @@ export function useScheduleFindCourseModal(slot: SchedulerSlotSelection | null) 
       return [];
     }
 
-    const availableCourses =
-      coursesBySlot.get(buildSlotKey(slot.weekDay, slot.startTime)) ?? [];
+    const availableCourses = coursesBySlot.get(buildSlotKey(slot.weekDay, slot.startTime)) ?? [];
 
     return availableCourses.map((course) => ({
       course,

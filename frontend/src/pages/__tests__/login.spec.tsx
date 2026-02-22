@@ -15,9 +15,7 @@ const setAuthMock = mockFn<(payload: unknown) => void>();
 const notifyErrorMock = mockFn<(error: unknown, message?: string) => void>();
 
 vi.mock('react-router-dom', async () => {
-  const original = await vi.importActual<typeof import('react-router-dom')>(
-    'react-router-dom',
-  );
+  const original = await vi.importActual<typeof import('react-router-dom')>('react-router-dom');
   return {
     ...original,
     useNavigate: () => navigateMock,
@@ -108,10 +106,13 @@ describe('Login page', () => {
     vi.mocked(useAuthStore).mockImplementation((selector) =>
       selector({ setAuth: setAuthMock } as never),
     );
-    vi.mocked(useLogin).mockImplementation(() => ({
-      mutate: mutateMock,
-      isPending: false,
-    }) as never);
+    vi.mocked(useLogin).mockImplementation(
+      () =>
+        ({
+          mutate: mutateMock,
+          isPending: false,
+        }) as never,
+    );
   });
 
   it('fills email when user is selected and submits normalized email', async () => {
@@ -125,9 +126,7 @@ describe('Login page', () => {
 
     expect(screen.getByTestId('users-count')).toHaveTextContent('users:2');
 
-    expect(screen.getByTestId('email-value')).toHaveTextContent(
-      'email: USER@SCHOOL.EDU',
-    );
+    expect(screen.getByTestId('email-value')).toHaveTextContent('email: USER@SCHOOL.EDU');
 
     expect(mutateMock).toHaveBeenCalledWith({
       email: 'user@school.edu',
@@ -142,9 +141,7 @@ describe('Login page', () => {
 
     expect(mutateMock).not.toHaveBeenCalled();
 
-    expect(
-      screen.getByText('Email is required.'),
-    ).toBeInTheDocument();
+    expect(screen.getByText('Email is required.')).toBeInTheDocument();
   });
 
   it('handles login success and error callbacks', () => {
@@ -160,8 +157,18 @@ describe('Login page', () => {
       },
     };
 
-    options?.onSuccess?.(successResponse as never, { email: 'student@school.edu' }, undefined, undefined as never);
-    options?.onError?.(new Error('bad login'), { email: 'student@school.edu' }, undefined, undefined as never);
+    options?.onSuccess?.(
+      successResponse as never,
+      { email: 'student@school.edu' },
+      undefined,
+      undefined as never,
+    );
+    options?.onError?.(
+      new Error('bad login'),
+      { email: 'student@school.edu' },
+      undefined,
+      undefined as never,
+    );
 
     expect(setAuthMock).toHaveBeenCalledWith(successResponse.data);
 

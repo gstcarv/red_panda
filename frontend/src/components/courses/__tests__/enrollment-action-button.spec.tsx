@@ -66,4 +66,3 @@ describe('EnrollmentActionButton', () => {
     expect(button).toBeDisabled();
   });
 });
-

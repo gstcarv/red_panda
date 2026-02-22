@@ -27,9 +27,7 @@ describe('BaseLayout', () => {
       isLoading: false,
       isError: false,
     } as never);
-    mockedUseAuthStore.mockImplementation((selector) =>
-      selector({ logout: logoutMock } as never),
-    );
+    mockedUseAuthStore.mockImplementation((selector) => selector({ logout: logoutMock } as never));
   });
 
   it('renders branding, navigation and children content', () => {

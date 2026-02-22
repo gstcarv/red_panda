@@ -25,9 +25,8 @@ const useCheckCourseStatusSpy = mockFn<
   }
 >();
 
-const eligibilityErrorMessageSpy = mockFn<
-  (props: { error: EnrollmentAvailabilityError }) => void
->();
+const eligibilityErrorMessageSpy =
+  mockFn<(props: { error: EnrollmentAvailabilityError }) => void>();
 
 vi.mock('@/hooks/enrollments/use-check-enrollment-eligibility', () => ({
   useCheckEnrollmentEligibility: () => useCheckCourseEligibilitySpy(),
@@ -51,9 +50,7 @@ vi.mock('@/components/ui/tooltip', () => ({
   Tooltip: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="tooltip">{children}</div>
   ),
-  TooltipTrigger: ({ children }: { children: React.ReactNode }) => (
-    <div>{children}</div>
-  ),
+  TooltipTrigger: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
   TooltipContent: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="tooltip-content">{children}</div>
   ),
@@ -157,6 +154,8 @@ describe('CourseStudentStatusTag', () => {
     );
     expect(screen.queryByText('Schedule conflict')).not.toBeInTheDocument();
 
-    expect(eligibilityErrorMessageSpy).toHaveBeenCalledWith({ error: firstError });
+    expect(eligibilityErrorMessageSpy).toHaveBeenCalledWith({
+      error: firstError,
+    });
   });
 });

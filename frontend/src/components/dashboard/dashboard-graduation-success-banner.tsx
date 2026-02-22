@@ -22,8 +22,8 @@ export function DashboardGraduationSuccessBanner({
             <Sparkles className="h-4 w-4" />
           </p>
           <p className="text-sm text-green-700 dark:text-green-400">
-            You reached {earnedCredits}/{requiredCredits} credits and completed
-            your graduation requirement.
+            You reached {earnedCredits}/{requiredCredits} credits and completed your graduation
+            requirement.
           </p>
         </div>
       </CardContent>

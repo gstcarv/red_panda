@@ -15,13 +15,7 @@ import type { CourseHistory } from '@/types/course-history.type';
 export function Dashboard() {
   const { isLoading, isError, metrics, historyByMostRecent, retry } = useDashboard();
   const [historyCourseStatus, setHistoryCourseStatus] = useState<CourseHistory['status']>();
-  const {
-    selectedCourseId,
-    selectedSemesterId,
-    modalOpen,
-    handleCourseSelect,
-    handleModalClose,
-  } =
+  const { selectedCourseId, selectedSemesterId, modalOpen, handleCourseSelect, handleModalClose } =
     useCourseDetailsModal({});
 
   const handleHistoryCourseClick = (
@@ -40,9 +34,7 @@ export function Dashboard() {
     handleModalClose(open);
   };
   const hasGraduated =
-    !isLoading &&
-    metrics.requiredCredits > 0 &&
-    metrics.earnedCredits >= metrics.requiredCredits;
+    !isLoading && metrics.requiredCredits > 0 && metrics.earnedCredits >= metrics.requiredCredits;
 
   if (isError) {
     return (
@@ -72,10 +64,7 @@ export function Dashboard() {
 
       <DashboardSummaryCards isLoading={isLoading} metrics={metrics} />
 
-      <section
-        aria-label="Graduation progress and course history"
-        className="grid gap-4"
-      >
+      <section aria-label="Graduation progress and course history" className="grid gap-4">
         <DashboardGraduationProgressCard isLoading={isLoading} metrics={metrics} />
         <DashboardCourseHistoryCard
           isLoading={isLoading}

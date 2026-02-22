@@ -28,9 +28,7 @@ export function ValidUsersDialog({ users, onSelectUser }: ValidUsersDialogProps)
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Valid users</DialogTitle>
-          <DialogDescription>
-            Select a user to fill the email field.
-          </DialogDescription>
+          <DialogDescription>Select a user to fill the email field.</DialogDescription>
         </DialogHeader>
         <div className="max-h-80 space-y-2 overflow-y-auto pr-1">
           {users.map((email) => (

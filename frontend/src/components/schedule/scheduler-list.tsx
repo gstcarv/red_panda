@@ -13,9 +13,7 @@ export type EnrolledCourseItem = {
   course: Course;
 };
 
-export function SchedulerList({
-  onCourseHoverChange,
-}: SchedulerListProps) {
+export function SchedulerList({ onCourseHoverChange }: SchedulerListProps) {
   const { data: enrollmentsResponse } = useEnrollments();
   const enrolledCourses = useMemo<EnrolledCourseItem[]>(() => {
     const enrollments = enrollmentsResponse?.enrollments ?? [];

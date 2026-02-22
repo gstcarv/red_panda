@@ -23,25 +23,18 @@ const SPACING = {
   pageY: 'py-6 sm:py-8',
 } as const;
 
-export function BaseLayout({
-  children,
-  className,
-  mainClassName,
-}: BaseLayoutProps) {
+export function BaseLayout({ children, className, mainClassName }: BaseLayoutProps) {
   const navigate = useNavigate();
   const { data, isLoading } = useStudent();
   const logout = useAuthStore((state) => state.logout);
   const student = data?.student;
 
-  const studentName = student
-    ? `${student.firstName} ${student.lastName}`
-    : 'User Name';
+  const studentName = student ? `${student.firstName} ${student.lastName}` : 'User Name';
 
   const activeSemesterLabel = student?.activeSemester
     ? `${student.activeSemester.name} ${student.activeSemester.year}`
     : null;
-  const gradeLabel =
-    student?.gradeLevel != null ? `Grade ${student.gradeLevel}` : null;
+  const gradeLabel = student?.gradeLevel != null ? `Grade ${student.gradeLevel}` : null;
   const hasGraduated =
     (student?.credits?.max ?? 0) > 0 &&
     (student?.credits?.earned ?? 0) >= (student?.credits?.max ?? 0);
@@ -53,12 +46,7 @@ export function BaseLayout({
   };
 
   return (
-    <div
-      className={cn(
-        'flex min-h-screen w-full min-w-0 flex-col bg-background',
-        className,
-      )}
-    >
+    <div className={cn('flex min-h-screen w-full min-w-0 flex-col bg-background', className)}>
       <header className="shrink-0 flex flex-col bg-white">
         <div className="container mx-auto flex items-center justify-between px-4 py-4 sm:px-0 sm:py-5">
           <div className="flex min-w-0 flex-1 items-center gap-4 sm:gap-6">

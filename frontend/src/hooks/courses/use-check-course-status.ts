@@ -35,8 +35,23 @@ export function useCheckCourseStatus(
   const enrolledSections: CourseSection[] = !course
     ? []
     : (enrollments ?? [])
-      .filter((enrollment) => {
-        if (enrollment.course.id !== course.id) {
+        .filter((enrollment) => {
+          if (enrollment.course.id !== course.id) {
+            return false;
+          }
+
+          if (selectedSemesterId === null) {
+            return true;
+          }
+
+          return enrollment.semester.id === selectedSemesterId;
+        })
+        .map((enrollment) => enrollment.courseSection);
+
+  const filteredHistory: CourseHistory[] = !course
+    ? []
+    : (courseHistory ?? []).filter((historyItem) => {
+        if (historyItem.courseId !== course.id) {
           return false;
         }
 
@@ -44,23 +59,8 @@ export function useCheckCourseStatus(
           return true;
         }
 
-        return enrollment.semester.id === selectedSemesterId;
-      })
-      .map((enrollment) => enrollment.courseSection);
-
-  const filteredHistory: CourseHistory[] = !course
-    ? []
-    : (courseHistory ?? []).filter((historyItem) => {
-      if (historyItem.courseId !== course.id) {
-        return false;
-      }
-
-      if (selectedSemesterId === null) {
-        return true;
-      }
-
-      return historyItem.semester.id === selectedSemesterId;
-    });
+        return historyItem.semester.id === selectedSemesterId;
+      });
 
   const foundCourseHistory =
     filteredHistory.find((historyItem) => historyItem.status === 'passed') ??
@@ -84,4 +84,3 @@ export function useCheckCourseStatus(
     isError: isEnrollmentsError || isCourseHistoryError,
   };
 }
-

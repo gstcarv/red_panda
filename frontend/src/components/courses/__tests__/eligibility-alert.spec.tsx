@@ -8,7 +8,11 @@ const useCheckEnrollmentEligibilitySpy = mockFn<
   () => {
     evaluate: () => {
       eligible: boolean;
-      validation?: Array<{ type: 'conflict' | 'grade_level' | 'max_courses' | 'prerequisite' | 'other'; message: string; prerequisite?: unknown }>;
+      validation?: Array<{
+        type: 'conflict' | 'grade_level' | 'max_courses' | 'prerequisite' | 'other';
+        message: string;
+        prerequisite?: unknown;
+      }>;
     };
   }
 >();
@@ -60,9 +64,7 @@ describe('EligibilityAlert', () => {
 
     render(<EligibilityAlert course={createCourse()} />);
 
-    expect(
-      screen.queryByText('No sections available for enrollment'),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText('No sections available for enrollment')).not.toBeInTheDocument();
   });
 
   it('shows warning and reasons when course cannot be enrolled', () => {
@@ -75,15 +77,18 @@ describe('EligibilityAlert', () => {
     useCheckEnrollmentEligibilitySpy.mockReturnValue({
       evaluate: () => ({
         eligible: false,
-        validation: [{ type: 'conflict', message: 'This course conflicts with your current schedule' }],
+        validation: [
+          {
+            type: 'conflict',
+            message: 'This course conflicts with your current schedule',
+          },
+        ],
       }),
     });
 
     render(<EligibilityAlert course={createCourse()} />);
 
-    expect(
-      screen.getByText('No sections available for enrollment'),
-    ).toBeInTheDocument();
+    expect(screen.getByText('No sections available for enrollment')).toBeInTheDocument();
 
     expect(
       screen.getByText('This course conflicts with your current schedule'),

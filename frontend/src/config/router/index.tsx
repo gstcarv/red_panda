@@ -19,10 +19,7 @@ const ExploreCourses = lazy(() =>
 
 function RouteLoadingFallback() {
   return (
-    <div
-      className="flex min-h-[40vh] items-center justify-center"
-      aria-label="Loading page"
-    >
+    <div className="flex min-h-[40vh] items-center justify-center" aria-label="Loading page">
       <Loader2 className="size-6 animate-spin text-muted-foreground" />
     </div>
   );

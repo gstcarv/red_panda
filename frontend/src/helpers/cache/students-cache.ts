@@ -7,4 +7,3 @@ function buildStudentQueryKey() {
 export const studentsCache = {
   buildKey: buildStudentQueryKey,
 };
-

@@ -29,7 +29,10 @@ const useCheckEnrollmentEligibilitySpy = mockFn<
   () => {
     evaluate: () => {
       eligible: boolean;
-      validation?: Array<{ message: string; type: 'conflict' | 'grade_level' | 'max_courses' | 'prerequisite' | 'other' }>;
+      validation?: Array<{
+        message: string;
+        type: 'conflict' | 'grade_level' | 'max_courses' | 'prerequisite' | 'other';
+      }>;
     };
   }
 >();
@@ -49,7 +52,11 @@ vi.mock('@/components/courses/enrollment-action-button', () => ({
     isFull?: boolean;
   }) => {
     enrollmentActionButtonSpy(props);
-    return <button type="button">action-{props.sectionId}-{props.isFull ? 'full' : 'open'}</button>;
+    return (
+      <button type="button">
+        action-{props.sectionId}-{props.isFull ? 'full' : 'open'}
+      </button>
+    );
   },
 }));
 
@@ -78,13 +85,7 @@ describe('CourseSectionList', () => {
       }),
     });
 
-    render(
-      <CourseSectionList
-        courseId={1}
-        course={createCourse()}
-        sections={[createSection()]}
-      />,
-    );
+    render(<CourseSectionList courseId={1} course={createCourse()} sections={[createSection()]} />);
 
     expect(screen.getByText('Jane Doe')).toBeInTheDocument();
     expect(screen.getByText('Mon 8:00 AM-9:30 AM')).toBeInTheDocument();
@@ -98,13 +99,9 @@ describe('CourseSectionList', () => {
       }),
     });
 
-    render(
-      <CourseSectionList courseId={1} course={createCourse()} sections={[]} />,
-    );
+    render(<CourseSectionList courseId={1} course={createCourse()} sections={[]} />);
 
-    expect(
-      screen.getByText('No sections available for this course.'),
-    ).toBeInTheDocument();
+    expect(screen.getByText('No sections available for this course.')).toBeInTheDocument();
   });
 
   it('passes course/section identifiers to EnrollmentActionButton', () => {

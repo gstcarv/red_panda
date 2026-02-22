@@ -1,11 +1,6 @@
 import { CheckCircle2, XCircle, CheckCircle } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useCheckEnrollmentEligibility } from '@/hooks/enrollments/use-check-enrollment-eligibility';
 import {
   useCheckCourseStatus,
@@ -53,11 +48,7 @@ function getStatusBadgeProps(status: CourseStudentStatus) {
 function CourseStudentStatusBadge({ status }: { status: CourseStudentStatus }) {
   const { className, icon: Icon, label } = getStatusBadgeProps(status);
   return (
-    <Badge
-      variant="default"
-      className={cn('shrink-0 gap-1', className)}
-      aria-label={label}
-    >
+    <Badge variant="default" className={cn('shrink-0 gap-1', className)} aria-label={label}>
       <Icon className="size-3" aria-hidden />
       {label}
     </Badge>
@@ -82,10 +73,7 @@ function CourseStudentStatusTagWithEligibility({
   const badge = (
     <Badge
       variant={eligible ? 'default' : 'secondary'}
-      className={cn(
-        'shrink-0 gap-1',
-        !eligible && 'bg-muted text-muted-foreground',
-      )}
+      className={cn('shrink-0 gap-1', !eligible && 'bg-muted text-muted-foreground')}
       aria-label={eligible ? 'Eligible' : 'Not eligible'}
     >
       {eligible ? (
@@ -119,10 +107,6 @@ export function CourseStudentStatusTag(props: CourseStudentStatusTagProps) {
   }
 
   return (
-    <CourseStudentStatusTagWithEligibility
-      course={props.course}
-      semesterId={props.semesterId}
-    />
+    <CourseStudentStatusTagWithEligibility course={props.course} semesterId={props.semesterId} />
   );
 }
-

@@ -22,10 +22,7 @@ export interface FeedbackDialogProps {
   confirmLabel?: string;
 }
 
-const variantConfig: Record<
-  FeedbackVariant,
-  { icon: typeof CheckCircle2; iconColor: string }
-> = {
+const variantConfig: Record<FeedbackVariant, { icon: typeof CheckCircle2; iconColor: string }> = {
   success: {
     icon: CheckCircle2,
     iconColor: 'text-green-600 dark:text-green-500',
@@ -64,9 +61,7 @@ export function FeedbackDialog({
             <Icon className={cn('h-6 w-6 shrink-0', iconColor)} />
             <DialogTitle>{title}</DialogTitle>
           </div>
-          {description && (
-            <DialogDescription className="pt-2">{description}</DialogDescription>
-          )}
+          {description && <DialogDescription className="pt-2">{description}</DialogDescription>}
         </DialogHeader>
         <DialogFooter>
           <Button onClick={handleConfirm} variant="default">

@@ -45,13 +45,8 @@ export function PrerequisiteLink({
   onCourseSelect,
   className,
 }: PrerequisiteLinkProps) {
-  const {
-    selectedCourseId,
-    selectedSemesterId,
-    modalOpen,
-    handleCourseSelect,
-    handleModalClose,
-  } = useCourseDetailsModal({ onCourseSelect });
+  const { selectedCourseId, selectedSemesterId, modalOpen, handleCourseSelect, handleModalClose } =
+    useCourseDetailsModal({ onCourseSelect });
   const [hasOpenedModal, setHasOpenedModal] = useState(false);
 
   const prerequisiteCourseForStatus = useMemo(() => {
@@ -66,9 +61,7 @@ export function PrerequisiteLink({
     } satisfies Course;
   }, [prerequisite.code, prerequisite.id, prerequisite.name]);
 
-  const { status, foundCourseHistory } = useCheckCourseStatus(
-    prerequisiteCourseForStatus,
-  );
+  const { status, foundCourseHistory } = useCheckCourseStatus(prerequisiteCourseForStatus);
   const statusUi = status ? getStatusUi(status) : null;
 
   const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
@@ -91,10 +84,7 @@ export function PrerequisiteLink({
         <span className="inline-flex items-center gap-1">
           {prerequisite.code} - {prerequisite.name}
           {statusUi ? (
-            <statusUi.Icon
-              className={cn('size-3', statusUi.className)}
-              aria-hidden
-            />
+            <statusUi.Icon className={cn('size-3', statusUi.className)} aria-hidden />
           ) : null}
         </span>
       </Button>

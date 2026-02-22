@@ -13,11 +13,7 @@ function createQueryClient() {
   });
 }
 
-function createEnrollment(
-  id: string,
-  courseId: number,
-  sectionId: number,
-): Enrollment {
+function createEnrollment(id: string, courseId: number, sectionId: number): Enrollment {
   return {
     id,
     course: {
@@ -32,9 +28,7 @@ function createEnrollment(
     courseSection: {
       id: sectionId,
       teacher: { id: 1, name: 'Teacher' },
-      meetingTimes: [
-        { dayOfWeek: 'Monday', startTime: '09:00', endTime: '10:00' },
-      ],
+      meetingTimes: [{ dayOfWeek: 'Monday', startTime: '09:00', endTime: '10:00' }],
       capacity: 30,
       enrolledCount: 10,
     },
@@ -47,16 +41,10 @@ function createEnrollment(
   };
 }
 
-function seedEnrollmentsCache(
-  queryClient: QueryClient,
-  enrollments: Enrollment[],
-) {
-  queryClient.setQueryData<GetStudentEnrollmentsResponse>(
-    enrollmentsCache.buildKey(),
-    {
-      enrollments,
-    },
-  );
+function seedEnrollmentsCache(queryClient: QueryClient, enrollments: Enrollment[]) {
+  queryClient.setQueryData<GetStudentEnrollmentsResponse>(enrollmentsCache.buildKey(), {
+    enrollments,
+  });
 }
 
 describe('enrollmentsCache', () => {

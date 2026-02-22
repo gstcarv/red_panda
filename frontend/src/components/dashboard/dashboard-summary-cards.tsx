@@ -1,9 +1,4 @@
-import {
-  Card,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { DashboardMetrics } from '@/types/dashboard.type';
 
@@ -20,10 +15,7 @@ interface DashboardSummaryCardsProps {
   metrics: DashboardMetrics;
 }
 
-export function DashboardSummaryCards({
-  isLoading,
-  metrics,
-}: DashboardSummaryCardsProps) {
+export function DashboardSummaryCards({ isLoading, metrics }: DashboardSummaryCardsProps) {
   return (
     <section
       aria-label="Academic summary metrics"

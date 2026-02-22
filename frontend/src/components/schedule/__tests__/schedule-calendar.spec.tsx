@@ -15,9 +15,7 @@ vi.mock('@/components/ui/scheduler', () => ({
     onEventClick?: (arg: { event: { extendedProps: { courseId: number } } }) => void;
   }) => {
     schedulerSpy(props);
-    return (
-      <div data-testid={props.testId ?? 'ui-scheduler'} data-ui-scheduler="true" />
-    );
+    return <div data-testid={props.testId ?? 'ui-scheduler'} data-ui-scheduler="true" />;
   },
 }));
 
@@ -182,7 +180,9 @@ describe('ScheduleCalendar', () => {
       />,
     );
 
-    const renderedEvents = schedulerSpy.mock.calls[0][0].events as Array<{ id: string }>;
+    const renderedEvents = schedulerSpy.mock.calls[0][0].events as Array<{
+      id: string;
+    }>;
     expect(renderedEvents.some((event) => event.id === 'slot-hint-1-09:00')).toBe(false);
   });
 
@@ -194,8 +194,7 @@ describe('ScheduleCalendar', () => {
 
     render(<ScheduleCalendar events={[]} />);
 
-    const onDateClick = schedulerSpy.mock.calls[0][0]
-      .onDateClick as (arg: { date: Date }) => void;
+    const onDateClick = schedulerSpy.mock.calls[0][0].onDateClick as (arg: { date: Date }) => void;
 
     act(() => {
       onDateClick({

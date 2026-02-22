@@ -1,8 +1,6 @@
 import type { Ref } from 'react';
 import FullCalendar from '@fullcalendar/react';
-import interactionPlugin, {
-  type DateClickArg,
-} from '@fullcalendar/interaction';
+import interactionPlugin, { type DateClickArg } from '@fullcalendar/interaction';
 import type { EventClickArg } from '@fullcalendar/core';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import type { SchedulerEvent } from '@/types/scheduler.type';

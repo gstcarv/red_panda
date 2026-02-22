@@ -1,5 +1,5 @@
-import { getCourses } from "@/api/courses-api";
-import { useQuery } from "@tanstack/react-query";
+import { getCourses } from '@/api/courses-api';
+import { useQuery } from '@tanstack/react-query';
 import { coursesCache } from '@/helpers/cache/courses-cache';
 import {
   DEFAULT_EXPLORE_COURSES_FILTER,

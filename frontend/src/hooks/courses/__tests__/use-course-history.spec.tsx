@@ -1,11 +1,8 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { renderHook, waitFor } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
-import * as studentsApi from "@/api/students-api";
-import {
-  buildCourseHistoryQueryKey,
-  useCourseHistory,
-} from "@/hooks/courses/use-course-history";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { renderHook, waitFor } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
+import * as studentsApi from '@/api/students-api';
+import { buildCourseHistoryQueryKey, useCourseHistory } from '@/hooks/courses/use-course-history';
 
 function createWrapper() {
   const queryClient = new QueryClient({
@@ -21,30 +18,30 @@ function createWrapper() {
   );
 }
 
-describe("useCourseHistory", () => {
-  it("builds a stable course history query key", () => {
-    expect(buildCourseHistoryQueryKey()).toEqual(["me", "courses", "history"]);
+describe('useCourseHistory', () => {
+  it('builds a stable course history query key', () => {
+    expect(buildCourseHistoryQueryKey()).toEqual(['me', 'courses', 'history']);
   });
 
-  it("loads course history data from api", async () => {
+  it('loads course history data from api', async () => {
     const response = {
       courseHistory: [
         {
           id: 1,
           courseId: 2,
-          courseName: "Introduction to Programming",
+          courseName: 'Introduction to Programming',
           semester: {
             id: 1,
-            name: "Fall",
+            name: 'Fall',
             year: 2024,
             order_in_year: 1,
           },
-          status: "passed",
+          status: 'passed',
         },
       ],
     };
     const getCourseHistorySpy = vi
-      .spyOn(studentsApi, "getStudentCourseHistory")
+      .spyOn(studentsApi, 'getStudentCourseHistory')
       .mockResolvedValue(response as never);
 
     const { result } = renderHook(() => useCourseHistory(), {
@@ -57,6 +54,6 @@ describe("useCourseHistory", () => {
 
     expect(getCourseHistorySpy).toHaveBeenCalledTimes(1);
     expect(result.current.data?.courseHistory).toHaveLength(1);
-    expect(result.current.data?.courseHistory[0].status).toBe("passed");
+    expect(result.current.data?.courseHistory[0].status).toBe('passed');
   });
 });

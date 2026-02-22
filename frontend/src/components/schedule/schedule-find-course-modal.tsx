@@ -61,9 +61,7 @@ export function ScheduleFindCourseModal({
           ) : isError ? (
             <Alert variant="destructive">
               <AlertCircle className="h-4 w-4" />
-              <AlertDescription>
-                Failed to load available courses for this slot.
-              </AlertDescription>
+              <AlertDescription>Failed to load available courses for this slot.</AlertDescription>
             </Alert>
           ) : coursesWithEligibility.length === 0 ? (
             <div className="rounded-lg border border-dashed px-4 py-6 text-sm text-muted-foreground">
@@ -81,9 +79,7 @@ export function ScheduleFindCourseModal({
                 >
                   <div className="text-left">
                     <h3 className="text-base font-semibold">{course.name}</h3>
-                    <p className="text-sm font-mono text-muted-foreground">
-                      {course.code}
-                    </p>
+                    <p className="text-sm font-mono text-muted-foreground">{course.code}</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <CourseStudentStatusTag course={course} />

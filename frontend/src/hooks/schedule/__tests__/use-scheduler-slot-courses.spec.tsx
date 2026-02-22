@@ -5,10 +5,7 @@ import * as coursesHook from '@/hooks/courses/use-courses';
 import * as enrollmentsHook from '@/hooks/enrollments/use-enrollments';
 import * as courseHistoryHook from '@/hooks/courses/use-course-history';
 import * as studentHook from '@/hooks/students/use-student';
-import {
-  buildSlotKey,
-  useSchedulerSlotCourses,
-} from '@/hooks/schedule/use-scheduler-slot-courses';
+import { buildSlotKey, useSchedulerSlotCourses } from '@/hooks/schedule/use-scheduler-slot-courses';
 
 function createWrapper() {
   const queryClient = new QueryClient({

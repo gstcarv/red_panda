@@ -1,12 +1,6 @@
 import { useMemo } from 'react';
 import { CourseStudentStatusTag } from '@/components/courses/course-student-status-tag';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Accordion,
   AccordionContent,
@@ -22,11 +16,7 @@ interface DashboardCourseHistoryCardProps {
   isLoading: boolean;
   history: CourseHistory[];
   metrics: DashboardMetrics;
-  onCourseClick?: (
-    courseId: number,
-    semesterId: number,
-    status: CourseHistory['status'],
-  ) => void;
+  onCourseClick?: (courseId: number, semesterId: number, status: CourseHistory['status']) => void;
 }
 
 export function DashboardCourseHistoryCard({
@@ -87,9 +77,7 @@ export function DashboardCourseHistoryCard({
             <Skeleton className="h-12 w-full" />
           </>
         ) : history.length === 0 ? (
-          <p className="text-sm text-muted-foreground">
-            No historical courses found yet.
-          </p>
+          <p className="text-sm text-muted-foreground">No historical courses found yet.</p>
         ) : (
           <>
             <Accordion
@@ -104,65 +92,61 @@ export function DashboardCourseHistoryCard({
                 const failedCount = group.items.length - passedCount;
 
                 return (
-                <AccordionItem
-                  key={group.key}
-                  value={group.key}
-                  className="mb-2 border-none last:mb-0"
-                >
-                  <AccordionTrigger
-                    className="cursor-pointer rounded-lg border border-border bg-muted/35 px-4 py-3 hover:bg-muted/55 hover:no-underline data-[state=open]:bg-muted/65"
+                  <AccordionItem
+                    key={group.key}
+                    value={group.key}
+                    className="mb-2 border-none last:mb-0"
                   >
-                    <div className="flex min-w-0 flex-1 items-center justify-between gap-4">
-                      <div className="min-w-0">
-                        <p className="truncate text-sm font-semibold text-foreground">
-                          {group.semesterLabel}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {group.items.length}{' '}
-                          {group.items.length === 1 ? 'course' : 'courses'}
-                        </p>
-                      </div>
-                      <div
-                        className="hidden items-center gap-2 sm:flex"
-                        aria-hidden="true"
-                      >
-                        <Badge
-                          variant="outline"
-                          className="border-emerald-200/70 bg-emerald-500/10 text-emerald-700 dark:border-emerald-900 dark:bg-emerald-900/30 dark:text-emerald-300"
-                        >
-                          {passedCount} passed
-                        </Badge>
-                        <Badge
-                          variant="outline"
-                          className="border-rose-200/70 bg-rose-500/10 text-rose-700 dark:border-rose-900 dark:bg-rose-900/30 dark:text-rose-300"
-                        >
-                          {failedCount} failed
-                        </Badge>
-                      </div>
-                    </div>
-                  </AccordionTrigger>
-                  <AccordionContent className="pt-3">
-                    <div className="space-y-3">
-                      {group.items.map((item) => {
-                        return (
-                          <button
-                            key={item.id}
-                            type="button"
-                            onClick={() => onCourseClick?.(item.courseId, item.semester.id, item.status)}
-                            className="flex w-full cursor-pointer items-center justify-between rounded-lg border border-border p-3 text-left transition-colors hover:bg-accent/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                    <AccordionTrigger className="cursor-pointer rounded-lg border border-border bg-muted/35 px-4 py-3 hover:bg-muted/55 hover:no-underline data-[state=open]:bg-muted/65">
+                      <div className="flex min-w-0 flex-1 items-center justify-between gap-4">
+                        <div className="min-w-0">
+                          <p className="truncate text-sm font-semibold text-foreground">
+                            {group.semesterLabel}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {group.items.length} {group.items.length === 1 ? 'course' : 'courses'}
+                          </p>
+                        </div>
+                        <div className="hidden items-center gap-2 sm:flex" aria-hidden="true">
+                          <Badge
+                            variant="outline"
+                            className="border-emerald-200/70 bg-emerald-500/10 text-emerald-700 dark:border-emerald-900 dark:bg-emerald-900/30 dark:text-emerald-300"
                           >
-                            <div className="min-w-0">
-                              <span className="truncate text-left text-sm font-medium text-foreground">
-                                {item.courseName}
-                              </span>
-                            </div>
-                            <CourseStudentStatusTag status={item.status} />
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
+                            {passedCount} passed
+                          </Badge>
+                          <Badge
+                            variant="outline"
+                            className="border-rose-200/70 bg-rose-500/10 text-rose-700 dark:border-rose-900 dark:bg-rose-900/30 dark:text-rose-300"
+                          >
+                            {failedCount} failed
+                          </Badge>
+                        </div>
+                      </div>
+                    </AccordionTrigger>
+                    <AccordionContent className="pt-3">
+                      <div className="space-y-3">
+                        {group.items.map((item) => {
+                          return (
+                            <button
+                              key={item.id}
+                              type="button"
+                              onClick={() =>
+                                onCourseClick?.(item.courseId, item.semester.id, item.status)
+                              }
+                              className="flex w-full cursor-pointer items-center justify-between rounded-lg border border-border p-3 text-left transition-colors hover:bg-accent/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                            >
+                              <div className="min-w-0">
+                                <span className="truncate text-left text-sm font-medium text-foreground">
+                                  {item.courseName}
+                                </span>
+                              </div>
+                              <CourseStudentStatusTag status={item.status} />
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
                 );
               })}
             </Accordion>

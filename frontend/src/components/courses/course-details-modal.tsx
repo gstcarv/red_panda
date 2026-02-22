@@ -70,10 +70,7 @@ export function CourseDetailsModal({
   // Use cached course if available, otherwise use current data
   // This prevents flicker during close animation
   const course = cachedCourse || courseData;
-  const { status: computedStatus, enrolledSections } = useCheckCourseStatus(
-    course,
-    semesterId,
-  );
+  const { status: computedStatus, enrolledSections } = useCheckCourseStatus(course, semesterId);
   const status = courseStatus ?? computedStatus;
   const hasCompletedStatus = status === 'failed' || status === 'passed';
 
@@ -83,14 +80,11 @@ export function CourseDetailsModal({
   const displayedSections =
     isEnrolled && course ? enrolledSections : (course?.availableSections ?? []);
   const semesterBadgeLabel =
-    course?.semester != null
-      ? `${course.semester.name} ${course.semester.year}`
-      : null;
+    course?.semester != null ? `${course.semester.name} ${course.semester.year}` : null;
   const modalTitle = 'Course Details';
-  const sectionsTitle =
-    hasCompletedStatus
-      ? 'Section enrolled in this semester'
-      : status === undefined
+  const sectionsTitle = hasCompletedStatus
+    ? 'Section enrolled in this semester'
+    : status === undefined
       ? isEnrolled
         ? 'Enrolled Section'
         : 'Available Sections'
@@ -113,9 +107,7 @@ export function CourseDetailsModal({
       ) : isError ? (
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
-            Failed to load course details. Please try again.
-          </AlertDescription>
+          <AlertDescription>Failed to load course details. Please try again.</AlertDescription>
         </Alert>
       ) : course ? (
         <>
@@ -123,22 +115,15 @@ export function CourseDetailsModal({
           <div className="space-y-3">
             <div className="flex items-start justify-between gap-4">
               <div className="flex-1 space-y-1">
-                <h2 className="text-xl font-bold tracking-tight">
-                  {course.name}
-                </h2>
-                <p className="text-sm text-muted-foreground font-mono">
-                  {course.code}
-                </p>
+                <h2 className="text-xl font-bold tracking-tight">{course.name}</h2>
+                <p className="text-sm text-muted-foreground font-mono">{course.code}</p>
                 {!hasCompletedStatus && <EligibilityAlert course={course} />}
               </div>
               <div className="flex items-center gap-2">
                 {status ? (
                   <CourseStudentStatusTag status={status} />
                 ) : (
-                  <CourseStudentStatusTag
-                    course={course}
-                    semesterId={semesterId}
-                  />
+                  <CourseStudentStatusTag course={course} semesterId={semesterId} />
                 )}
 
                 <Badge variant="secondary" className="text-xs">
@@ -153,9 +138,7 @@ export function CourseDetailsModal({
                 <Clock className="h-4 w-4 text-muted-foreground shrink-0" />
                 <div>
                   <p className="font-medium">Hours per Week</p>
-                  <p className="text-muted-foreground text-xs">
-                    {course.hoursPerWeek}h/week
-                  </p>
+                  <p className="text-muted-foreground text-xs">{course.hoursPerWeek}h/week</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">

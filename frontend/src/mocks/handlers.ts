@@ -1,26 +1,21 @@
-import { http, HttpResponse } from "msw";
-import type { Course, CourseSection } from "@/types/course.type";
-import type { CourseHistory } from "@/types/course-history.type";
-import type { Enrollment } from "@/types/enrollments.type";
-import type { Student } from "@/types/student.type";
-import type {
-  CoursesResponse,
-} from "@/api/courses-api";
-import type {
-  EnrollParams,
-  EnrollResponse,
-} from "@/api/students-api";
+import { http, HttpResponse } from 'msw';
+import type { Course, CourseSection } from '@/types/course.type';
+import type { CourseHistory } from '@/types/course-history.type';
+import type { Enrollment } from '@/types/enrollments.type';
+import type { Student } from '@/types/student.type';
+import type { CoursesResponse } from '@/api/courses-api';
+import type { EnrollParams, EnrollResponse } from '@/api/students-api';
 import type {
   GetStudentCourseHistoryResponse,
   GetStudentEnrollmentsResponse,
   GetStudentProfileResponse,
-} from "@/api/students-api";
+} from '@/api/students-api';
 
 const courses: Course[] = [
   {
     id: 1,
-    code: "MATH-101",
-    name: "Algebra I",
+    code: 'MATH-101',
+    name: 'Algebra I',
     credits: 3,
     hoursPerWeek: 4,
     gradeLevel: { min: 9, max: 12 },
@@ -28,8 +23,8 @@ const courses: Course[] = [
   },
   {
     id: 2,
-    code: "CS-101",
-    name: "Introduction to Programming",
+    code: 'CS-101',
+    name: 'Introduction to Programming',
     credits: 4,
     hoursPerWeek: 5,
     gradeLevel: { min: 9, max: 12 },
@@ -37,64 +32,64 @@ const courses: Course[] = [
   },
   {
     id: 3,
-    code: "CS-201",
-    name: "Data Structures",
+    code: 'CS-201',
+    name: 'Data Structures',
     credits: 4,
     hoursPerWeek: 5,
     prerequisite: {
       id: 2,
-      code: "CS-101",
-      name: "Introduction to Programming",
+      code: 'CS-101',
+      name: 'Introduction to Programming',
     },
     gradeLevel: { min: 10, max: 12 },
     availableSections: [],
   },
   {
     id: 4,
-    code: "CS-301",
-    name: "Algorithms",
+    code: 'CS-301',
+    name: 'Algorithms',
     credits: 4,
     hoursPerWeek: 5,
     prerequisite: {
       id: 3,
-      code: "CS-201",
-      name: "Data Structures",
+      code: 'CS-201',
+      name: 'Data Structures',
     },
     gradeLevel: { min: 11, max: 12 },
     availableSections: [],
   },
   {
     id: 5,
-    code: "MATH-201",
-    name: "Geometry",
+    code: 'MATH-201',
+    name: 'Geometry',
     credits: 3,
     hoursPerWeek: 4,
     prerequisite: {
       id: 1,
-      code: "MATH-101",
-      name: "Algebra I",
+      code: 'MATH-101',
+      name: 'Algebra I',
     },
     gradeLevel: { min: 10, max: 12 },
     availableSections: [],
   },
   {
     id: 6,
-    code: "MATH-301",
-    name: "Pre-Calculus",
+    code: 'MATH-301',
+    name: 'Pre-Calculus',
     credits: 4,
     hoursPerWeek: 5,
     prerequisite: {
       id: 5,
-      code: "MATH-201",
-      name: "Geometry",
+      code: 'MATH-201',
+      name: 'Geometry',
     },
     gradeLevel: { min: 11, max: 12 },
     availableSections: [],
   },
   {
     id: 7,
-    code: "PHYS-101",
-    name: "Physics I",
+    code: 'PHYS-101',
+    name: 'Physics I',
     credits: 4,
     hoursPerWeek: 5,
     gradeLevel: { min: 10, max: 12 },
@@ -102,8 +97,8 @@ const courses: Course[] = [
   },
   {
     id: 8,
-    code: "CHEM-101",
-    name: "Chemistry I",
+    code: 'CHEM-101',
+    name: 'Chemistry I',
     credits: 4,
     hoursPerWeek: 5,
     gradeLevel: { min: 10, max: 12 },
@@ -111,8 +106,8 @@ const courses: Course[] = [
   },
   {
     id: 9,
-    code: "BIO-101",
-    name: "Biology I",
+    code: 'BIO-101',
+    name: 'Biology I',
     credits: 4,
     hoursPerWeek: 5,
     gradeLevel: { min: 9, max: 12 },
@@ -120,8 +115,8 @@ const courses: Course[] = [
   },
   {
     id: 10,
-    code: "ENG-101",
-    name: "English Literature",
+    code: 'ENG-101',
+    name: 'English Literature',
     credits: 3,
     hoursPerWeek: 4,
     gradeLevel: { min: 9, max: 12 },
@@ -129,22 +124,22 @@ const courses: Course[] = [
   },
   {
     id: 11,
-    code: "ENG-201",
-    name: "Advanced Composition",
+    code: 'ENG-201',
+    name: 'Advanced Composition',
     credits: 3,
     hoursPerWeek: 4,
     prerequisite: {
       id: 10,
-      code: "ENG-101",
-      name: "English Literature",
+      code: 'ENG-101',
+      name: 'English Literature',
     },
     gradeLevel: { min: 10, max: 12 },
     availableSections: [],
   },
   {
     id: 12,
-    code: "HIST-101",
-    name: "World History",
+    code: 'HIST-101',
+    name: 'World History',
     credits: 3,
     hoursPerWeek: 4,
     gradeLevel: { min: 9, max: 12 },
@@ -152,8 +147,8 @@ const courses: Course[] = [
   },
   {
     id: 13,
-    code: "HIST-201",
-    name: "US History",
+    code: 'HIST-201',
+    name: 'US History',
     credits: 3,
     hoursPerWeek: 4,
     gradeLevel: { min: 10, max: 12 },
@@ -161,8 +156,8 @@ const courses: Course[] = [
   },
   {
     id: 14,
-    code: "ART-101",
-    name: "Introduction to Art",
+    code: 'ART-101',
+    name: 'Introduction to Art',
     credits: 2,
     hoursPerWeek: 3,
     gradeLevel: { min: 9, max: 12 },
@@ -170,8 +165,8 @@ const courses: Course[] = [
   },
   {
     id: 15,
-    code: "MUS-101",
-    name: "Music Theory",
+    code: 'MUS-101',
+    name: 'Music Theory',
     credits: 2,
     hoursPerWeek: 3,
     gradeLevel: { min: 9, max: 12 },
@@ -179,8 +174,8 @@ const courses: Course[] = [
   },
   {
     id: 16,
-    code: "SPAN-101",
-    name: "Spanish I",
+    code: 'SPAN-101',
+    name: 'Spanish I',
     credits: 3,
     hoursPerWeek: 4,
     gradeLevel: { min: 9, max: 12 },
@@ -188,56 +183,56 @@ const courses: Course[] = [
   },
   {
     id: 17,
-    code: "SPAN-201",
-    name: "Spanish II",
+    code: 'SPAN-201',
+    name: 'Spanish II',
     credits: 3,
     hoursPerWeek: 4,
     prerequisite: {
       id: 16,
-      code: "SPAN-101",
-      name: "Spanish I",
+      code: 'SPAN-101',
+      name: 'Spanish I',
     },
     gradeLevel: { min: 10, max: 12 },
     availableSections: [],
   },
   {
     id: 18,
-    code: "PHYS-201",
-    name: "Physics II",
+    code: 'PHYS-201',
+    name: 'Physics II',
     credits: 4,
     hoursPerWeek: 5,
     prerequisite: {
       id: 7,
-      code: "PHYS-101",
-      name: "Physics I",
+      code: 'PHYS-101',
+      name: 'Physics I',
     },
     gradeLevel: { min: 11, max: 12 },
     availableSections: [],
   },
   {
     id: 19,
-    code: "CS-401",
-    name: "Software Engineering",
+    code: 'CS-401',
+    name: 'Software Engineering',
     credits: 4,
     hoursPerWeek: 5,
     prerequisite: {
       id: 4,
-      code: "CS-301",
-      name: "Algorithms",
+      code: 'CS-301',
+      name: 'Algorithms',
     },
     gradeLevel: { min: 12, max: 12 },
     availableSections: [],
   },
   {
     id: 20,
-    code: "MATH-401",
-    name: "Calculus",
+    code: 'MATH-401',
+    name: 'Calculus',
     credits: 4,
     hoursPerWeek: 5,
     prerequisite: {
       id: 6,
-      code: "MATH-301",
-      name: "Pre-Calculus",
+      code: 'MATH-301',
+      name: 'Pre-Calculus',
     },
     gradeLevel: { min: 12, max: 12 },
     availableSections: [],
@@ -248,20 +243,20 @@ const mockSectionsByCourseId: Record<number, CourseSection[]> = {
   1: [
     {
       id: 101,
-      teacher: { id: 1, name: "Dr. Smith" },
+      teacher: { id: 1, name: 'Dr. Smith' },
       meetingTimes: [
-        { dayOfWeek: "Monday", startTime: "09:00", endTime: "10:30" },
-        { dayOfWeek: "Wednesday", startTime: "09:00", endTime: "10:30" },
+        { dayOfWeek: 'Monday', startTime: '09:00', endTime: '10:30' },
+        { dayOfWeek: 'Wednesday', startTime: '09:00', endTime: '10:30' },
       ],
       capacity: 30,
       enrolledCount: 25,
     },
     {
       id: 102,
-      teacher: { id: 2, name: "Prof. Johnson" },
+      teacher: { id: 2, name: 'Prof. Johnson' },
       meetingTimes: [
-        { dayOfWeek: "Tuesday", startTime: "14:00", endTime: "15:30" },
-        { dayOfWeek: "Thursday", startTime: "14:00", endTime: "15:30" },
+        { dayOfWeek: 'Tuesday', startTime: '14:00', endTime: '15:30' },
+        { dayOfWeek: 'Thursday', startTime: '14:00', endTime: '15:30' },
       ],
       capacity: 25,
       enrolledCount: 20,
@@ -270,21 +265,21 @@ const mockSectionsByCourseId: Record<number, CourseSection[]> = {
   2: [
     {
       id: 201,
-      teacher: { id: 3, name: "Dr. Williams" },
+      teacher: { id: 3, name: 'Dr. Williams' },
       meetingTimes: [
-        { dayOfWeek: "Monday", startTime: "10:00", endTime: "12:00" },
-        { dayOfWeek: "Wednesday", startTime: "10:00", endTime: "12:00" },
-        { dayOfWeek: "Friday", startTime: "10:00", endTime: "11:00" },
+        { dayOfWeek: 'Monday', startTime: '10:00', endTime: '12:00' },
+        { dayOfWeek: 'Wednesday', startTime: '10:00', endTime: '12:00' },
+        { dayOfWeek: 'Friday', startTime: '10:00', endTime: '11:00' },
       ],
       capacity: 35,
       enrolledCount: 32,
     },
     {
       id: 202,
-      teacher: { id: 4, name: "Prof. Brown" },
+      teacher: { id: 4, name: 'Prof. Brown' },
       meetingTimes: [
-        { dayOfWeek: "Tuesday", startTime: "13:00", endTime: "15:00" },
-        { dayOfWeek: "Thursday", startTime: "13:00", endTime: "15:00" },
+        { dayOfWeek: 'Tuesday', startTime: '13:00', endTime: '15:00' },
+        { dayOfWeek: 'Thursday', startTime: '13:00', endTime: '15:00' },
       ],
       capacity: 30,
       enrolledCount: 28,
@@ -293,10 +288,10 @@ const mockSectionsByCourseId: Record<number, CourseSection[]> = {
   3: [
     {
       id: 301,
-      teacher: { id: 5, name: "Dr. Davis" },
+      teacher: { id: 5, name: 'Dr. Davis' },
       meetingTimes: [
-        { dayOfWeek: "Monday", startTime: "13:00", endTime: "15:00" },
-        { dayOfWeek: "Wednesday", startTime: "13:00", endTime: "15:00" },
+        { dayOfWeek: 'Monday', startTime: '13:00', endTime: '15:00' },
+        { dayOfWeek: 'Wednesday', startTime: '13:00', endTime: '15:00' },
       ],
       capacity: 28,
       enrolledCount: 24,
@@ -305,10 +300,10 @@ const mockSectionsByCourseId: Record<number, CourseSection[]> = {
   4: [
     {
       id: 401,
-      teacher: { id: 6, name: "Prof. Miller" },
+      teacher: { id: 6, name: 'Prof. Miller' },
       meetingTimes: [
-        { dayOfWeek: "Tuesday", startTime: "09:00", endTime: "11:00" },
-        { dayOfWeek: "Thursday", startTime: "09:00", endTime: "11:00" },
+        { dayOfWeek: 'Tuesday', startTime: '09:00', endTime: '11:00' },
+        { dayOfWeek: 'Thursday', startTime: '09:00', endTime: '11:00' },
       ],
       capacity: 25,
       enrolledCount: 22,
@@ -317,21 +312,21 @@ const mockSectionsByCourseId: Record<number, CourseSection[]> = {
   5: [
     {
       id: 501,
-      teacher: { id: 7, name: "Dr. Anderson" },
+      teacher: { id: 7, name: 'Dr. Anderson' },
       meetingTimes: [
-        { dayOfWeek: "Monday", startTime: "11:00", endTime: "12:30" },
-        { dayOfWeek: "Wednesday", startTime: "11:00", endTime: "12:30" },
-        { dayOfWeek: "Friday", startTime: "11:00", endTime: "11:50" },
+        { dayOfWeek: 'Monday', startTime: '11:00', endTime: '12:30' },
+        { dayOfWeek: 'Wednesday', startTime: '11:00', endTime: '12:30' },
+        { dayOfWeek: 'Friday', startTime: '11:00', endTime: '11:50' },
       ],
       capacity: 30,
       enrolledCount: 28,
     },
     {
       id: 502,
-      teacher: { id: 8, name: "Prof. Taylor" },
+      teacher: { id: 8, name: 'Prof. Taylor' },
       meetingTimes: [
-        { dayOfWeek: "Tuesday", startTime: "10:00", endTime: "11:30" },
-        { dayOfWeek: "Thursday", startTime: "10:00", endTime: "11:30" },
+        { dayOfWeek: 'Tuesday', startTime: '10:00', endTime: '11:30' },
+        { dayOfWeek: 'Thursday', startTime: '10:00', endTime: '11:30' },
       ],
       capacity: 28,
       enrolledCount: 25,
@@ -340,11 +335,11 @@ const mockSectionsByCourseId: Record<number, CourseSection[]> = {
   6: [
     {
       id: 601,
-      teacher: { id: 9, name: "Dr. Martinez" },
+      teacher: { id: 9, name: 'Dr. Martinez' },
       meetingTimes: [
-        { dayOfWeek: "Monday", startTime: "14:00", endTime: "15:30" },
-        { dayOfWeek: "Wednesday", startTime: "14:00", endTime: "15:30" },
-        { dayOfWeek: "Friday", startTime: "14:00", endTime: "14:50" },
+        { dayOfWeek: 'Monday', startTime: '14:00', endTime: '15:30' },
+        { dayOfWeek: 'Wednesday', startTime: '14:00', endTime: '15:30' },
+        { dayOfWeek: 'Friday', startTime: '14:00', endTime: '14:50' },
       ],
       capacity: 25,
       enrolledCount: 23,
@@ -353,20 +348,20 @@ const mockSectionsByCourseId: Record<number, CourseSection[]> = {
   7: [
     {
       id: 701,
-      teacher: { id: 10, name: "Dr. Thompson" },
+      teacher: { id: 10, name: 'Dr. Thompson' },
       meetingTimes: [
-        { dayOfWeek: "Monday", startTime: "08:00", endTime: "10:00" },
-        { dayOfWeek: "Wednesday", startTime: "08:00", endTime: "10:00" },
+        { dayOfWeek: 'Monday', startTime: '08:00', endTime: '10:00' },
+        { dayOfWeek: 'Wednesday', startTime: '08:00', endTime: '10:00' },
       ],
       capacity: 30,
       enrolledCount: 27,
     },
     {
       id: 702,
-      teacher: { id: 11, name: "Prof. Garcia" },
+      teacher: { id: 11, name: 'Prof. Garcia' },
       meetingTimes: [
-        { dayOfWeek: "Tuesday", startTime: "15:00", endTime: "17:00" },
-        { dayOfWeek: "Thursday", startTime: "15:00", endTime: "17:00" },
+        { dayOfWeek: 'Tuesday', startTime: '15:00', endTime: '17:00' },
+        { dayOfWeek: 'Thursday', startTime: '15:00', endTime: '17:00' },
       ],
       capacity: 28,
       enrolledCount: 24,
@@ -375,10 +370,10 @@ const mockSectionsByCourseId: Record<number, CourseSection[]> = {
   8: [
     {
       id: 801,
-      teacher: { id: 12, name: "Dr. Rodriguez" },
+      teacher: { id: 12, name: 'Dr. Rodriguez' },
       meetingTimes: [
-        { dayOfWeek: "Monday", startTime: "13:00", endTime: "15:00" },
-        { dayOfWeek: "Wednesday", startTime: "13:00", endTime: "15:00" },
+        { dayOfWeek: 'Monday', startTime: '13:00', endTime: '15:00' },
+        { dayOfWeek: 'Wednesday', startTime: '13:00', endTime: '15:00' },
       ],
       capacity: 32,
       enrolledCount: 30,
@@ -387,20 +382,20 @@ const mockSectionsByCourseId: Record<number, CourseSection[]> = {
   9: [
     {
       id: 901,
-      teacher: { id: 13, name: "Dr. Lee" },
+      teacher: { id: 13, name: 'Dr. Lee' },
       meetingTimes: [
-        { dayOfWeek: "Tuesday", startTime: "09:00", endTime: "11:00" },
-        { dayOfWeek: "Thursday", startTime: "09:00", endTime: "11:00" },
+        { dayOfWeek: 'Tuesday', startTime: '09:00', endTime: '11:00' },
+        { dayOfWeek: 'Thursday', startTime: '09:00', endTime: '11:00' },
       ],
       capacity: 35,
       enrolledCount: 32,
     },
     {
       id: 902,
-      teacher: { id: 14, name: "Prof. White" },
+      teacher: { id: 14, name: 'Prof. White' },
       meetingTimes: [
-        { dayOfWeek: "Monday", startTime: "10:00", endTime: "12:00" },
-        { dayOfWeek: "Friday", startTime: "10:00", endTime: "12:00" },
+        { dayOfWeek: 'Monday', startTime: '10:00', endTime: '12:00' },
+        { dayOfWeek: 'Friday', startTime: '10:00', endTime: '12:00' },
       ],
       capacity: 30,
       enrolledCount: 28,
@@ -409,21 +404,21 @@ const mockSectionsByCourseId: Record<number, CourseSection[]> = {
   10: [
     {
       id: 1001,
-      teacher: { id: 15, name: "Dr. Harris" },
+      teacher: { id: 15, name: 'Dr. Harris' },
       meetingTimes: [
-        { dayOfWeek: "Monday", startTime: "09:00", endTime: "10:30" },
-        { dayOfWeek: "Wednesday", startTime: "09:00", endTime: "10:30" },
-        { dayOfWeek: "Friday", startTime: "09:00", endTime: "09:50" },
+        { dayOfWeek: 'Monday', startTime: '09:00', endTime: '10:30' },
+        { dayOfWeek: 'Wednesday', startTime: '09:00', endTime: '10:30' },
+        { dayOfWeek: 'Friday', startTime: '09:00', endTime: '09:50' },
       ],
       capacity: 25,
       enrolledCount: 22,
     },
     {
       id: 1002,
-      teacher: { id: 16, name: "Prof. Clark" },
+      teacher: { id: 16, name: 'Prof. Clark' },
       meetingTimes: [
-        { dayOfWeek: "Tuesday", startTime: "11:00", endTime: "12:30" },
-        { dayOfWeek: "Thursday", startTime: "11:00", endTime: "12:30" },
+        { dayOfWeek: 'Tuesday', startTime: '11:00', endTime: '12:30' },
+        { dayOfWeek: 'Thursday', startTime: '11:00', endTime: '12:30' },
       ],
       capacity: 25,
       enrolledCount: 20,
@@ -432,10 +427,10 @@ const mockSectionsByCourseId: Record<number, CourseSection[]> = {
   11: [
     {
       id: 1101,
-      teacher: { id: 17, name: "Dr. Lewis" },
+      teacher: { id: 17, name: 'Dr. Lewis' },
       meetingTimes: [
-        { dayOfWeek: "Monday", startTime: "15:00", endTime: "16:30" },
-        { dayOfWeek: "Wednesday", startTime: "15:00", endTime: "16:30" },
+        { dayOfWeek: 'Monday', startTime: '15:00', endTime: '16:30' },
+        { dayOfWeek: 'Wednesday', startTime: '15:00', endTime: '16:30' },
       ],
       capacity: 20,
       enrolledCount: 18,
@@ -444,20 +439,20 @@ const mockSectionsByCourseId: Record<number, CourseSection[]> = {
   12: [
     {
       id: 1201,
-      teacher: { id: 18, name: "Dr. Walker" },
+      teacher: { id: 18, name: 'Dr. Walker' },
       meetingTimes: [
-        { dayOfWeek: "Tuesday", startTime: "08:00", endTime: "09:30" },
-        { dayOfWeek: "Thursday", startTime: "08:00", endTime: "09:30" },
+        { dayOfWeek: 'Tuesday', startTime: '08:00', endTime: '09:30' },
+        { dayOfWeek: 'Thursday', startTime: '08:00', endTime: '09:30' },
       ],
       capacity: 30,
       enrolledCount: 28,
     },
     {
       id: 1202,
-      teacher: { id: 19, name: "Prof. Hall" },
+      teacher: { id: 19, name: 'Prof. Hall' },
       meetingTimes: [
-        { dayOfWeek: "Monday", startTime: "14:00", endTime: "15:30" },
-        { dayOfWeek: "Wednesday", startTime: "14:00", endTime: "15:30" },
+        { dayOfWeek: 'Monday', startTime: '14:00', endTime: '15:30' },
+        { dayOfWeek: 'Wednesday', startTime: '14:00', endTime: '15:30' },
       ],
       capacity: 28,
       enrolledCount: 25,
@@ -466,10 +461,10 @@ const mockSectionsByCourseId: Record<number, CourseSection[]> = {
   13: [
     {
       id: 1301,
-      teacher: { id: 20, name: "Dr. Allen" },
+      teacher: { id: 20, name: 'Dr. Allen' },
       meetingTimes: [
-        { dayOfWeek: "Tuesday", startTime: "13:00", endTime: "14:30" },
-        { dayOfWeek: "Thursday", startTime: "13:00", endTime: "14:30" },
+        { dayOfWeek: 'Tuesday', startTime: '13:00', endTime: '14:30' },
+        { dayOfWeek: 'Thursday', startTime: '13:00', endTime: '14:30' },
       ],
       capacity: 30,
       enrolledCount: 27,
@@ -478,19 +473,15 @@ const mockSectionsByCourseId: Record<number, CourseSection[]> = {
   14: [
     {
       id: 1401,
-      teacher: { id: 21, name: "Prof. Young" },
-      meetingTimes: [
-        { dayOfWeek: "Monday", startTime: "15:00", endTime: "17:00" },
-      ],
+      teacher: { id: 21, name: 'Prof. Young' },
+      meetingTimes: [{ dayOfWeek: 'Monday', startTime: '15:00', endTime: '17:00' }],
       capacity: 20,
       enrolledCount: 18,
     },
     {
       id: 1402,
-      teacher: { id: 22, name: "Dr. King" },
-      meetingTimes: [
-        { dayOfWeek: "Wednesday", startTime: "15:00", endTime: "17:00" },
-      ],
+      teacher: { id: 22, name: 'Dr. King' },
+      meetingTimes: [{ dayOfWeek: 'Wednesday', startTime: '15:00', endTime: '17:00' }],
       capacity: 20,
       enrolledCount: 15,
     },
@@ -498,10 +489,8 @@ const mockSectionsByCourseId: Record<number, CourseSection[]> = {
   15: [
     {
       id: 1501,
-      teacher: { id: 23, name: "Prof. Wright" },
-      meetingTimes: [
-        { dayOfWeek: "Tuesday", startTime: "15:00", endTime: "17:00" },
-      ],
+      teacher: { id: 23, name: 'Prof. Wright' },
+      meetingTimes: [{ dayOfWeek: 'Tuesday', startTime: '15:00', endTime: '17:00' }],
       capacity: 25,
       enrolledCount: 22,
     },
@@ -509,21 +498,21 @@ const mockSectionsByCourseId: Record<number, CourseSection[]> = {
   16: [
     {
       id: 1601,
-      teacher: { id: 24, name: "Dr. Lopez" },
+      teacher: { id: 24, name: 'Dr. Lopez' },
       meetingTimes: [
-        { dayOfWeek: "Monday", startTime: "11:00", endTime: "12:30" },
-        { dayOfWeek: "Wednesday", startTime: "11:00", endTime: "12:30" },
-        { dayOfWeek: "Friday", startTime: "11:00", endTime: "11:50" },
+        { dayOfWeek: 'Monday', startTime: '11:00', endTime: '12:30' },
+        { dayOfWeek: 'Wednesday', startTime: '11:00', endTime: '12:30' },
+        { dayOfWeek: 'Friday', startTime: '11:00', endTime: '11:50' },
       ],
       capacity: 25,
       enrolledCount: 23,
     },
     {
       id: 1602,
-      teacher: { id: 25, name: "Prof. Hill" },
+      teacher: { id: 25, name: 'Prof. Hill' },
       meetingTimes: [
-        { dayOfWeek: "Tuesday", startTime: "14:00", endTime: "15:30" },
-        { dayOfWeek: "Thursday", startTime: "14:00", endTime: "15:30" },
+        { dayOfWeek: 'Tuesday', startTime: '14:00', endTime: '15:30' },
+        { dayOfWeek: 'Thursday', startTime: '14:00', endTime: '15:30' },
       ],
       capacity: 25,
       enrolledCount: 20,
@@ -532,11 +521,11 @@ const mockSectionsByCourseId: Record<number, CourseSection[]> = {
   17: [
     {
       id: 1701,
-      teacher: { id: 24, name: "Dr. Lopez" },
+      teacher: { id: 24, name: 'Dr. Lopez' },
       meetingTimes: [
-        { dayOfWeek: "Monday", startTime: "13:00", endTime: "14:30" },
-        { dayOfWeek: "Wednesday", startTime: "13:00", endTime: "14:30" },
-        { dayOfWeek: "Friday", startTime: "13:00", endTime: "13:50" },
+        { dayOfWeek: 'Monday', startTime: '13:00', endTime: '14:30' },
+        { dayOfWeek: 'Wednesday', startTime: '13:00', endTime: '14:30' },
+        { dayOfWeek: 'Friday', startTime: '13:00', endTime: '13:50' },
       ],
       capacity: 20,
       enrolledCount: 18,
@@ -545,10 +534,10 @@ const mockSectionsByCourseId: Record<number, CourseSection[]> = {
   18: [
     {
       id: 1801,
-      teacher: { id: 10, name: "Dr. Thompson" },
+      teacher: { id: 10, name: 'Dr. Thompson' },
       meetingTimes: [
-        { dayOfWeek: "Tuesday", startTime: "08:00", endTime: "10:00" },
-        { dayOfWeek: "Thursday", startTime: "08:00", endTime: "10:00" },
+        { dayOfWeek: 'Tuesday', startTime: '08:00', endTime: '10:00' },
+        { dayOfWeek: 'Thursday', startTime: '08:00', endTime: '10:00' },
       ],
       capacity: 25,
       enrolledCount: 22,
@@ -557,11 +546,11 @@ const mockSectionsByCourseId: Record<number, CourseSection[]> = {
   19: [
     {
       id: 1901,
-      teacher: { id: 3, name: "Dr. Williams" },
+      teacher: { id: 3, name: 'Dr. Williams' },
       meetingTimes: [
-        { dayOfWeek: "Monday", startTime: "10:00", endTime: "12:00" },
-        { dayOfWeek: "Wednesday", startTime: "10:00", endTime: "12:00" },
-        { dayOfWeek: "Friday", startTime: "10:00", endTime: "11:00" },
+        { dayOfWeek: 'Monday', startTime: '10:00', endTime: '12:00' },
+        { dayOfWeek: 'Wednesday', startTime: '10:00', endTime: '12:00' },
+        { dayOfWeek: 'Friday', startTime: '10:00', endTime: '11:00' },
       ],
       capacity: 20,
       enrolledCount: 18,
@@ -570,10 +559,10 @@ const mockSectionsByCourseId: Record<number, CourseSection[]> = {
   20: [
     {
       id: 2001,
-      teacher: { id: 9, name: "Dr. Martinez" },
+      teacher: { id: 9, name: 'Dr. Martinez' },
       meetingTimes: [
-        { dayOfWeek: "Tuesday", startTime: "11:00", endTime: "13:00" },
-        { dayOfWeek: "Thursday", startTime: "11:00", endTime: "13:00" },
+        { dayOfWeek: 'Tuesday', startTime: '11:00', endTime: '13:00' },
+        { dayOfWeek: 'Thursday', startTime: '11:00', endTime: '13:00' },
       ],
       capacity: 22,
       enrolledCount: 20,
@@ -590,23 +579,23 @@ function toCourseWithSections(course: Course): Course {
 
 const mockEnrollments: Enrollment[] = [
   {
-    id: "1",
+    id: '1',
     course: courses[0],
     courseSection: mockSectionsByCourseId[1][0],
     semester: {
       id: 2,
-      name: "Spring",
+      name: 'Spring',
       year: 2025,
       order_in_year: 2,
     },
   },
   {
-    id: "2",
+    id: '2',
     course: courses[1],
     courseSection: mockSectionsByCourseId[2][0],
     semester: {
       id: 2,
-      name: "Spring",
+      name: 'Spring',
       year: 2025,
       order_in_year: 2,
     },
@@ -618,59 +607,59 @@ const mockCourseHistory: CourseHistory[] = [
   {
     id: 1,
     courseId: 1,
-    courseName: "Algebra I",
+    courseName: 'Algebra I',
     semester: {
       id: 1,
-      name: "Fall",
+      name: 'Fall',
       year: 2024,
       order_in_year: 1,
     },
-    status: "passed",
+    status: 'passed',
   },
   {
     id: 2,
     courseId: 2,
-    courseName: "Introduction to Programming",
+    courseName: 'Introduction to Programming',
     semester: {
       id: 1,
-      name: "Fall",
+      name: 'Fall',
       year: 2024,
       order_in_year: 1,
     },
-    status: "passed",
+    status: 'passed',
   },
   {
     id: 3,
     courseId: 3,
-    courseName: "Data Structures",
+    courseName: 'Data Structures',
     semester: {
       id: 2,
-      name: "Spring",
+      name: 'Spring',
       year: 2025,
       order_in_year: 2,
     },
-    status: "failed",
+    status: 'failed',
   },
   {
     id: 4,
     courseId: 3,
-    courseName: "Data Structures",
+    courseName: 'Data Structures',
     semester: {
       id: 1,
-      name: "Fall",
+      name: 'Fall',
       year: 2024,
       order_in_year: 1,
     },
-    status: "failed",
+    status: 'failed',
   },
 ];
 
 const mockStudent: Student = {
   id: 1,
-  firstName: "Alex",
-  lastName: "Johnson",
+  firstName: 'Alex',
+  lastName: 'Johnson',
   gradeLevel: 11,
-  email: "alex.johnson@example.com",
+  email: 'alex.johnson@example.com',
   gpa: 3.7,
   credits: {
     earned: 30,
@@ -682,13 +671,13 @@ const mockStudent: Student = {
 };
 
 export const handlers = [
-  http.get("/courses", () => {
+  http.get('/courses', () => {
     return HttpResponse.json<CoursesResponse>({
       courses: courses.map(toCourseWithSections),
     });
   }),
 
-  http.get("/courses/:id", ({ params }) => {
+  http.get('/courses/:id', ({ params }) => {
     const id = Number(params.id);
     const course = courses.find((c) => c.id === id);
 
@@ -699,25 +688,25 @@ export const handlers = [
     return HttpResponse.json<Course>(details);
   }),
 
-  http.get("/me/enrollments", () => {
+  http.get('/me/enrollments', () => {
     return HttpResponse.json<GetStudentEnrollmentsResponse>({
       enrollments: mockEnrollments,
     });
   }),
 
-  http.get("/me/courses/history", () => {
+  http.get('/me/courses/history', () => {
     return HttpResponse.json<GetStudentCourseHistoryResponse>({
       courseHistory: mockCourseHistory,
     });
   }),
 
-  http.get("/me/profile", () => {
+  http.get('/me/profile', () => {
     return HttpResponse.json<GetStudentProfileResponse>({
       student: mockStudent,
     });
   }),
 
-  http.post("/me/enrollments", async ({ request }) => {
+  http.post('/me/enrollments', async ({ request }) => {
     const body = (await request.json()) as EnrollParams;
 
     // Simulate error scenarios for testing
@@ -735,20 +724,14 @@ export const handlers = [
     );
 
     if (!course || !courseSection) {
-      return HttpResponse.json(
-        { error: "Course or section not found" },
-        { status: 404 },
-      );
+      return HttpResponse.json({ error: 'Course or section not found' }, { status: 404 });
     }
 
     const alreadyEnrolled = mockEnrollments.some(
       (enrollment) => enrollment.courseSection.id === body.sectionId,
     );
     if (alreadyEnrolled) {
-      return HttpResponse.json(
-        { error: "Already enrolled in this section" },
-        { status: 409 },
-      );
+      return HttpResponse.json({ error: 'Already enrolled in this section' }, { status: 409 });
     }
 
     const enrollment: Enrollment = {
@@ -757,7 +740,7 @@ export const handlers = [
       courseSection,
       semester: {
         id: 2,
-        name: "Spring",
+        name: 'Spring',
         year: 2025,
         order_in_year: 2,
       },
@@ -769,25 +752,17 @@ export const handlers = [
     return HttpResponse.json<EnrollResponse>({ enrollment });
   }),
 
-  http.delete("/me/enrollments", ({ request }) => {
+  http.delete('/me/enrollments', ({ request }) => {
     const url = new URL(request.url);
-    const courseId = Number(url.searchParams.get("courseId"));
+    const courseId = Number(url.searchParams.get('courseId'));
     if (!Number.isFinite(courseId)) {
-      return HttpResponse.json(
-        { error: "Invalid courseId" },
-        { status: 400 },
-      );
+      return HttpResponse.json({ error: 'Invalid courseId' }, { status: 400 });
     }
 
-    const enrollmentIndex = mockEnrollments.findIndex(
-      (value) => value.course.id === courseId,
-    );
+    const enrollmentIndex = mockEnrollments.findIndex((value) => value.course.id === courseId);
 
     if (enrollmentIndex === -1) {
-      return HttpResponse.json(
-        { error: "Enrollment not found" },
-        { status: 404 },
-      );
+      return HttpResponse.json({ error: 'Enrollment not found' }, { status: 404 });
     }
 
     const [removedEnrollment] = mockEnrollments.splice(enrollmentIndex, 1);

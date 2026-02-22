@@ -13,12 +13,8 @@ export function useCourseDetailsModal({
   onCourseSelect,
   onModalClose,
 }: UseCourseDetailsModalParams) {
-  const [internalSelectedCourseId, setInternalSelectedCourseId] = useState<
-    number | null
-  >(null);
-  const [internalSelectedSemesterId, setInternalSelectedSemesterId] = useState<
-    number | null
-  >(null);
+  const [internalSelectedCourseId, setInternalSelectedCourseId] = useState<number | null>(null);
+  const [internalSelectedSemesterId, setInternalSelectedSemesterId] = useState<number | null>(null);
 
   const selectedCourseId =
     controlledSelectedCourseId !== undefined

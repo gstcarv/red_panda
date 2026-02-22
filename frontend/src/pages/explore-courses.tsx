@@ -1,7 +1,4 @@
-import {
-  CoursesFilter,
-  CoursesList,
-} from '@/components/courses';
+import { CoursesFilter, CoursesList } from '@/components/courses';
 import { PageTitle } from '@/components/ui/page-title';
 import { useCourses } from '@/hooks/courses/use-courses';
 import { useExploreCoursesFilterStore } from '@/stores/explore-courses-filter-store';

@@ -7,15 +7,16 @@ import { useCourseDetailsModal } from '@/hooks/courses/use-course-details-modal'
 import { useCheckCourseStatus } from '@/hooks/courses/use-check-course-status';
 import type { CoursePrerequisite } from '@/types/course.type';
 
-const courseSectionModalSpy = mockFn<
-  (props: {
-    courseId?: number;
-    semesterId?: number | null;
-    courseHistory?: unknown;
-    open: boolean;
-    onOpenChange: (open: boolean) => void;
-  }) => void
->();
+const courseSectionModalSpy =
+  mockFn<
+    (props: {
+      courseId?: number;
+      semesterId?: number | null;
+      courseHistory?: unknown;
+      open: boolean;
+      onOpenChange: (open: boolean) => void;
+    }) => void
+  >();
 
 vi.mock('@/hooks/courses/use-course-details-modal', () => ({
   useCourseDetailsModal: vi.fn(),
@@ -69,16 +70,16 @@ describe('PrerequisiteLink', () => {
       isError: false,
     });
 
-    render(
-      <PrerequisiteLink prerequisite={prerequisite} onCourseSelect={onCourseSelect} />,
-    );
+    render(<PrerequisiteLink prerequisite={prerequisite} onCourseSelect={onCourseSelect} />);
 
     expect(screen.queryByTestId('course-section-modal')).not.toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: 'MATH101 - Algebra I' }));
 
     expect(handleCourseSelect).toHaveBeenCalledWith(7);
-    expect(mockedUseCourseDetailsModal).toHaveBeenCalledWith({ onCourseSelect });
+    expect(mockedUseCourseDetailsModal).toHaveBeenCalledWith({
+      onCourseSelect,
+    });
 
     expect(await screen.findByTestId('course-section-modal')).toBeInTheDocument();
     expect(courseSectionModalSpy).toHaveBeenCalledWith(

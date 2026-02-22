@@ -18,16 +18,10 @@ function mockMatchMedia(initialMatch: boolean): MatchMediaController {
       },
       media: '(min-width: 768px)',
       onchange: null,
-      addEventListener: (
-        _: string,
-        listener: (event: MediaQueryListEvent) => void,
-      ) => {
+      addEventListener: (_: string, listener: (event: MediaQueryListEvent) => void) => {
         listeners.add(listener);
       },
-      removeEventListener: (
-        _: string,
-        listener: (event: MediaQueryListEvent) => void,
-      ) => {
+      removeEventListener: (_: string, listener: (event: MediaQueryListEvent) => void) => {
         listeners.delete(listener);
       },
       dispatchEvent: () => true,
@@ -38,9 +32,7 @@ function mockMatchMedia(initialMatch: boolean): MatchMediaController {
     trigger(nextMatch: boolean) {
       act(() => {
         currentMatch = nextMatch;
-        listeners.forEach((listener) =>
-          listener({ matches: nextMatch } as MediaQueryListEvent),
-        );
+        listeners.forEach((listener) => listener({ matches: nextMatch } as MediaQueryListEvent));
       });
     },
   };

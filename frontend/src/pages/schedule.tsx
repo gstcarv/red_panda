@@ -10,17 +10,11 @@ export function Schedule() {
   return (
     <div className="grid gap-6 lg:grid-cols-[360px_minmax(0,1fr)] lg:gap-8">
       <section className="flex flex-col gap-4 sm:gap-5">
-        <PageTitle
-          title="Schedule"
-          description="Your schedule for the current semester."
-        />
+        <PageTitle title="Schedule" description="Your schedule for the current semester." />
         <SchedulerList onCourseHoverChange={setActiveCourseId} />
       </section>
 
-      <section
-        aria-label="Weekly calendar"
-        className="lg:sticky lg:top-6 lg:self-start"
-      >
+      <section aria-label="Weekly calendar" className="lg:sticky lg:top-6 lg:self-start">
         <ScheduleCalendar events={events} activeCourseId={activeCourseId} />
       </section>
     </div>

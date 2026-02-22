@@ -71,29 +71,21 @@ export function CourseSectionList({
             key={section.id}
             className={cn(
               'flex items-center justify-between gap-3 rounded-lg border p-3 transition-colors',
-              isEnrolled
-                ? 'border-purple-500 dark:border-purple-600'
-                : 'border-border',
+              isEnrolled ? 'border-purple-500 dark:border-purple-600' : 'border-border',
               'hover:bg-muted/50',
             )}
           >
             <div className="flex-1 min-w-0 space-y-1">
               <div className="flex items-center gap-2">
                 <User className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-                <span className="text-sm font-medium truncate">
-                  {section.teacher.name}
-                </span>
+                <span className="text-sm font-medium truncate">{section.teacher.name}</span>
               </div>
               <div className="space-y-0.5 pl-5">
                 {section.meetingTimes.map((meeting, idx) => (
-                  <div
-                    key={idx}
-                    className="flex items-center gap-1 text-xs text-muted-foreground"
-                  >
+                  <div key={idx} className="flex items-center gap-1 text-xs text-muted-foreground">
                     <Clock className="h-3 w-3 shrink-0" />
                     <span>
-                      {formatDayOfWeek(meeting.dayOfWeek)}{' '}
-                      {formatTime(meeting.startTime)}-
+                      {formatDayOfWeek(meeting.dayOfWeek)} {formatTime(meeting.startTime)}-
                       {formatTime(meeting.endTime)}
                     </span>
                   </div>

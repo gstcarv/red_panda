@@ -119,12 +119,8 @@ describe('Dashboard', () => {
     expect(screen.getByText('14')).toBeInTheDocument();
     expect(screen.getByText('68%')).toBeInTheDocument();
     expect(screen.getByText('1 passed, 1 failed')).toBeInTheDocument();
-    expect(
-      screen.getByRole('button', { name: /^Fall 2024/i }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole('button', { name: /^Spring 2024/i }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /^Fall 2024/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /^Spring 2024/i })).toBeInTheDocument();
     expect(screen.queryByText('Data Structures')).not.toBeInTheDocument();
     expect(screen.queryByText('Introduction to Programming')).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'See more' })).not.toBeInTheDocument();
@@ -137,9 +133,7 @@ describe('Dashboard', () => {
     render(<Dashboard />);
 
     await user.click(screen.getByRole('button', { name: /^Fall 2024/i }));
-    await user.click(
-      screen.getByRole('button', { name: /Data Structures/i }),
-    );
+    await user.click(screen.getByRole('button', { name: /Data Structures/i }));
 
     expect(screen.getByTestId('course-details-modal')).toHaveTextContent(
       'Course details for 3 on semester 3',
@@ -177,67 +171,67 @@ describe('Dashboard', () => {
     mockedUseCourseHistory.mockReturnValue({
       data: {
         courseHistory: [
-            {
+          {
+            id: 1,
+            courseId: 101,
+            courseName: 'Course A',
+            semester: {
               id: 1,
-              courseId: 101,
-              courseName: 'Course A',
-              semester: {
-                id: 1,
-                name: 'Fall',
-                year: 2023,
-                order_in_year: 1,
-              },
-              status: 'passed',
+              name: 'Fall',
+              year: 2023,
+              order_in_year: 1,
             },
-            {
+            status: 'passed',
+          },
+          {
+            id: 2,
+            courseId: 102,
+            courseName: 'Course B',
+            semester: {
               id: 2,
-              courseId: 102,
-              courseName: 'Course B',
-              semester: {
-                id: 2,
-                name: 'Spring',
-                year: 2024,
-                order_in_year: 2,
-              },
-              status: 'passed',
+              name: 'Spring',
+              year: 2024,
+              order_in_year: 2,
             },
-            {
+            status: 'passed',
+          },
+          {
+            id: 3,
+            courseId: 103,
+            courseName: 'Course C',
+            semester: {
               id: 3,
-              courseId: 103,
-              courseName: 'Course C',
-              semester: {
-                id: 3,
-                name: 'Fall',
-                year: 2024,
-                order_in_year: 1,
-              },
-              status: 'failed',
+              name: 'Fall',
+              year: 2024,
+              order_in_year: 1,
             },
-            {
+            status: 'failed',
+          },
+          {
+            id: 4,
+            courseId: 104,
+            courseName: 'Course D',
+            semester: {
               id: 4,
-              courseId: 104,
-              courseName: 'Course D',
-              semester: {
-                id: 4,
-                name: 'Spring',
-                year: 2025,
-                order_in_year: 2,
-              },
-              status: 'passed',
+              name: 'Spring',
+              year: 2025,
+              order_in_year: 2,
             },
-            {
+            status: 'passed',
+          },
+          {
+            id: 5,
+            courseId: 105,
+            courseName: 'Course E',
+            semester: {
               id: 5,
-              courseId: 105,
-              courseName: 'Course E',
-              semester: {
-                id: 5,
-                name: 'Fall',
-                year: 2025,
-                order_in_year: 1,
-              },
-              status: 'failed',
+              name: 'Fall',
+              year: 2025,
+              order_in_year: 1,
             },
-          ],
+            status: 'failed',
+          },
+        ],
       },
       isLoading: false,
       isError: false,
@@ -355,9 +349,7 @@ describe('Dashboard', () => {
 
     expect(screen.getByText('Graduation successful')).toBeInTheDocument();
     expect(
-      screen.getByText(
-        'You reached 30/30 credits and completed your graduation requirement.',
-      ),
+      screen.getByText('You reached 30/30 credits and completed your graduation requirement.'),
     ).toBeInTheDocument();
   });
 

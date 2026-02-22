@@ -41,10 +41,7 @@ describe('useLogin', () => {
 
     await result.current.mutateAsync({ email: 'student@school.edu' });
 
-    expect(loginMock).toHaveBeenCalledWith(
-      { email: 'student@school.edu' },
-      expect.anything(),
-    );
+    expect(loginMock).toHaveBeenCalledWith({ email: 'student@school.edu' }, expect.anything());
   });
 
   it('triggers mutation callbacks passed in options', async () => {

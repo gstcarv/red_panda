@@ -33,9 +33,7 @@ describe('useCourses', () => {
     vi.spyOn(useFilterCoursesHook, 'useFilterCourses').mockReturnValue({
       filteredCourses: [{ id: 1, name: 'Algebra' }],
     } as never);
-    const getCoursesSpy = vi
-      .spyOn(coursesApi, 'getCourses')
-      .mockResolvedValue(response as never);
+    const getCoursesSpy = vi.spyOn(coursesApi, 'getCourses').mockResolvedValue(response as never);
 
     const { result } = renderHook(() => useCourses(), {
       wrapper: createWrapper(),
@@ -55,11 +53,9 @@ describe('useCourses', () => {
         courses: [{ id: 1, name: 'Algebra' }],
       },
     };
-    const useFilterCoursesSpy = vi
-      .spyOn(useFilterCoursesHook, 'useFilterCourses')
-      .mockReturnValue({
-        filteredCourses: [],
-      } as never);
+    const useFilterCoursesSpy = vi.spyOn(useFilterCoursesHook, 'useFilterCourses').mockReturnValue({
+      filteredCourses: [],
+    } as never);
     vi.spyOn(coursesApi, 'getCourses').mockResolvedValue(response as never);
 
     const filter = {

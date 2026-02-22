@@ -11,14 +11,24 @@ vi.mock('@/hooks/schedule/use-scheduler-enrollments', () => ({
 }));
 
 vi.mock('@/components/schedule', () => ({
-  ScheduleCalendar: ({ events, activeCourseId }: { events: unknown[]; activeCourseId?: number | null }) => {
+  ScheduleCalendar: ({
+    events,
+    activeCourseId,
+  }: {
+    events: unknown[];
+    activeCourseId?: number | null;
+  }) => {
     scheduleCalendarSpy({
       events,
       activeCourseId,
     });
     return <div data-testid="schedule-calendar" />;
   },
-  SchedulerList: ({ onCourseHoverChange }: { onCourseHoverChange?: (courseId: number | null) => void }) => {
+  SchedulerList: ({
+    onCourseHoverChange,
+  }: {
+    onCourseHoverChange?: (courseId: number | null) => void;
+  }) => {
     schedulerListSpy({
       onCourseHoverChange,
     });
@@ -45,12 +55,8 @@ describe('Schedule', () => {
 
     render(<Schedule />);
 
-    expect(
-      screen.getByRole('heading', { name: 'Schedule', level: 1 }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText('Your schedule for the current semester.'),
-    ).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Schedule', level: 1 })).toBeInTheDocument();
+    expect(screen.getByText('Your schedule for the current semester.')).toBeInTheDocument();
     expect(screen.getByTestId('schedule-calendar')).toBeInTheDocument();
     expect(screen.getByTestId('scheduler-list')).toBeInTheDocument();
     expect(schedulerListSpy).toHaveBeenCalledWith({

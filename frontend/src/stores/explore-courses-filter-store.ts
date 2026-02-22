@@ -36,32 +36,25 @@ function normalizeWeekday(value: string) {
   return value.trim().toLowerCase();
 }
 
-export const useExploreCoursesFilterStore = create<ExploreCoursesFilterStore>(
-  (set) => ({
-    filter: DEFAULT_EXPLORE_COURSES_FILTER,
-    setSearch: (value) =>
-      set((state) => ({ filter: { ...state.filter, search: value } })),
-    setFromTime: (value) =>
-      set((state) => ({ filter: { ...state.filter, fromTime: value } })),
-    setUntilTime: (value) =>
-      set((state) => ({ filter: { ...state.filter, untilTime: value } })),
-    toggleWeekday: (day) =>
-      set((state) => {
-        const normalizedDay = normalizeWeekday(day);
-        const hasDay = state.filter.weekdays.includes(normalizedDay);
+export const useExploreCoursesFilterStore = create<ExploreCoursesFilterStore>((set) => ({
+  filter: DEFAULT_EXPLORE_COURSES_FILTER,
+  setSearch: (value) => set((state) => ({ filter: { ...state.filter, search: value } })),
+  setFromTime: (value) => set((state) => ({ filter: { ...state.filter, fromTime: value } })),
+  setUntilTime: (value) => set((state) => ({ filter: { ...state.filter, untilTime: value } })),
+  toggleWeekday: (day) =>
+    set((state) => {
+      const normalizedDay = normalizeWeekday(day);
+      const hasDay = state.filter.weekdays.includes(normalizedDay);
 
-        return {
-          filter: {
-            ...state.filter,
-            weekdays: hasDay
-              ? state.filter.weekdays.filter(
-                  (existingDay) => existingDay !== normalizedDay,
-                )
-              : [...state.filter.weekdays, normalizedDay],
-          },
-        };
-      }),
-    setFilter: (value) => set({ filter: value }),
-    resetFilter: () => set({ filter: DEFAULT_EXPLORE_COURSES_FILTER }),
-  }),
-);
+      return {
+        filter: {
+          ...state.filter,
+          weekdays: hasDay
+            ? state.filter.weekdays.filter((existingDay) => existingDay !== normalizedDay)
+            : [...state.filter.weekdays, normalizedDay],
+        },
+      };
+    }),
+  setFilter: (value) => set({ filter: value }),
+  resetFilter: () => set({ filter: DEFAULT_EXPLORE_COURSES_FILTER }),
+}));

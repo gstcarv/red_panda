@@ -30,10 +30,7 @@ describe('useErrorHandler', () => {
   it('uses Error.message for regular errors', () => {
     const { result } = renderHook(() => useErrorHandler());
 
-    const message = result.current.getErrorMessage(
-      new Error('Network offline'),
-      'Fallback',
-    );
+    const message = result.current.getErrorMessage(new Error('Network offline'), 'Fallback');
 
     expect(message).toBe('Network offline');
   });

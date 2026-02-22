@@ -1,24 +1,13 @@
 import * as React from 'react';
 import { cn } from '@/lib/utils';
 
-export interface SwitchProps
-  extends Omit<React.ComponentProps<'button'>, 'onChange'> {
+export interface SwitchProps extends Omit<React.ComponentProps<'button'>, 'onChange'> {
   checked?: boolean;
   onCheckedChange?: (checked: boolean) => void;
 }
 
 const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
-  (
-    {
-      className,
-      checked = false,
-      onCheckedChange,
-      onClick,
-      disabled,
-      ...props
-    },
-    ref,
-  ) => {
+  ({ className, checked = false, onCheckedChange, onClick, disabled, ...props }, ref) => {
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
       onClick?.(e);
       if (!disabled) onCheckedChange?.(!checked);

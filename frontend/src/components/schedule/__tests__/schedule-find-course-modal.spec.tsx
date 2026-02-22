@@ -35,12 +35,8 @@ vi.mock('@/components/courses/course-student-status-tag', () => ({
 
 vi.mock('@/components/ui/dialog', () => ({
   Dialog: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  DialogContent: ({ children }: { children: React.ReactNode }) => (
-    <div>{children}</div>
-  ),
-  DialogDescription: ({ children }: { children: React.ReactNode }) => (
-    <p>{children}</p>
-  ),
+  DialogContent: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  DialogDescription: ({ children }: { children: React.ReactNode }) => <p>{children}</p>,
   DialogHeader: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
   DialogTitle: ({ children }: { children: React.ReactNode }) => <h1>{children}</h1>,
 }));
@@ -225,9 +221,7 @@ describe('ScheduleFindCourseModal', () => {
     fireEvent.click(screen.getByRole('button', { name: /algebra i/i }));
 
     expect(onOpenChange).toHaveBeenCalledWith(false);
-    expect(screen.getByTestId('course-section-modal')).toHaveTextContent(
-      'course:1-open:yes',
-    );
+    expect(screen.getByTestId('course-section-modal')).toHaveTextContent('course:1-open:yes');
   });
 
   it('shows not eligible when prerequisite is not enrolled', () => {

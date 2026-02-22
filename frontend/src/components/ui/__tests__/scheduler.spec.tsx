@@ -123,16 +123,15 @@ describe('Scheduler', () => {
       eventClassNames: expect.any(Function),
     });
 
-    const eventClassNames = fullCalendarSpy.mock.calls[0][0]
-      .eventClassNames as (arg: {
+    const eventClassNames = fullCalendarSpy.mock.calls[0][0].eventClassNames as (arg: {
       event: { extendedProps: { courseId: number } };
     }) => string[];
 
-    expect(
-      eventClassNames({ event: { extendedProps: { courseId: 1 } } }),
-    ).toEqual(['ui-scheduler-event-highlighted']);
-    expect(
-      eventClassNames({ event: { extendedProps: { courseId: 2 } } }),
-    ).toEqual(['ui-scheduler-event-dimmed']);
+    expect(eventClassNames({ event: { extendedProps: { courseId: 1 } } })).toEqual([
+      'ui-scheduler-event-highlighted',
+    ]);
+    expect(eventClassNames({ event: { extendedProps: { courseId: 2 } } })).toEqual([
+      'ui-scheduler-event-dimmed',
+    ]);
   });
 });

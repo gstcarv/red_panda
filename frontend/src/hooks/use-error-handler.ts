@@ -15,11 +15,7 @@ export function useErrorHandler() {
     (error: unknown, defaultMessage = 'Something went wrong.') => {
       if (error && typeof error === 'object' && 'response' in error) {
         const apiError = error as ApiErrorShape;
-        return (
-          apiError.response?.data?.message ??
-          apiError.response?.data?.error ??
-          defaultMessage
-        );
+        return apiError.response?.data?.message ?? apiError.response?.data?.error ?? defaultMessage;
       }
 
       if (error instanceof Error) {

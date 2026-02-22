@@ -8,7 +8,8 @@ export function useDashboard() {
   const historyQuery = useCourseHistory();
 
   const student = studentQuery.data?.student;
-  const history = historyQuery.data?.courseHistory ?? [];
+  const courseHistory = historyQuery.data?.courseHistory;
+  const history = useMemo(() => courseHistory ?? [], [courseHistory]);
 
   const isLoading = studentQuery.isLoading || historyQuery.isLoading;
   const isError = studentQuery.isError || historyQuery.isError;
@@ -19,9 +20,7 @@ export function useDashboard() {
     const requiredCredits = student?.credits.max ?? 0;
     const remainingCredits = Math.max(0, requiredCredits - earnedCredits);
     const graduationPercent =
-      requiredCredits > 0
-        ? Math.min(100, (earnedCredits / requiredCredits) * 100)
-        : 0;
+      requiredCredits > 0 ? Math.min(100, (earnedCredits / requiredCredits) * 100) : 0;
     const passedCount = history.filter((item) => item.status === 'passed').length;
     const failedCount = history.filter((item) => item.status === 'failed').length;
 
