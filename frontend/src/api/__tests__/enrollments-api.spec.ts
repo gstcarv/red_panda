@@ -14,13 +14,11 @@ describe('students api enrollments endpoints', () => {
     vi.spyOn(api, 'post').mockImplementation(postMock);
 
     await studentsApi.enroll({
-      studentId: 1,
       courseId: 2,
       sectionId: 3,
     });
 
     expect(postMock).toHaveBeenCalledWith('/me/enrollments', {
-      studentId: 1,
       courseId: 2,
       sectionId: 3,
     });

@@ -1,13 +1,10 @@
 import { getCourses } from "@/api/courses-api";
 import { useQuery } from "@tanstack/react-query";
-
-export function buildCoursesQueryKey() {
-    return ["courses"] as const;
-}
+import { coursesCache } from '@/helpers/cache/courses-cache';
 
 export function useCourses() {
     return useQuery({
-        queryKey: buildCoursesQueryKey(),
+        queryKey: coursesCache.buildKey(),
         queryFn: getCourses,
     });
 }

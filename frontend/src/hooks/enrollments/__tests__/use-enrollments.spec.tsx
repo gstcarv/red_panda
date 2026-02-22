@@ -2,10 +2,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import * as studentsApi from '@/api/students-api';
-import {
-  buildEnrollmentsQueryKey,
-  useEnrollments,
-} from '@/hooks/enrollments/use-enrollments';
+import { useEnrollments } from '@/hooks/enrollments/use-enrollments';
 
 function createWrapper() {
   const queryClient = new QueryClient({
@@ -22,10 +19,6 @@ function createWrapper() {
 }
 
 describe('useEnrollments', () => {
-  it('builds a stable enrollments query key', () => {
-    expect(buildEnrollmentsQueryKey()).toEqual(['me', 'enrollments']);
-  });
-
   it('loads enrollments data from api', async () => {
     const response = {
       data: {

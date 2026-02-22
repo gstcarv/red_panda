@@ -1,13 +1,10 @@
 import { getStudentEnrollments } from "@/api/students-api";
 import { useQuery } from "@tanstack/react-query";
-
-export function buildEnrollmentsQueryKey() {
-  return ["me", "enrollments"] as const;
-}
+import { enrollmentsCache } from '@/helpers/cache/enrollment-cache';
 
 export function useEnrollments() {
   return useQuery({
-    queryKey: buildEnrollmentsQueryKey(),
+    queryKey: enrollmentsCache.buildKey(),
     queryFn: getStudentEnrollments,
   });
 }

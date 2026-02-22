@@ -16,7 +16,6 @@ export type GetStudentEnrollmentsResponse = {
 };
 
 export type EnrollParams = {
-  studentId: number;
   courseId: number;
   sectionId: number;
 };
