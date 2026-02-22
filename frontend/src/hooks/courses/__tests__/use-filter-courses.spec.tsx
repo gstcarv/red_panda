@@ -15,9 +15,7 @@ vi.mock('@/hooks/enrollments/use-check-enrollment-eligibility', () => ({
 vi.mock('@/hooks/courses/use-course-history', () => ({
   useCourseHistory: vi.fn(() => ({
     data: {
-      data: {
-        courseHistory: [],
-      },
+      courseHistory: [],
     },
   })),
 }));
@@ -66,22 +64,20 @@ describe('useFilterCourses', () => {
   it('hides passed courses from explore list', () => {
     vi.mocked(useCourseHistory).mockReturnValue({
       data: {
-        data: {
-          courseHistory: [
-            {
+        courseHistory: [
+          {
+            id: 1,
+            courseId: 2,
+            courseName: 'Biology',
+            semester: {
               id: 1,
-              courseId: 2,
-              courseName: 'Biology',
-              semester: {
-                id: 1,
-                name: 'Fall',
-                year: 2024,
-                order_in_year: 1,
-              },
-              status: 'passed',
+              name: 'Fall',
+              year: 2024,
+              order_in_year: 1,
             },
-          ],
-        },
+            status: 'passed',
+          },
+        ],
       },
     } as never);
 
@@ -130,9 +126,7 @@ describe('useFilterCourses', () => {
   it('filters by weekday/time and sorts eligible courses first', () => {
     vi.mocked(useCourseHistory).mockReturnValue({
       data: {
-        data: {
-          courseHistory: [],
-        },
+        courseHistory: [],
       },
     } as never);
 
@@ -181,9 +175,7 @@ describe('useFilterCourses', () => {
   it('filters by search text in name or code', () => {
     vi.mocked(useCourseHistory).mockReturnValue({
       data: {
-        data: {
-          courseHistory: [],
-        },
+        courseHistory: [],
       },
     } as never);
 

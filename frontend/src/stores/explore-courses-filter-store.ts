@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { normalizeWeekday } from '@/helpers/date-helper';
 
 export type ExploreCoursesFilterValues = {
   search: string;
@@ -31,10 +32,6 @@ export const DEFAULT_EXPLORE_COURSES_FILTER: ExploreCoursesFilterValues = {
   untilTime: '',
   weekdays: [],
 };
-
-function normalizeWeekday(value: string) {
-  return value.trim().toLowerCase();
-}
 
 export const useExploreCoursesFilterStore = create<ExploreCoursesFilterStore>((set) => ({
   filter: DEFAULT_EXPLORE_COURSES_FILTER,

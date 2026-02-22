@@ -9,59 +9,10 @@ import type { SchedulerEvent, SchedulerSlotSelection } from '@/types/scheduler.t
 import { ScheduleFindCourseModal } from './schedule-find-course-modal';
 import { CourseDetailsModal } from '@/components/courses/course-details-modal';
 import { useActiveSemester } from '@/hooks/semester/use-active-semester';
+import { addMinutesToTime, indexToWeekday, parseTimeToMinutes, weekdayToIndex } from '@/helpers/date-helper';
+import { pluralize } from '@/helpers/string-helper';
 
 const CALENDAR_BOTTOM_OFFSET = 40;
-
-const WEEK_DAYS = [
-  'sunday',
-  'monday',
-  'tuesday',
-  'wednesday',
-  'thursday',
-  'friday',
-  'saturday',
-] as const;
-const WEEK_DAY_TO_INDEX: Record<string, number> = {
-  sunday: 0,
-  monday: 1,
-  tuesday: 2,
-  wednesday: 3,
-  thursday: 4,
-  friday: 5,
-  saturday: 6,
-};
-
-function parseTimeToMinutes(value: string): number | null {
-  const [hours, minutes] = value.split(':').map(Number);
-  if (
-    Number.isNaN(hours) ||
-    Number.isNaN(minutes) ||
-    hours < 0 ||
-    hours > 23 ||
-    minutes < 0 ||
-    minutes > 59
-  ) {
-    return null;
-  }
-
-  return hours * 60 + minutes;
-}
-
-function addOneHourToTime(startTime: string): string | null {
-  const startInMinutes = parseTimeToMinutes(startTime);
-  if (startInMinutes === null) {
-    return null;
-  }
-
-  const totalMinutes = startInMinutes + 60;
-  if (totalMinutes > 24 * 60) {
-    return null;
-  }
-
-  const nextHours = Math.floor(totalMinutes / 60);
-  const nextMinutes = totalMinutes % 60;
-  return `${String(nextHours).padStart(2, '0')}:${String(nextMinutes).padStart(2, '0')}`;
-}
 
 function hasRegularEventInSlot(
   regularEvents: SchedulerEvent[],
@@ -89,7 +40,7 @@ function hasRegularEventInSlot(
 }
 
 function toWeekDay(date: Date): string | null {
-  return WEEK_DAYS[date.getDay()] ?? null;
+  return indexToWeekday(date.getDay());
 }
 
 function toStartTime(date: Date): string {
@@ -181,10 +132,10 @@ export function ScheduleCalendar({ events, activeCourseId = null }: ScheduleCale
 
     for (const [slotKey, courses] of coursesBySlot.entries()) {
       const [weekDay, startTime] = slotKey.split('|');
-      const dayIndex = WEEK_DAY_TO_INDEX[weekDay];
-      const endTime = addOneHourToTime(startTime ?? '');
+      const dayIndex = weekdayToIndex(weekDay ?? '');
+      const endTime = addMinutesToTime(startTime ?? '', 60);
 
-      if (dayIndex === undefined || !startTime || endTime === null || courses.length === 0) {
+      if (dayIndex === null || !startTime || endTime === null || courses.length === 0) {
         continue;
       }
 
@@ -194,7 +145,7 @@ export function ScheduleCalendar({ events, activeCourseId = null }: ScheduleCale
 
       slotHintEvents.push({
         id: `slot-hint-${dayIndex}-${startTime}`,
-        title: `${courses.length} course${courses.length !== 1 ? 's' : ''} available`,
+        title: `${courses.length} ${pluralize(courses.length, 'course')} available`,
         daysOfWeek: [dayIndex],
         startTime,
         endTime,

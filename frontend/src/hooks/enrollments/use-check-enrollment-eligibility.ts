@@ -105,12 +105,19 @@ export function useCheckEnrollmentEligibility(): UseCheckEnrollmentEligibilityRe
   const { data: courseHistoryResponse, isLoading: isCourseHistoryLoading } = useCourseHistory();
   const { data: studentResponse } = useStudent();
 
-  const student = studentResponse?.student;
+  const student = studentResponse?.student ?? (studentResponse as { data?: { student?: Student } })?.data?.student;
 
   const evaluate = useCallback(
     (course: Course) => {
-      const enrollments = enrollmentsResponse?.enrollments ?? [];
-      const courseHistory = courseHistoryResponse?.courseHistory ?? [];
+      const enrollments =
+        enrollmentsResponse?.enrollments ??
+        (enrollmentsResponse as { data?: { enrollments?: Enrollment[] } })?.data?.enrollments ??
+        [];
+      const courseHistory =
+        courseHistoryResponse?.courseHistory ??
+        (courseHistoryResponse as { data?: { courseHistory?: CourseHistory[] } })?.data
+          ?.courseHistory ??
+        [];
 
       return evaluateEnrollmentEligibility({
         course,

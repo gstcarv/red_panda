@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { CourseHistory } from '@/types/course-history.type';
 import type { DashboardMetrics } from '@/types/dashboard.type';
+import { pluralize } from '@/helpers/string-helper';
 
 interface DashboardCourseHistoryCardProps {
   isLoading: boolean;
@@ -104,7 +105,7 @@ export function DashboardCourseHistoryCard({
                             {group.semesterLabel}
                           </p>
                           <p className="text-xs text-muted-foreground">
-                            {group.items.length} {group.items.length === 1 ? 'course' : 'courses'}
+                            {group.items.length} {pluralize(group.items.length, 'course')}
                           </p>
                         </div>
                         <div className="hidden items-center gap-2 sm:flex" aria-hidden="true">

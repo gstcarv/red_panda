@@ -41,21 +41,19 @@ describe('useCheckCourseStatus', () => {
 
     mockedUseEnrollments.mockReturnValue({
       data: {
-        data: {
-          enrollments: [
-            {
-              id: 'e-1',
-              course: createCourse({ id: 1 }),
-              courseSection: section,
-              semester: {
-                id: 1,
-                name: 'Fall',
-                year: 2024,
-                order_in_year: 1,
-              },
+        enrollments: [
+          {
+            id: 'e-1',
+            course: createCourse({ id: 1 }),
+            courseSection: section,
+            semester: {
+              id: 1,
+              name: 'Fall',
+              year: 2024,
+              order_in_year: 1,
             },
-          ],
-        },
+          },
+        ],
       },
       isLoading: false,
       isError: false,
@@ -63,22 +61,20 @@ describe('useCheckCourseStatus', () => {
 
     mockedUseCourseHistory.mockReturnValue({
       data: {
-        data: {
-          courseHistory: [
-            {
+        courseHistory: [
+          {
+            id: 1,
+            courseId: 1,
+            courseName: 'Intro to Programming',
+            semester: {
               id: 1,
-              courseId: 1,
-              courseName: 'Intro to Programming',
-              semester: {
-                id: 1,
-                name: 'Fall',
-                year: 2024,
-                order_in_year: 1,
-              },
-              status: 'passed',
+              name: 'Fall',
+              year: 2024,
+              order_in_year: 1,
             },
-          ],
-        },
+            status: 'passed',
+          },
+        ],
       },
       isLoading: false,
       isError: false,
@@ -94,9 +90,7 @@ describe('useCheckCourseStatus', () => {
   it('returns passed status when not enrolled and course history indicates passed', () => {
     mockedUseEnrollments.mockReturnValue({
       data: {
-        data: {
-          enrollments: [],
-        },
+        enrollments: [],
       },
       isLoading: false,
       isError: false,
@@ -104,34 +98,32 @@ describe('useCheckCourseStatus', () => {
 
     mockedUseCourseHistory.mockReturnValue({
       data: {
-        data: {
-          courseHistory: [
-            {
-              id: 10,
-              courseId: 99,
-              courseName: 'Other course',
-              semester: {
-                id: 1,
-                name: 'Fall',
-                year: 2024,
-                order_in_year: 1,
-              },
-              status: 'failed',
+        courseHistory: [
+          {
+            id: 10,
+            courseId: 99,
+            courseName: 'Other course',
+            semester: {
+              id: 1,
+              name: 'Fall',
+              year: 2024,
+              order_in_year: 1,
             },
-            {
-              id: 11,
-              courseId: 1,
-              courseName: 'Intro to Programming',
-              semester: {
-                id: 2,
-                name: 'Spring',
-                year: 2025,
-                order_in_year: 2,
-              },
-              status: 'passed',
+            status: 'failed',
+          },
+          {
+            id: 11,
+            courseId: 1,
+            courseName: 'Intro to Programming',
+            semester: {
+              id: 2,
+              name: 'Spring',
+              year: 2025,
+              order_in_year: 2,
             },
-          ],
-        },
+            status: 'passed',
+          },
+        ],
       },
       isLoading: false,
       isError: false,
@@ -147,9 +139,7 @@ describe('useCheckCourseStatus', () => {
   it('returns undefined status when neither enrolled nor in course history', () => {
     mockedUseEnrollments.mockReturnValue({
       data: {
-        data: {
-          enrollments: [],
-        },
+        enrollments: [],
       },
       isLoading: false,
       isError: false,
@@ -157,9 +147,7 @@ describe('useCheckCourseStatus', () => {
 
     mockedUseCourseHistory.mockReturnValue({
       data: {
-        data: {
-          courseHistory: [],
-        },
+        courseHistory: [],
       },
       isLoading: false,
       isError: false,
@@ -175,9 +163,7 @@ describe('useCheckCourseStatus', () => {
   it('ignores semester when determining history status', () => {
     mockedUseEnrollments.mockReturnValue({
       data: {
-        data: {
-          enrollments: [],
-        },
+        enrollments: [],
       },
       isLoading: false,
       isError: false,
@@ -185,22 +171,20 @@ describe('useCheckCourseStatus', () => {
 
     mockedUseCourseHistory.mockReturnValue({
       data: {
-        data: {
-          courseHistory: [
-            {
-              id: 20,
-              courseId: 1,
-              courseName: 'Intro to Programming',
-              semester: {
-                id: 2,
-                name: 'Spring',
-                year: 2025,
-                order_in_year: 2,
-              },
-              status: 'passed',
+        courseHistory: [
+          {
+            id: 20,
+            courseId: 1,
+            courseName: 'Intro to Programming',
+            semester: {
+              id: 2,
+              name: 'Spring',
+              year: 2025,
+              order_in_year: 2,
             },
-          ],
-        },
+            status: 'passed',
+          },
+        ],
       },
       isLoading: false,
       isError: false,
@@ -226,9 +210,7 @@ describe('useCheckCourseStatus', () => {
   it('uses provided semesterId to determine history status', () => {
     mockedUseEnrollments.mockReturnValue({
       data: {
-        data: {
-          enrollments: [],
-        },
+        enrollments: [],
       },
       isLoading: false,
       isError: false,
@@ -236,22 +218,20 @@ describe('useCheckCourseStatus', () => {
 
     mockedUseCourseHistory.mockReturnValue({
       data: {
-        data: {
-          courseHistory: [
-            {
-              id: 21,
-              courseId: 1,
-              courseName: 'Intro to Programming',
-              semester: {
-                id: 2,
-                name: 'Spring',
-                year: 2025,
-                order_in_year: 2,
-              },
-              status: 'passed',
+        courseHistory: [
+          {
+            id: 21,
+            courseId: 1,
+            courseName: 'Intro to Programming',
+            semester: {
+              id: 2,
+              name: 'Spring',
+              year: 2025,
+              order_in_year: 2,
             },
-          ],
-        },
+            status: 'passed',
+          },
+        ],
       },
       isLoading: false,
       isError: false,

@@ -8,6 +8,7 @@ import { useCourseDetailsModal } from '@/hooks/courses/use-course-details-modal'
 import { useCheckEnrollmentEligibility } from '@/hooks/enrollments/use-check-enrollment-eligibility';
 import type { Course } from '@/types/course.type';
 import { useMemo } from 'react';
+import { pluralize } from '@/helpers/string-helper';
 
 export interface CoursesListProps {
   courses: Course[];
@@ -140,7 +141,7 @@ export function CoursesList({
   return (
     <div className={className ?? ''}>
       <p className="mb-4 text-sm text-muted-foreground">
-        {courses.length} {courses.length === 1 ? 'course' : 'courses'} found
+        {courses.length} {pluralize(courses.length, 'course')} found
       </p>
       <ul className="grid grid-cols-1 gap-4 sm:gap-5 md:grid-cols-2 xl:grid-cols-3" role="list">
         {courses.map((course) => (

@@ -5,34 +5,12 @@ import { useCourseHistory } from '@/hooks/courses/use-course-history';
 import { useStudent } from '@/hooks/students/use-student';
 import { evaluateEnrollmentEligibility } from '@/hooks/enrollments/use-check-enrollment-eligibility';
 import type { Course } from '@/types/course.type';
+import { formatMinutesToTime, normalizeWeekday, parseTimeToMinutes } from '@/helpers/date-helper';
 
 const SLOT_INTERVAL_IN_MINUTES = 60;
 
-function parseTimeToMinutes(value: string): number | null {
-  const [hours, minutes] = value.split(':').map(Number);
-
-  if (
-    Number.isNaN(hours) ||
-    Number.isNaN(minutes) ||
-    hours < 0 ||
-    hours > 23 ||
-    minutes < 0 ||
-    minutes > 59
-  ) {
-    return null;
-  }
-
-  return hours * 60 + minutes;
-}
-
-function formatMinutesToTime(value: number): string {
-  const hours = Math.floor(value / 60);
-  const minutes = value % 60;
-  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
-}
-
 export function buildSlotKey(weekDay: string, startTime: string) {
-  return `${weekDay.trim().toLowerCase()}|${startTime}`;
+  return `${normalizeWeekday(weekDay)}|${startTime}`;
 }
 
 function addCourseToSlot(bySlot: Map<string, Course[]>, slotKey: string, course: Course) {
@@ -86,7 +64,7 @@ export function useSchedulerSlotCourses() {
 
       for (const section of course.availableSections) {
         for (const meetingTime of section.meetingTimes) {
-          const normalizedWeekDay = meetingTime.dayOfWeek.trim().toLowerCase();
+          const normalizedWeekDay = normalizeWeekday(meetingTime.dayOfWeek);
           const startInMinutes = parseTimeToMinutes(meetingTime.startTime);
           const endInMinutes = parseTimeToMinutes(meetingTime.endTime);
 

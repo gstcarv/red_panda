@@ -3,6 +3,7 @@ import { useCheckEnrollmentEligibility } from '@/hooks/enrollments/use-check-enr
 import { useCourseHistory } from '@/hooks/courses/use-course-history';
 import type { Course } from '@/types/course.type';
 import type { ExploreCoursesFilterValues } from '@/stores/explore-courses-filter-store';
+import { normalizeWeekday, parseTimeToMinutes } from '@/helpers/date-helper';
 
 type UseFilterCoursesArgs = {
   courses: Course[];
@@ -15,26 +16,9 @@ type MeetingTimeFilter = {
   untilInMinutes: number | null;
 };
 
-function parseTimeToMinutes(value: string): number | null {
-  const [hours, minutes] = value.split(':').map(Number);
-
-  if (
-    Number.isNaN(hours) ||
-    Number.isNaN(minutes) ||
-    hours < 0 ||
-    hours > 23 ||
-    minutes < 0 ||
-    minutes > 59
-  ) {
-    return null;
-  }
-
-  return hours * 60 + minutes;
-}
-
 function buildMeetingTimeFilter(filter: ExploreCoursesFilterValues): MeetingTimeFilter {
   return {
-    selectedWeekdays: new Set(filter.weekdays.map((day) => day.toLowerCase())),
+    selectedWeekdays: new Set(filter.weekdays.map(normalizeWeekday)),
     fromInMinutes: filter.fromTime ? parseTimeToMinutes(filter.fromTime) : null,
     untilInMinutes: filter.untilTime ? parseTimeToMinutes(filter.untilTime) : null,
   };
@@ -55,7 +39,7 @@ function hasMatchingMeetingTime(
 
   return course.availableSections.some((section) =>
     section.meetingTimes.some((meetingTime) => {
-      const meetingWeekday = meetingTime.dayOfWeek.trim().toLowerCase();
+      const meetingWeekday = normalizeWeekday(meetingTime.dayOfWeek);
 
       if (hasWeekdayFilter && !selectedWeekdays.has(meetingWeekday)) {
         return false;
