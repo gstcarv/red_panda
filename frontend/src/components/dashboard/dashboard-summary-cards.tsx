@@ -5,8 +5,20 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { formatCredits, formatGpa } from './formatters';
-import type { DashboardSummaryCardsProps } from './types';
+import type { DashboardMetrics } from '@/types/dashboard.type';
+
+function formatGpa(value: number) {
+  return value.toFixed(2);
+}
+
+function formatCredits(earned: number, max: number) {
+  return `${earned}/${max}`;
+}
+
+interface DashboardSummaryCardsProps {
+  isLoading: boolean;
+  metrics: DashboardMetrics;
+}
 
 export function DashboardSummaryCards({
   isLoading,

@@ -1,5 +1,4 @@
 import { QueryClient } from '@tanstack/react-query';
-import type { AxiosResponse } from 'axios';
 import type { GetStudentEnrollmentsResponse } from '@/api/students-api';
 import { enrollmentsCache } from '@/helpers/cache/enrollment-cache';
 import type { Enrollment } from '@/types/enrollments.type';
@@ -52,11 +51,11 @@ function seedEnrollmentsCache(
   queryClient: QueryClient,
   enrollments: Enrollment[],
 ) {
-  queryClient.setQueryData<AxiosResponse<GetStudentEnrollmentsResponse>>(
+  queryClient.setQueryData<GetStudentEnrollmentsResponse>(
     enrollmentsCache.buildKey(),
     {
-      data: { enrollments },
-    } as AxiosResponse<GetStudentEnrollmentsResponse>,
+      enrollments,
+    },
   );
 }
 
@@ -76,12 +75,12 @@ describe('enrollmentsCache', () => {
       enrollment: second,
     });
 
-    const cacheData = queryClient.getQueryData<AxiosResponse<GetStudentEnrollmentsResponse>>(
+    const cacheData = queryClient.getQueryData<GetStudentEnrollmentsResponse>(
       enrollmentsCache.buildKey(),
     );
 
-    expect(cacheData?.data.enrollments).toHaveLength(2);
-    expect(cacheData?.data.enrollments[1].id).toBe('e-2');
+    expect(cacheData?.enrollments).toHaveLength(2);
+    expect(cacheData?.enrollments[1].id).toBe('e-2');
   });
 
   it('does not add duplicate enrollment for same section', () => {
@@ -95,12 +94,12 @@ describe('enrollmentsCache', () => {
       enrollment: duplicateSection,
     });
 
-    const cacheData = queryClient.getQueryData<AxiosResponse<GetStudentEnrollmentsResponse>>(
+    const cacheData = queryClient.getQueryData<GetStudentEnrollmentsResponse>(
       enrollmentsCache.buildKey(),
     );
 
-    expect(cacheData?.data.enrollments).toHaveLength(1);
-    expect(cacheData?.data.enrollments[0].id).toBe('e-1');
+    expect(cacheData?.enrollments).toHaveLength(1);
+    expect(cacheData?.enrollments[0].id).toBe('e-1');
   });
 
   it('removes enrollment by course id', () => {
@@ -114,12 +113,12 @@ describe('enrollmentsCache', () => {
       courseId: 10,
     });
 
-    const cacheData = queryClient.getQueryData<AxiosResponse<GetStudentEnrollmentsResponse>>(
+    const cacheData = queryClient.getQueryData<GetStudentEnrollmentsResponse>(
       enrollmentsCache.buildKey(),
     );
 
-    expect(cacheData?.data.enrollments).toHaveLength(1);
-    expect(cacheData?.data.enrollments[0].course.id).toBe(11);
+    expect(cacheData?.enrollments).toHaveLength(1);
+    expect(cacheData?.enrollments[0].course.id).toBe(11);
   });
 
   it('invalidates enrollments query key', async () => {

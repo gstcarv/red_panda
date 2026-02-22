@@ -4,21 +4,13 @@ import {
 } from '@/components/courses';
 import { PageTitle } from '@/components/ui/page-title';
 import { useCourses } from '@/hooks/courses/use-courses';
-import { useFilteredExploreCourses } from '@/hooks/courses/use-filtered-explore-courses';
 import { useExploreCoursesFilterStore } from '@/stores/explore-courses-filter-store';
 
 export function ExploreCourses() {
   const filter = useExploreCoursesFilterStore((state) => state.filter);
   const setFilter = useExploreCoursesFilterStore((state) => state.setFilter);
 
-  const { data, isLoading, isError, refetch } = useCourses();
-  const courses = data?.data.courses ?? [];
-  const { filteredCourses, getEligible, getCourseCardClassName } =
-    useFilteredExploreCourses({
-    courses,
-    filter,
-  });
-
+  const { courses, isLoading, isError, refetch } = useCourses(filter);
 
   return (
     <div className="flex flex-col gap-6 sm:gap-8">
@@ -32,9 +24,7 @@ export function ExploreCourses() {
 
       <section aria-label="Courses list">
         <CoursesList
-          courses={filteredCourses}
-          getEligible={getEligible}
-          getCourseCardClassName={getCourseCardClassName}
+          courses={courses}
           isLoading={isLoading}
           isError={isError}
           onRetry={() => refetch()}

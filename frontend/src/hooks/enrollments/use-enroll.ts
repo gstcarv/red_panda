@@ -31,7 +31,7 @@ export function useEnroll(
       });
     },
     onSuccess: async (data, sectionId, onMutateResult, context) => {
-      const enrollment = data.data.enrollment;
+      const enrollment = data.enrollment;
 
       if (enrollment) {
         enrollmentsCache.addEnrollment({

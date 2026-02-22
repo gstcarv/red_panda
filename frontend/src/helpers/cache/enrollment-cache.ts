@@ -1,4 +1,3 @@
-import type { AxiosResponse } from 'axios';
 import merge from 'lodash.merge';
 import type { QueryClient } from '@tanstack/react-query';
 import type { GetStudentEnrollmentsResponse } from '@/api/students-api';
@@ -17,14 +16,14 @@ function addEnrollment({
   queryClient: QueryClient;
   enrollment: Enrollment;
 }) {
-  queryClient.setQueryData<AxiosResponse<GetStudentEnrollmentsResponse>>(
+  queryClient.setQueryData<GetStudentEnrollmentsResponse>(
     buildEnrollmentQueryKey(),
     (current) => {
       if (!current) {
         return current;
       }
 
-      const alreadyExists = current.data.enrollments.some(
+      const alreadyExists = current.enrollments.some(
         (value) => value.courseSection.id === enrollment.courseSection.id,
       );
 
@@ -33,9 +32,7 @@ function addEnrollment({
       }
 
       return merge({}, current, {
-        data: {
-          enrollments: [...current.data.enrollments, enrollment],
-        },
+        enrollments: [...current.enrollments, enrollment],
       });
     },
   );
@@ -48,23 +45,20 @@ function removeEnrollmentByCourseId({
   queryClient: QueryClient;
   courseId: number;
 }) {
-  queryClient.setQueryData<AxiosResponse<GetStudentEnrollmentsResponse>>(
+  queryClient.setQueryData<GetStudentEnrollmentsResponse>(
     buildEnrollmentQueryKey(),
     (current) => {
       if (!current) {
         return current;
       }
 
-      const nextEnrollments = current.data.enrollments.filter(
+      const nextEnrollments = current.enrollments.filter(
         (enrollment) => enrollment.course.id !== courseId,
       );
 
       return {
         ...current,
-        data: {
-          ...current.data,
-          enrollments: nextEnrollments,
-        },
+        enrollments: nextEnrollments,
       };
     },
   );

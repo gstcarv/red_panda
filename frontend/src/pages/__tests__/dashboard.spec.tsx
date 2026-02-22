@@ -9,7 +9,7 @@ vi.mock('@/components/courses/course-student-status-tag', () => ({
   CourseStudentStatusTag: () => <span>Status</span>,
 }));
 
-vi.mock('@/components/courses/course-section-modal', () => ({
+vi.mock('@/components/courses/course-details-modal', () => ({
   CourseDetailsModal: ({
     open,
     courseId,
@@ -43,21 +43,19 @@ function mockLoadedState() {
 
   mockedUseStudent.mockReturnValue({
     data: {
-      data: {
-        student: {
-          id: 1,
-          firstName: 'Alex',
-          lastName: 'Johnson',
-          gradeLevel: 11,
-          email: 'alex@example.com',
-          gpa: 3.7,
-          credits: {
-            earned: 30,
-            max: 44,
-          },
-          options: {
-            maxCoursesPerSemester: 5,
-          },
+      student: {
+        id: 1,
+        firstName: 'Alex',
+        lastName: 'Johnson',
+        gradeLevel: 11,
+        email: 'alex@example.com',
+        gpa: 3.7,
+        credits: {
+          earned: 30,
+          max: 44,
+        },
+        options: {
+          maxCoursesPerSemester: 5,
         },
       },
     },
@@ -68,34 +66,32 @@ function mockLoadedState() {
 
   mockedUseCourseHistory.mockReturnValue({
     data: {
-      data: {
-        courseHistory: [
-          {
-            id: 1,
-            courseId: 2,
-            courseName: 'Introduction to Programming',
-            semester: {
-              id: 2,
-              name: 'Spring',
-              year: 2024,
-              order_in_year: 2,
-            },
-            status: 'passed',
-          },
-          {
+      courseHistory: [
+        {
+          id: 1,
+          courseId: 2,
+          courseName: 'Introduction to Programming',
+          semester: {
             id: 2,
-            courseId: 3,
-            courseName: 'Data Structures',
-            semester: {
-              id: 3,
-              name: 'Fall',
-              year: 2024,
-              order_in_year: 1,
-            },
-            status: 'failed',
+            name: 'Spring',
+            year: 2024,
+            order_in_year: 2,
           },
-        ],
-      },
+          status: 'passed',
+        },
+        {
+          id: 2,
+          courseId: 3,
+          courseName: 'Data Structures',
+          semester: {
+            id: 3,
+            name: 'Fall',
+            year: 2024,
+            order_in_year: 1,
+          },
+          status: 'failed',
+        },
+      ],
     },
     isLoading: false,
     isError: false,
@@ -157,21 +153,19 @@ describe('Dashboard', () => {
 
     mockedUseStudent.mockReturnValue({
       data: {
-        data: {
-          student: {
-            id: 1,
-            firstName: 'Alex',
-            lastName: 'Johnson',
-            gradeLevel: 11,
-            email: 'alex@example.com',
-            gpa: 3.7,
-            credits: {
-              earned: 30,
-              max: 44,
-            },
-            options: {
-              maxCoursesPerSemester: 5,
-            },
+        student: {
+          id: 1,
+          firstName: 'Alex',
+          lastName: 'Johnson',
+          gradeLevel: 11,
+          email: 'alex@example.com',
+          gpa: 3.7,
+          credits: {
+            earned: 30,
+            max: 44,
+          },
+          options: {
+            maxCoursesPerSemester: 5,
           },
         },
       },
@@ -182,8 +176,7 @@ describe('Dashboard', () => {
 
     mockedUseCourseHistory.mockReturnValue({
       data: {
-        data: {
-          courseHistory: [
+        courseHistory: [
             {
               id: 1,
               courseId: 101,
@@ -245,7 +238,6 @@ describe('Dashboard', () => {
               status: 'failed',
             },
           ],
-        },
       },
       isLoading: false,
       isError: false,
@@ -266,21 +258,19 @@ describe('Dashboard', () => {
 
     mockedUseStudent.mockReturnValue({
       data: {
-        data: {
-          student: {
-            id: 1,
-            firstName: 'Alex',
-            lastName: 'Johnson',
-            gradeLevel: 11,
-            email: 'alex@example.com',
-            gpa: 3.7,
-            credits: {
-              earned: 30,
-              max: 44,
-            },
-            options: {
-              maxCoursesPerSemester: 5,
-            },
+        student: {
+          id: 1,
+          firstName: 'Alex',
+          lastName: 'Johnson',
+          gradeLevel: 11,
+          email: 'alex@example.com',
+          gpa: 3.7,
+          credits: {
+            earned: 30,
+            max: 44,
+          },
+          options: {
+            maxCoursesPerSemester: 5,
           },
         },
       },
@@ -291,9 +281,7 @@ describe('Dashboard', () => {
 
     mockedUseCourseHistory.mockReturnValue({
       data: {
-        data: {
-          courseHistory: [],
-        },
+        courseHistory: [],
       },
       isLoading: false,
       isError: false,
@@ -333,21 +321,19 @@ describe('Dashboard', () => {
 
     mockedUseStudent.mockReturnValue({
       data: {
-        data: {
-          student: {
-            id: 1,
-            firstName: 'Alex',
-            lastName: 'Johnson',
-            gradeLevel: 11,
-            email: 'alex@example.com',
-            gpa: 3.7,
-            credits: {
-              earned: 30,
-              max: 30,
-            },
-            options: {
-              maxCoursesPerSemester: 5,
-            },
+        student: {
+          id: 1,
+          firstName: 'Alex',
+          lastName: 'Johnson',
+          gradeLevel: 11,
+          email: 'alex@example.com',
+          gpa: 3.7,
+          credits: {
+            earned: 30,
+            max: 30,
+          },
+          options: {
+            maxCoursesPerSemester: 5,
           },
         },
       },
@@ -358,9 +344,7 @@ describe('Dashboard', () => {
 
     mockedUseCourseHistory.mockReturnValue({
       data: {
-        data: {
-          courseHistory: [],
-        },
+        courseHistory: [],
       },
       isLoading: false,
       isError: false,

@@ -28,22 +28,20 @@ describe("useCourseHistory", () => {
 
   it("loads course history data from api", async () => {
     const response = {
-      data: {
-        courseHistory: [
-          {
+      courseHistory: [
+        {
+          id: 1,
+          courseId: 2,
+          courseName: "Introduction to Programming",
+          semester: {
             id: 1,
-            courseId: 2,
-            courseName: "Introduction to Programming",
-            semester: {
-              id: 1,
-              name: "Fall",
-              year: 2024,
-              order_in_year: 1,
-            },
-            status: "passed",
+            name: "Fall",
+            year: 2024,
+            order_in_year: 1,
           },
-        ],
-      },
+          status: "passed",
+        },
+      ],
     };
     const getCourseHistorySpy = vi
       .spyOn(studentsApi, "getStudentCourseHistory")
@@ -58,7 +56,7 @@ describe("useCourseHistory", () => {
     });
 
     expect(getCourseHistorySpy).toHaveBeenCalledTimes(1);
-    expect(result.current.data?.data.courseHistory).toHaveLength(1);
-    expect(result.current.data?.data.courseHistory[0].status).toBe("passed");
+    expect(result.current.data?.courseHistory).toHaveLength(1);
+    expect(result.current.data?.courseHistory[0].status).toBe("passed");
   });
 });

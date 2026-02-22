@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { useEnrollments } from '@/hooks/enrollments/use-enrollments';
-import { useSchedulerEnrollments } from '@/hooks/enrollments/use-scheduler-enrollments';
+import { useSchedulerEnrollments } from '@/hooks/schedule/use-scheduler-enrollments';
 
 vi.mock('@/hooks/enrollments/use-enrollments', () => ({
   useEnrollments: vi.fn(),
@@ -17,33 +17,31 @@ describe('useSchedulerEnrollments', () => {
   it('maps enrollments into scheduler events', () => {
     mockedUseEnrollments.mockReturnValue({
       data: {
-        data: {
-          enrollments: [
-            {
-              id: 'enroll-1',
-              course: {
-                id: 1,
-                code: 'MATH101',
-                name: 'Algebra I',
-              },
-              courseSection: {
-                id: 100,
-                meetingTimes: [
-                  {
-                    dayOfWeek: 'Monday',
-                    startTime: '09:00',
-                    endTime: '10:00',
-                  },
-                  {
-                    dayOfWeek: 'Wednesday',
-                    startTime: '09:00',
-                    endTime: '10:00',
-                  },
-                ],
-              },
+        enrollments: [
+          {
+            id: 'enroll-1',
+            course: {
+              id: 1,
+              code: 'MATH101',
+              name: 'Algebra I',
             },
-          ],
-        },
+            courseSection: {
+              id: 100,
+              meetingTimes: [
+                {
+                  dayOfWeek: 'Monday',
+                  startTime: '09:00',
+                  endTime: '10:00',
+                },
+                {
+                  dayOfWeek: 'Wednesday',
+                  startTime: '09:00',
+                  endTime: '10:00',
+                },
+              ],
+            },
+          },
+        ],
       },
     } as never);
 
@@ -72,28 +70,26 @@ describe('useSchedulerEnrollments', () => {
   it('ignores meeting times with invalid day names', () => {
     mockedUseEnrollments.mockReturnValue({
       data: {
-        data: {
-          enrollments: [
-            {
-              id: 'enroll-2',
-              course: {
-                id: 2,
-                code: 'CHEM101',
-                name: 'Chemistry',
-              },
-              courseSection: {
-                id: 101,
-                meetingTimes: [
-                  {
-                    dayOfWeek: 'InvalidDay',
-                    startTime: '11:00',
-                    endTime: '12:00',
-                  },
-                ],
-              },
+        enrollments: [
+          {
+            id: 'enroll-2',
+            course: {
+              id: 2,
+              code: 'CHEM101',
+              name: 'Chemistry',
             },
-          ],
-        },
+            courseSection: {
+              id: 101,
+              meetingTimes: [
+                {
+                  dayOfWeek: 'InvalidDay',
+                  startTime: '11:00',
+                  endTime: '12:00',
+                },
+              ],
+            },
+          },
+        ],
       },
     } as never);
 

@@ -48,7 +48,7 @@ export function CourseDetailsModal({
   const [cachedCourse, setCachedCourse] = useState<Course | null>(null);
   const { data, isLoading, isError } = useCourseById(courseId, semesterId);
 
-  const courseData = data?.data;
+  const courseData = data;
 
   // Cache course data when it's loaded
   useEffect(() => {

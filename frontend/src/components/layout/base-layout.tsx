@@ -31,7 +31,7 @@ export function BaseLayout({
   const navigate = useNavigate();
   const { data, isLoading } = useStudent();
   const logout = useAuthStore((state) => state.logout);
-  const student = data?.data.student;
+  const student = data?.student;
 
   const studentName = student
     ? `${student.firstName} ${student.lastName}`

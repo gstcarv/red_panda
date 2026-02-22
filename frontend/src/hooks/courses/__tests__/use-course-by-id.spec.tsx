@@ -32,10 +32,8 @@ describe('useCourseById', () => {
 
   it('fetches course details when a valid id is provided', async () => {
     const response = {
-      data: {
-        id: 2,
-        name: 'Physics',
-      },
+      id: 2,
+      name: 'Physics',
     };
     const getCourseByIdSpy = vi
       .spyOn(coursesApi, 'getCourseById')
@@ -50,6 +48,6 @@ describe('useCourseById', () => {
     });
 
     expect(getCourseByIdSpy).toHaveBeenCalledWith(2);
-    expect(result.current.data?.data.id).toBe(2);
+    expect(result.current.data?.id).toBe(2);
   });
 });

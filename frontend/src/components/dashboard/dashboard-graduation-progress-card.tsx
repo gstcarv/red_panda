@@ -3,13 +3,21 @@ import {
   CardContent,
 } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { formatGraduationPercent } from './formatters';
-import type { GraduationProgressCardProps } from './types';
+import type { DashboardMetrics } from '@/types/dashboard.type';
 
-export function GraduationProgressCard({
+function formatGraduationPercent(value: number) {
+  return `${Math.round(value)}%`;
+}
+
+interface DashboardGraduationProgressCardProps {
+  isLoading: boolean;
+  metrics: DashboardMetrics;
+}
+
+export function DashboardGraduationProgressCard({
   isLoading,
   metrics,
-}: GraduationProgressCardProps) {
+}: DashboardGraduationProgressCardProps) {
   return (
     <Card>
       <CardContent className="flex items-center gap-3">

@@ -18,12 +18,10 @@ describe('GraduationAccessGuard', () => {
   it('redirects to dashboard when student reached required credits', () => {
     mockedUseStudent.mockReturnValue({
       data: {
-        data: {
-          student: {
-            credits: {
-              earned: 30,
-              max: 30,
-            },
+        student: {
+          credits: {
+            earned: 30,
+            max: 30,
           },
         },
       },
@@ -53,12 +51,10 @@ describe('GraduationAccessGuard', () => {
   it('allows access when student has not reached required credits', () => {
     mockedUseStudent.mockReturnValue({
       data: {
-        data: {
-          student: {
-            credits: {
-              earned: 22,
-              max: 30,
-            },
+        student: {
+          credits: {
+            earned: 22,
+            max: 30,
           },
         },
       },

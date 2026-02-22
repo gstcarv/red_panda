@@ -10,7 +10,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Skeleton } from '@/components/ui/skeleton';
-import { CourseDetailsModal } from '@/components/courses/course-section-modal';
+import { CourseDetailsModal } from '@/components/courses/course-details-modal';
 import { CourseStudentStatusTag } from '@/components/courses/course-student-status-tag';
 import { useScheduleFindCourseModal } from '@/hooks/schedule/use-schedule-find-course-modal';
 import type { SchedulerSlotSelection } from '@/types/scheduler.type';

@@ -21,16 +21,14 @@ function createWrapper() {
 describe('useEnrollments', () => {
   it('loads enrollments data from api', async () => {
     const response = {
-      data: {
-        enrollments: [
-          {
-            id: 'enroll-1',
-            courseSection: {
-              id: 10,
-            },
+      enrollments: [
+        {
+          id: 'enroll-1',
+          courseSection: {
+            id: 10,
           },
-        ],
-      },
+        },
+      ],
     };
     const getStudentEnrollmentsSpy = vi
       .spyOn(studentsApi, 'getStudentEnrollments')
@@ -45,7 +43,7 @@ describe('useEnrollments', () => {
     });
 
     expect(getStudentEnrollmentsSpy).toHaveBeenCalledTimes(1);
-    expect(result.current.data?.data.enrollments).toHaveLength(1);
-    expect(result.current.data?.data.enrollments[0].courseSection.id).toBe(10);
+    expect(result.current.data?.enrollments).toHaveLength(1);
+    expect(result.current.data?.enrollments[0].courseSection.id).toBe(10);
   });
 });

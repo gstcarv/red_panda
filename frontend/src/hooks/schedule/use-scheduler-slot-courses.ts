@@ -54,15 +54,15 @@ function addCourseToSlot(
   existingCourses.push(course);
 }
 
-export function useAvailableCoursesBySlot() {
+export function useSchedulerSlotCourses() {
   const coursesQuery = useCourses();
   const enrollmentsQuery = useEnrollments();
   const courseHistoryQuery = useCourseHistory();
   const studentQuery = useStudent();
-  const courses = coursesQuery.data?.data.courses;
-  const enrollments = enrollmentsQuery.data?.data.enrollments;
-  const courseHistory = courseHistoryQuery.data?.data.courseHistory;
-  const student = studentQuery.data?.data.student;
+  const courses = coursesQuery.data?.courses;
+  const enrollments = enrollmentsQuery.data?.enrollments;
+  const courseHistory = courseHistoryQuery.data?.courseHistory;
+  const student = studentQuery.data?.student;
 
   const coursesBySlot = useMemo(() => {
     const bySlot = new Map<string, Course[]>();

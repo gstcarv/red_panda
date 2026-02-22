@@ -262,4 +262,3 @@ describe('useCheckCourseStatus', () => {
     expect(result.current.status).toBeUndefined();
   });
 });
-

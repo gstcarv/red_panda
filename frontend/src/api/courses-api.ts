@@ -5,14 +5,14 @@ export type CoursesResponse = {
     courses: Course[];
 };
 
-function getCourses() {
-    return api.get<CoursesResponse>("/courses");
+async function getCourses() {
+    return (await api.get<CoursesResponse>("/courses")).data;
 }
 
-function getCourseById(id: number, semesterId?: number) {
-    return api.get<Course>(`/courses/${id}`, {
+async function getCourseById(id: number, semesterId?: number) {
+    return (await api.get<Course>(`/courses/${id}`, {
         params: semesterId === undefined ? undefined : { semesterId },
-    });
+    })).data;
 }
 
 export { getCourses, getCourseById };

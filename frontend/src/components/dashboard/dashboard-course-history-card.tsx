@@ -15,14 +15,26 @@ import {
 } from '@/components/ui/accordion';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import type { CourseHistoryCardProps } from './types';
+import type { CourseHistory } from '@/types/course-history.type';
+import type { DashboardMetrics } from '@/types/dashboard.type';
 
-export function CourseHistoryCard({
+interface DashboardCourseHistoryCardProps {
+  isLoading: boolean;
+  history: CourseHistory[];
+  metrics: DashboardMetrics;
+  onCourseClick?: (
+    courseId: number,
+    semesterId: number,
+    status: CourseHistory['status'],
+  ) => void;
+}
+
+export function DashboardCourseHistoryCard({
   isLoading,
   history,
   metrics,
   onCourseClick,
-}: CourseHistoryCardProps) {
+}: DashboardCourseHistoryCardProps) {
   const groupedHistory = useMemo(() => {
     const grouped = new Map<
       string,

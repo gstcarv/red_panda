@@ -61,9 +61,7 @@ describe('SchedulerList', () => {
   it('renders empty state when no enrollment exists', () => {
     mockedUseEnrollments.mockReturnValue({
       data: {
-        data: {
-          enrollments: [],
-        },
+        enrollments: [],
       },
     } as never);
 
@@ -75,32 +73,30 @@ describe('SchedulerList', () => {
   it('renders one card per enrolled course', () => {
     mockedUseEnrollments.mockReturnValue({
       data: {
-        data: {
-          enrollments: [
-            createEnrollment({
-              id: 'enroll-1',
-              course: {
-                id: 1,
-                code: 'MATH101',
-                name: 'Algebra I',
-                credits: 3,
-                hoursPerWeek: 4,
-                gradeLevel: { min: 9, max: 10 },
-              },
-            }),
-            createEnrollment({
-              id: 'enroll-2',
-              course: {
-                id: 2,
-                code: 'CHEM101',
-                name: 'Chemistry',
-                credits: 3,
-                hoursPerWeek: 4,
-                gradeLevel: { min: 9, max: 11 },
-              },
-            }),
-          ],
-        },
+        enrollments: [
+          createEnrollment({
+            id: 'enroll-1',
+            course: {
+              id: 1,
+              code: 'MATH101',
+              name: 'Algebra I',
+              credits: 3,
+              hoursPerWeek: 4,
+              gradeLevel: { min: 9, max: 10 },
+            },
+          }),
+          createEnrollment({
+            id: 'enroll-2',
+            course: {
+              id: 2,
+              code: 'CHEM101',
+              name: 'Chemistry',
+              credits: 3,
+              hoursPerWeek: 4,
+              gradeLevel: { min: 9, max: 11 },
+            },
+          }),
+        ],
       },
     } as never);
 
@@ -117,9 +113,7 @@ describe('SchedulerList', () => {
     const onCourseHoverChange = vi.fn();
     mockedUseEnrollments.mockReturnValue({
       data: {
-        data: {
-          enrollments: [createEnrollment()],
-        },
+        enrollments: [createEnrollment()],
       },
     } as never);
 
@@ -140,9 +134,7 @@ describe('SchedulerList', () => {
 
     mockedUseEnrollments.mockReturnValue({
       data: {
-        data: {
-          enrollments: [createEnrollment()],
-        },
+        enrollments: [createEnrollment()],
       },
     } as never);
 

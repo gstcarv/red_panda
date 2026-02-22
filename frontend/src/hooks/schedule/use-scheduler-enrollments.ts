@@ -21,7 +21,7 @@ export function useSchedulerEnrollments() {
   const enrollmentsQuery = useEnrollments();
 
   const events = useMemo<SchedulerEvent[]>(() => {
-    const enrollments = enrollmentsQuery.data?.data.enrollments ?? [];
+    const enrollments = enrollmentsQuery.data?.enrollments ?? [];
 
     return enrollments.flatMap((enrollment) => {
       const title = `${enrollment.course.code} - ${enrollment.course.name}`;

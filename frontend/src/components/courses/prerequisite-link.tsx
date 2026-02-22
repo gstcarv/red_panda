@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils';
 import type { Course, CoursePrerequisite } from '@/types/course.type';
 
 const LazyCourseDetailsModal = lazy(async () => {
-  const module = await import('@/components/courses/course-section-modal');
+  const module = await import('@/components/courses/course-details-modal');
   return { default: module.CourseDetailsModal };
 });
 

@@ -31,36 +31,32 @@ describe('EnrollmentActionButton', () => {
   it('disables unenroll when course is passed', () => {
     mockedUseEnrollments.mockReturnValue({
       data: {
-        data: {
-          enrollments: [
-            {
-              id: 'enroll-1',
-              course: { id: 1 },
-              courseSection: { id: 10 },
-            },
-          ],
-        },
+        enrollments: [
+          {
+            id: 'enroll-1',
+            course: { id: 1 },
+            courseSection: { id: 10 },
+          },
+        ],
       },
     } as never);
 
     mockedUseCourseHistory.mockReturnValue({
       data: {
-        data: {
-          courseHistory: [
-            {
+        courseHistory: [
+          {
+            id: 1,
+            courseId: 1,
+            courseName: 'Course 1',
+            semester: {
               id: 1,
-              courseId: 1,
-              courseName: 'Course 1',
-              semester: {
-                id: 1,
-                name: 'Fall',
-                year: 2024,
-                order_in_year: 1,
-              },
-              status: 'passed',
+              name: 'Fall',
+              year: 2024,
+              order_in_year: 1,
             },
-          ],
-        },
+            status: 'passed',
+          },
+        ],
       },
     } as never);
 

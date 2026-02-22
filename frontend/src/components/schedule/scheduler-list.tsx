@@ -18,7 +18,7 @@ export function SchedulerList({
 }: SchedulerListProps) {
   const { data: enrollmentsResponse } = useEnrollments();
   const enrolledCourses = useMemo<EnrolledCourseItem[]>(() => {
-    const enrollments = enrollmentsResponse?.data.enrollments ?? [];
+    const enrollments = enrollmentsResponse?.enrollments ?? [];
     const coursesById = new Map<number, EnrolledCourseItem>();
 
     for (const enrollment of enrollments) {

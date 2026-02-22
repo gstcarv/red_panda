@@ -1,14 +1,14 @@
 import { useCallback, useMemo } from 'react';
 import { useCourseHistory } from '@/hooks/courses/use-course-history';
 import { useStudent } from '@/hooks/students/use-student';
-import type { DashboardMetrics } from '@/components/dashboard';
+import type { DashboardMetrics } from '@/types/dashboard.type';
 
 export function useDashboard() {
   const studentQuery = useStudent();
   const historyQuery = useCourseHistory();
 
-  const student = studentQuery.data?.data.student;
-  const history = historyQuery.data?.data.courseHistory ?? [];
+  const student = studentQuery.data?.student;
+  const history = historyQuery.data?.courseHistory ?? [];
 
   const isLoading = studentQuery.isLoading || historyQuery.isLoading;
   const isError = studentQuery.isError || historyQuery.isError;

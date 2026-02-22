@@ -28,8 +28,8 @@ export function useCheckCourseStatus(
     isError: isCourseHistoryError,
   } = useCourseHistory();
 
-  const enrollments = enrollmentsResponse?.data.enrollments;
-  const courseHistory = courseHistoryResponse?.data.courseHistory;
+  const enrollments = enrollmentsResponse?.enrollments;
+  const courseHistory = courseHistoryResponse?.courseHistory;
   const selectedSemesterId = semesterId ?? null;
 
   const enrolledSections: CourseSection[] = !course

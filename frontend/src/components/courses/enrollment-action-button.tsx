@@ -61,12 +61,12 @@ export function EnrollmentActionButton({
     title: '',
     description: '',
   });
-  const enrollments = enrollmentsResponse?.data.enrollments ?? [];
+  const enrollments = enrollmentsResponse?.enrollments ?? [];
   const enrollment = enrollments.find(
     (value) => value.courseSection.id === sectionId,
   );
   const isEnrolled = Boolean(enrollment);
-  const courseHistory = courseHistoryResponse?.data.courseHistory ?? [];
+  const courseHistory = courseHistoryResponse?.courseHistory ?? [];
   const isPassed =
     courseId != null &&
     Boolean(

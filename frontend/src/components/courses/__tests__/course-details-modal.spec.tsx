@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { mockFn } from 'vitest-mock-extended';
-import { CourseDetailsModal } from '@/components/courses/course-section-modal';
+import { CourseDetailsModal } from '@/components/courses/course-details-modal';
 import { useMediaQuery } from '@/lib/utils';
 import { useCourseById } from '@/hooks/courses/use-course-by-id';
 import { useCheckCourseStatus } from '@/hooks/courses/use-check-course-status';
@@ -101,7 +101,7 @@ describe('CourseDetailsModal', () => {
     eligibilityAlertSpy.mockClear();
     mockUseMediaQuery.mockReturnValue(true);
     mockUseCourseById.mockReturnValue({
-      data: { data: createCourse({ availableSections: [createSection({ id: 3 })] }) },
+      data: createCourse({ availableSections: [createSection({ id: 3 })] }),
       isLoading: false,
       isError: false,
     } as never);
@@ -127,7 +127,7 @@ describe('CourseDetailsModal', () => {
     mockUseMediaQuery.mockReturnValue(true);
     const enrolledSection = createSection({ id: 30 });
     mockUseCourseById.mockReturnValue({
-      data: { data: createCourse({ availableSections: [createSection({ id: 99 })] }) },
+      data: createCourse({ availableSections: [createSection({ id: 99 })] }),
       isLoading: false,
       isError: false,
     } as never);

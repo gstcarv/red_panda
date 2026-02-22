@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { useFilteredExploreCourses } from '@/hooks/courses/use-filtered-explore-courses';
+import { useFilterCourses } from '@/hooks/courses/use-filter-courses';
 import type { Course } from '@/types/course.type';
 import { useCourseHistory } from '@/hooks/courses/use-course-history';
 
@@ -62,7 +62,7 @@ function createCourse({
   };
 }
 
-describe('useFilteredExploreCourses', () => {
+describe('useFilterCourses', () => {
   it('hides passed courses from explore list', () => {
     vi.mocked(useCourseHistory).mockReturnValue({
       data: {
@@ -113,7 +113,7 @@ describe('useFilteredExploreCourses', () => {
     ];
 
     const { result } = renderHook(() =>
-      useFilteredExploreCourses({
+      useFilterCourses({
         courses,
         filter: {
           search: '',
@@ -125,9 +125,6 @@ describe('useFilteredExploreCourses', () => {
     );
 
     expect(result.current.filteredCourses.map((course) => course.id)).toEqual([3, 4]);
-    expect(result.current.getCourseCardClassName(courses[0])).toBe('opacity-55');
-    expect(result.current.getCourseCardClassName(courses[1])).toBeUndefined();
-    expect(result.current.getCourseCardClassName(courses[2])).toBeUndefined();
   });
 
   it('filters by weekday/time and sorts eligible courses first', () => {
@@ -167,7 +164,7 @@ describe('useFilteredExploreCourses', () => {
     ];
 
     const { result } = renderHook(() =>
-      useFilteredExploreCourses({
+      useFilterCourses({
         courses,
         filter: {
           search: '',
@@ -179,8 +176,6 @@ describe('useFilteredExploreCourses', () => {
     );
 
     expect(result.current.filteredCourses.map((course) => course.id)).toEqual([3, 2]);
-    expect(result.current.getEligible(courses[2])).toBe(true);
-    expect(result.current.getEligible(courses[1])).toBe(false);
   });
 
   it('filters by search text in name or code', () => {
@@ -212,7 +207,7 @@ describe('useFilteredExploreCourses', () => {
     ];
 
     const { result } = renderHook(() =>
-      useFilteredExploreCourses({
+      useFilterCourses({
         courses,
         filter: {
           search: 'math',

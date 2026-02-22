@@ -1,12 +1,12 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { Schedule } from '@/pages/schedule';
-import { useSchedulerEnrollments } from '@/hooks/enrollments/use-scheduler-enrollments';
+import { useSchedulerEnrollments } from '@/hooks/schedule/use-scheduler-enrollments';
 
 const scheduleCalendarSpy = vi.fn();
 const schedulerListSpy = vi.fn();
 
-vi.mock('@/hooks/enrollments/use-scheduler-enrollments', () => ({
+vi.mock('@/hooks/schedule/use-scheduler-enrollments', () => ({
   useSchedulerEnrollments: vi.fn(),
 }));
 

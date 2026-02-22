@@ -51,27 +51,25 @@ describe('BaseLayout', () => {
   it('renders student name, grade and active semester when profile is loaded', () => {
     mockedUseStudent.mockReturnValue({
       data: {
-        data: {
-          student: {
-            id: 1,
-            firstName: 'Jane',
-            lastName: 'Doe',
-            gradeLevel: 11,
-            email: 'jane@example.com',
-            gpa: 3.8,
-            credits: {
-              earned: 27,
-              max: 44,
-            },
-            options: {
-              maxCoursesPerSemester: 5,
-            },
-            activeSemester: {
-              id: 2,
-              name: 'Spring',
-              year: 2025,
-              order_in_year: 2,
-            },
+        student: {
+          id: 1,
+          firstName: 'Jane',
+          lastName: 'Doe',
+          gradeLevel: 11,
+          email: 'jane@example.com',
+          gpa: 3.8,
+          credits: {
+            earned: 27,
+            max: 44,
+          },
+          options: {
+            maxCoursesPerSemester: 5,
+          },
+          activeSemester: {
+            id: 2,
+            name: 'Spring',
+            year: 2025,
+            order_in_year: 2,
           },
         },
       },

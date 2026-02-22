@@ -25,7 +25,7 @@ vi.mock('@/hooks/courses/use-check-course-status', () => ({
   useCheckCourseStatus: vi.fn(),
 }));
 
-vi.mock('@/components/courses/course-section-modal', () => ({
+vi.mock('@/components/courses/course-details-modal', () => ({
   CourseDetailsModal: (props: {
     courseId?: number;
     semesterId?: number | null;

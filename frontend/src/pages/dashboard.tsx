@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { PageTitle } from '@/components/ui/page-title';
-import { CourseDetailsModal } from '@/components/courses/course-section-modal';
+import { CourseDetailsModal } from '@/components/courses/course-details-modal';
 import {
-  CourseHistoryCard,
+  DashboardCourseHistoryCard,
   DashboardErrorState,
+  DashboardGraduationProgressCard,
+  DashboardGraduationSuccessBanner,
   DashboardSummaryCards,
-  GraduationSuccessBanner,
-  GraduationProgressCard,
 } from '@/components/dashboard';
 import { useCourseDetailsModal } from '@/hooks/courses/use-course-details-modal';
 import { useDashboard } from '@/hooks/dashboard/use-dashboard';
@@ -64,7 +64,7 @@ export function Dashboard() {
       />
 
       {hasGraduated ? (
-        <GraduationSuccessBanner
+        <DashboardGraduationSuccessBanner
           earnedCredits={metrics.earnedCredits}
           requiredCredits={metrics.requiredCredits}
         />
@@ -76,8 +76,8 @@ export function Dashboard() {
         aria-label="Graduation progress and course history"
         className="grid gap-4"
       >
-        <GraduationProgressCard isLoading={isLoading} metrics={metrics} />
-        <CourseHistoryCard
+        <DashboardGraduationProgressCard isLoading={isLoading} metrics={metrics} />
+        <DashboardCourseHistoryCard
           isLoading={isLoading}
           history={historyByMostRecent}
           metrics={metrics}

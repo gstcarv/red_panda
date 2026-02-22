@@ -1,6 +1,6 @@
 import { ScheduleCalendar, SchedulerList } from '@/components/schedule';
 import { PageTitle } from '@/components/ui/page-title';
-import { useSchedulerEnrollments } from '@/hooks/enrollments/use-scheduler-enrollments';
+import { useSchedulerEnrollments } from '@/hooks/schedule/use-scheduler-enrollments';
 import { useState } from 'react';
 
 export function Schedule() {

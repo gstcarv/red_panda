@@ -33,7 +33,7 @@ describe('useUnenroll', () => {
     const { wrapper } = createWrapper();
     const unenrollSpy = vi
       .spyOn(studentsApi, 'unenroll')
-      .mockResolvedValue({ data: {} } as never);
+      .mockResolvedValue({} as never);
 
     const { result } = renderHook(() => useUnenroll(), {
       wrapper,
@@ -52,7 +52,7 @@ describe('useUnenroll', () => {
     const onSettled = mockFn<() => void>();
 
     vi.spyOn(studentsApi, 'unenroll').mockResolvedValue({
-      data: {} as never,
+      enrollment: {} as never,
     } as never);
 
     const { result } = renderHook(

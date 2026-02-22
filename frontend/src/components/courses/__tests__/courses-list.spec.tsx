@@ -35,7 +35,7 @@ vi.mock('@/components/courses/course-card', () => ({
   ),
 }));
 
-vi.mock('@/components/courses/course-section-modal', () => ({
+vi.mock('@/components/courses/course-details-modal', () => ({
   CourseDetailsModal: ({
     courseId,
     open,
@@ -47,6 +47,12 @@ vi.mock('@/components/courses/course-section-modal', () => ({
       {open ? `open:${courseId}` : 'closed'}
     </div>
   ),
+}));
+
+vi.mock('@/hooks/enrollments/use-check-enrollment-eligibility', () => ({
+  useCheckEnrollmentEligibility: () => ({
+    evaluate: () => ({ eligible: true }),
+  }),
 }));
 
 describe('CoursesList', () => {

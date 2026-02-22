@@ -4,15 +4,13 @@ import {
   type SchedulerDateClickArg,
   type SchedulerEventClickArg,
 } from '@/components/ui/scheduler';
-import {
-  useAvailableCoursesBySlot,
-} from '@/hooks/courses/use-available-courses-by-slot';
+import { useSchedulerSlotCourses } from '@/hooks/schedule/use-scheduler-slot-courses';
 import type {
   SchedulerEvent,
   SchedulerSlotSelection,
 } from '@/types/scheduler.type';
 import { ScheduleFindCourseModal } from './schedule-find-course-modal';
-import { CourseDetailsModal } from '@/components/courses/course-section-modal';
+import { CourseDetailsModal } from '@/components/courses/course-details-modal';
 import { useActiveSemester } from '@/hooks/semester/use-active-semester';
 
 const CALENDAR_BOTTOM_OFFSET = 40;
@@ -122,7 +120,7 @@ export function ScheduleCalendar({
   events,
   activeCourseId = null,
 }: ScheduleCalendarProps) {
-  const { coursesBySlot } = useAvailableCoursesBySlot();
+  const { coursesBySlot } = useSchedulerSlotCourses();
   const semester = useActiveSemester();
   const calendarContainerRef = useRef<HTMLElement | null>(null);
   const [calendarHeight, setCalendarHeight] = useState(720);
@@ -229,11 +227,13 @@ export function ScheduleCalendar({
         testId="schedule-calendar"
         ariaLabel="Weekly calendar"
       />
+
       <ScheduleFindCourseModal
         open={isFindCourseModalOpen}
         slot={selectedSlot}
         onOpenChange={handleFindCourseModalOpenChange}
       />
+
       <CourseDetailsModal
         courseId={selectedCourseId}
         semesterId={semester?.id}

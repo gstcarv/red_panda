@@ -28,26 +28,26 @@ export type UnenrollResponse = {
   enrollment: Enrollment;
 };
 
-function getStudentCourseHistory() {
-  return api.get<GetStudentCourseHistoryResponse>("/me/courses/history");
+async function getStudentCourseHistory() {
+  return (await api.get<GetStudentCourseHistoryResponse>("/me/courses/history")).data;
 }
 
-function getStudentProfile() {
-  return api.get<GetStudentProfileResponse>("/me/profile");
+async function getStudentProfile() {
+  return (await api.get<GetStudentProfileResponse>("/me/profile")).data;
 }
 
-function getStudentEnrollments() {
-  return api.get<GetStudentEnrollmentsResponse>("/me/enrollments");
+async function getStudentEnrollments() {
+  return (await api.get<GetStudentEnrollmentsResponse>("/me/enrollments")).data;
 }
 
-function enroll(params: EnrollParams) {
-  return api.post<EnrollResponse>("/me/enrollments", params);
+async function enroll(params: EnrollParams) {
+  return (await api.post<EnrollResponse>("/me/enrollments", params)).data;
 }
 
-function unenroll(courseId: number) {
-  return api.delete<UnenrollResponse>("/me/enrollments", {
+async function unenroll(courseId: number) {
+  return (await api.delete<UnenrollResponse>("/me/enrollments", {
     params: { courseId },
-  });
+  })).data;
 }
 
 export {

@@ -8,16 +8,14 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { CourseCard } from './course-card';
-import { CourseDetailsModal } from './course-section-modal';
+import { CourseDetailsModal } from './course-details-modal';
 import { useCourseDetailsModal } from '@/hooks/courses/use-course-details-modal';
+import { useCheckEnrollmentEligibility } from '@/hooks/enrollments/use-check-enrollment-eligibility';
 import type { Course } from '@/types/course.type';
+import { useMemo } from 'react';
 
 export interface CoursesListProps {
   courses: Course[];
-  /** Optional: determine eligibility per course for the card badge */
-  getEligible?: (course: Course) => boolean;
-  /** Optional: compute per-course card classes */
-  getCourseCardClassName?: (course: Course) => string | undefined;
   emptyMessage?: string;
   className?: string;
   /** When true, shows skeleton placeholders instead of the list */
@@ -60,8 +58,6 @@ function CourseCardSkeleton() {
 
 export function CoursesList({
   courses,
-  getEligible,
-  getCourseCardClassName,
   emptyMessage = 'No courses match your filters.',
   className,
   isLoading = false,
@@ -71,6 +67,7 @@ export function CoursesList({
   onCourseSelect,
   onModalClose,
 }: CoursesListProps) {
+  const { evaluate } = useCheckEnrollmentEligibility();
   const {
     selectedCourseId,
     selectedSemesterId,
@@ -82,6 +79,16 @@ export function CoursesList({
     onCourseSelect,
     onModalClose,
   });
+  const classNameByCourseId = useMemo(() => {
+    const map = new Map<number, string | undefined>();
+
+    for (const course of courses) {
+      const eligible = evaluate(course).eligible;
+      map.set(course.id, eligible ? undefined : 'opacity-55');
+    }
+
+    return map;
+  }, [courses, evaluate]);
 
   if (isLoading) {
     return (
@@ -155,8 +162,7 @@ export function CoursesList({
           <li key={course.id} className="h-full">
             <CourseCard
               course={course}
-              eligible={getEligible?.(course) ?? false}
-              className={getCourseCardClassName?.(course)}
+              className={classNameByCourseId.get(course.id)}
               onClick={handleCourseSelect}
             />
           </li>

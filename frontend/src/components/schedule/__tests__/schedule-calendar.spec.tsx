@@ -1,7 +1,7 @@
 import { act, render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { ScheduleCalendar } from '@/components/schedule/schedule-calendar';
-import { useAvailableCoursesBySlot } from '@/hooks/courses/use-available-courses-by-slot';
+import { useSchedulerSlotCourses } from '@/hooks/schedule/use-scheduler-slot-courses';
 import { useActiveSemester } from '@/hooks/semester/use-active-semester';
 
 const schedulerSpy = vi.fn();
@@ -35,22 +35,22 @@ vi.mock('@/components/schedule/schedule-find-course-modal', () => ({
   },
 }));
 
-vi.mock('@/components/courses/course-section-modal', () => ({
+vi.mock('@/components/courses/course-details-modal', () => ({
   CourseDetailsModal: (props: { courseId: number | null; open: boolean }) => {
     courseSectionModalSpy(props);
     return <div data-testid="course-section-modal" />;
   },
 }));
 
-vi.mock('@/hooks/courses/use-available-courses-by-slot', () => ({
-  useAvailableCoursesBySlot: vi.fn(),
+vi.mock('@/hooks/schedule/use-scheduler-slot-courses', () => ({
+  useSchedulerSlotCourses: vi.fn(),
 }));
 
 vi.mock('@/hooks/semester/use-active-semester', () => ({
   useActiveSemester: vi.fn(),
 }));
 
-const mockedUseAvailableCoursesBySlot = vi.mocked(useAvailableCoursesBySlot);
+const mockedUseSchedulerSlotCourses = vi.mocked(useSchedulerSlotCourses);
 const mockedUseActiveSemester = vi.mocked(useActiveSemester);
 
 describe('ScheduleCalendar', () => {
@@ -61,7 +61,7 @@ describe('ScheduleCalendar', () => {
       year: 2025,
       order_in_year: 2,
     });
-    mockedUseAvailableCoursesBySlot.mockReturnValue({
+    mockedUseSchedulerSlotCourses.mockReturnValue({
       coursesBySlot: new Map([
         [
           'monday|11:00',
@@ -148,7 +148,7 @@ describe('ScheduleCalendar', () => {
     findCourseModalSpy.mockClear();
     courseSectionModalSpy.mockClear();
 
-    mockedUseAvailableCoursesBySlot.mockReturnValue({
+    mockedUseSchedulerSlotCourses.mockReturnValue({
       coursesBySlot: new Map([
         [
           'monday|09:00',

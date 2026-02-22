@@ -4,9 +4,15 @@ import { useCourseHistory } from '@/hooks/courses/use-course-history';
 import type { Course } from '@/types/course.type';
 import type { ExploreCoursesFilterValues } from '@/stores/explore-courses-filter-store';
 
-type UseFilteredExploreCoursesArgs = {
+type UseFilterCoursesArgs = {
   courses: Course[];
   filter: ExploreCoursesFilterValues;
+};
+
+type MeetingTimeFilter = {
+  selectedWeekdays: Set<string>;
+  fromInMinutes: number | null;
+  untilInMinutes: number | null;
 };
 
 function parseTimeToMinutes(value: string): number | null {
@@ -24,6 +30,14 @@ function parseTimeToMinutes(value: string): number | null {
   }
 
   return hours * 60 + minutes;
+}
+
+function buildMeetingTimeFilter(filter: ExploreCoursesFilterValues): MeetingTimeFilter {
+  return {
+    selectedWeekdays: new Set(filter.weekdays.map((day) => day.toLowerCase())),
+    fromInMinutes: filter.fromTime ? parseTimeToMinutes(filter.fromTime) : null,
+    untilInMinutes: filter.untilTime ? parseTimeToMinutes(filter.untilTime) : null,
+  };
 }
 
 function hasMatchingMeetingTime(
@@ -67,15 +81,68 @@ function hasMatchingMeetingTime(
   );
 }
 
-export function useFilteredExploreCourses({
+function passesCompletedCourseFilter(course: Course, passedCourseIds: Set<number>) {
+  return !passedCourseIds.has(course.id);
+}
+
+function passesSearchFilter(course: Course, normalizedSearch: string) {
+  if (normalizedSearch.length === 0) {
+    return true;
+  }
+
+  const courseName = course.name.toLowerCase();
+  const courseCode = course.code.toLowerCase();
+
+  return (
+    courseName.includes(normalizedSearch) ||
+    courseCode.includes(normalizedSearch)
+  );
+}
+
+function passesMeetingTimeFilter(course: Course, meetingTimeFilter: MeetingTimeFilter) {
+  return hasMatchingMeetingTime(
+    course,
+    meetingTimeFilter.selectedWeekdays,
+    meetingTimeFilter.fromInMinutes,
+    meetingTimeFilter.untilInMinutes,
+  );
+}
+
+function sortCoursesByEligibilityAndName(
+  courses: Course[],
+  eligibilityByCourseId: Map<number, boolean>,
+) {
+  return courses.sort((courseA, courseB) => {
+    const courseAIsEligible = eligibilityByCourseId.get(courseA.id) ?? false;
+    const courseBIsEligible = eligibilityByCourseId.get(courseB.id) ?? false;
+
+    if (courseAIsEligible !== courseBIsEligible) {
+      return courseAIsEligible ? -1 : 1;
+    }
+
+    const nameOrder = courseA.name.localeCompare(courseB.name);
+    if (nameOrder !== 0) {
+      return nameOrder;
+    }
+
+    const codeOrder = courseA.code.localeCompare(courseB.code);
+    if (codeOrder !== 0) {
+      return codeOrder;
+    }
+
+    return courseA.id - courseB.id;
+  });
+}
+
+export function useFilterCourses({
   courses,
   filter,
-}: UseFilteredExploreCoursesArgs) {
+}: UseFilterCoursesArgs) {
   const { evaluate } = useCheckEnrollmentEligibility();
   const { data: courseHistoryResponse } = useCourseHistory();
 
   const passedCourseIds = useMemo(() => {
-    const courseHistory = courseHistoryResponse?.data.courseHistory ?? [];
+    const courseHistory = courseHistoryResponse?.courseHistory ?? [];
     const ids = new Set<number>();
 
     for (const historyItem of courseHistory) {
@@ -85,7 +152,7 @@ export function useFilteredExploreCourses({
     }
 
     return ids;
-  }, [courseHistoryResponse?.data.courseHistory]);
+  }, [courseHistoryResponse?.courseHistory]);
 
   const eligibilityByCourseId = useMemo(() => {
     const map = new Map<number, boolean>();
@@ -99,67 +166,24 @@ export function useFilteredExploreCourses({
 
   const filteredCourses = useMemo(() => {
     const normalizedSearch = filter.search.trim().toLowerCase();
-    const selectedWeekdays = new Set(filter.weekdays.map((day) => day.toLowerCase()));
-    const fromInMinutes = filter.fromTime
-      ? parseTimeToMinutes(filter.fromTime)
-      : null;
-    const untilInMinutes = filter.untilTime
-      ? parseTimeToMinutes(filter.untilTime)
-      : null;
+    const meetingTimeFilter = buildMeetingTimeFilter(filter);
 
-    return courses
-      .filter((course) => {
-        if (passedCourseIds.has(course.id)) {
-          return false;
-        }
+    const filtered = courses.filter((course) => {
+      if (!passesCompletedCourseFilter(course, passedCourseIds)) {
+        return false;
+      }
 
-        if (normalizedSearch.length > 0) {
-          const courseName = course.name.toLowerCase();
-          const courseCode = course.code.toLowerCase();
-          const matchesSearch =
-            courseName.includes(normalizedSearch) ||
-            courseCode.includes(normalizedSearch);
+      if (!passesSearchFilter(course, normalizedSearch)) {
+        return false;
+      }
 
-          if (!matchesSearch) {
-            return false;
-          }
-        }
+      return passesMeetingTimeFilter(course, meetingTimeFilter);
+    });
 
-        return hasMatchingMeetingTime(
-          course,
-          selectedWeekdays,
-          fromInMinutes,
-          untilInMinutes,
-        );
-      })
-      .sort((courseA, courseB) => {
-        const courseAIsEligible = eligibilityByCourseId.get(courseA.id) ?? false;
-        const courseBIsEligible = eligibilityByCourseId.get(courseB.id) ?? false;
-
-        if (courseAIsEligible !== courseBIsEligible) {
-          return courseAIsEligible ? -1 : 1;
-        }
-
-        const nameOrder = courseA.name.localeCompare(courseB.name);
-        if (nameOrder !== 0) {
-          return nameOrder;
-        }
-
-        const codeOrder = courseA.code.localeCompare(courseB.code);
-        if (codeOrder !== 0) {
-          return codeOrder;
-        }
-
-        return courseA.id - courseB.id;
-      });
+    return sortCoursesByEligibilityAndName(filtered, eligibilityByCourseId);
   }, [courses, eligibilityByCourseId, filter, passedCourseIds]);
 
   return {
     filteredCourses,
-    getEligible: (course: Course) => eligibilityByCourseId.get(course.id) ?? false,
-    getCourseCardClassName: (course: Course) => {
-      const isEligible = eligibilityByCourseId.get(course.id) ?? false;
-      return !isEligible ? 'opacity-55' : undefined;
-    },
   };
 }

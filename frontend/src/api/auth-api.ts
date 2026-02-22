@@ -11,6 +11,6 @@ export type LoginResponse = {
   userId: number;
 };
 
-export function login(params: LoginRequest) {
-  return api.post<LoginResponse>('/login', params);
+export async function login(params: LoginRequest) {
+  return (await api.post<LoginResponse>('/login', params)).data;
 }

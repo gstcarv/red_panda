@@ -1,15 +1,15 @@
 import { Trophy, Sparkles } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 
-interface GraduationSuccessBannerProps {
+interface DashboardGraduationSuccessBannerProps {
   earnedCredits: number;
   requiredCredits: number;
 }
 
-export function GraduationSuccessBanner({
+export function DashboardGraduationSuccessBanner({
   earnedCredits,
   requiredCredits,
-}: GraduationSuccessBannerProps) {
+}: DashboardGraduationSuccessBannerProps) {
   return (
     <Card className="border-green-200 bg-linear-to-r from-green-50 to-emerald-50 dark:border-green-900 dark:from-green-950/20 dark:to-emerald-950/20">
       <CardContent className="flex items-start gap-3 py-4">

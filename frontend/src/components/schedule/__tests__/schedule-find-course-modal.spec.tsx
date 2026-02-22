@@ -1,22 +1,22 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { ScheduleFindCourseModal } from '@/components/schedule/schedule-find-course-modal';
-import { useAvailableCoursesBySlot } from '@/hooks/courses/use-available-courses-by-slot';
+import { useSchedulerSlotCourses } from '@/hooks/schedule/use-scheduler-slot-courses';
 import { useEnrollments } from '@/hooks/enrollments/use-enrollments';
 
 vi.mock('@/hooks/enrollments/use-enrollments', () => ({
   useEnrollments: vi.fn(),
 }));
 
-vi.mock('@/hooks/courses/use-available-courses-by-slot', () => ({
-  useAvailableCoursesBySlot: vi.fn(),
+vi.mock('@/hooks/schedule/use-scheduler-slot-courses', () => ({
+  useSchedulerSlotCourses: vi.fn(),
   buildSlotKey: (weekDay: string, startTime: string) =>
     `${weekDay.trim().toLowerCase()}|${startTime}`,
 }));
 
 const courseSectionModalSpy = vi.fn();
 
-vi.mock('@/components/courses/course-section-modal', () => ({
+vi.mock('@/components/courses/course-details-modal', () => ({
   CourseDetailsModal: (props: { courseId: number | null; open: boolean }) => {
     courseSectionModalSpy(props);
     return (
@@ -45,7 +45,7 @@ vi.mock('@/components/ui/dialog', () => ({
   DialogTitle: ({ children }: { children: React.ReactNode }) => <h1>{children}</h1>,
 }));
 
-const mockedUseAvailableCoursesBySlot = vi.mocked(useAvailableCoursesBySlot);
+const mockedUseSchedulerSlotCourses = vi.mocked(useSchedulerSlotCourses);
 const mockedUseEnrollments = vi.mocked(useEnrollments);
 const MONDAY_11 = 'monday|11:00';
 
@@ -80,7 +80,7 @@ describe('ScheduleFindCourseModal', () => {
   it('shows loading state', () => {
     courseSectionModalSpy.mockClear();
     setupEnrollmentsMock();
-    mockedUseAvailableCoursesBySlot.mockReturnValue({
+    mockedUseSchedulerSlotCourses.mockReturnValue({
       coursesBySlot: new Map(),
       isLoading: true,
       isError: false,
@@ -104,7 +104,7 @@ describe('ScheduleFindCourseModal', () => {
   it('shows empty state when no courses are available', () => {
     courseSectionModalSpy.mockClear();
     setupEnrollmentsMock();
-    mockedUseAvailableCoursesBySlot.mockReturnValue({
+    mockedUseSchedulerSlotCourses.mockReturnValue({
       coursesBySlot: new Map([[MONDAY_11, []]]),
       isLoading: false,
       isError: false,
@@ -130,7 +130,7 @@ describe('ScheduleFindCourseModal', () => {
   it('shows available courses only', () => {
     courseSectionModalSpy.mockClear();
     setupEnrollmentsMock();
-    mockedUseAvailableCoursesBySlot.mockReturnValue({
+    mockedUseSchedulerSlotCourses.mockReturnValue({
       coursesBySlot: new Map([
         [
           MONDAY_11,
@@ -180,7 +180,7 @@ describe('ScheduleFindCourseModal', () => {
   it('opens course details modal when clicking a course', () => {
     courseSectionModalSpy.mockClear();
     setupEnrollmentsMock();
-    mockedUseAvailableCoursesBySlot.mockReturnValue({
+    mockedUseSchedulerSlotCourses.mockReturnValue({
       coursesBySlot: new Map([
         [
           MONDAY_11,
@@ -233,7 +233,7 @@ describe('ScheduleFindCourseModal', () => {
   it('shows not eligible when prerequisite is not enrolled', () => {
     courseSectionModalSpy.mockClear();
     setupEnrollmentsMock([]);
-    mockedUseAvailableCoursesBySlot.mockReturnValue({
+    mockedUseSchedulerSlotCourses.mockReturnValue({
       coursesBySlot: new Map([
         [
           MONDAY_11,
