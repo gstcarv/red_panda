@@ -1,0 +1,56 @@
+version: "3.8"
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: red_panda_backend
+    ports:
+      - "8080:8080"
+    volumes:
+      # Mount the existing database file from resources (writable for Flyway migrations)
+      - ./backend/src/main/resources/maplewood_school.sqlite:/app/data/maplewood_school.sqlite
+      # Mount other resources as read-only
+      - ./backend/src/main/resources:/app/resources:ro
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:sqlite:/app/data/maplewood_school.sqlite
+      - SERVER_PORT=8080
+    networks:
+      - red_panda_network
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "wget",
+          "--quiet",
+          "--tries=1",
+          "--spider",
+          "http://localhost:8080/actuator/health",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        # Use relative path so nginx proxy handles routing to backend
+        VITE_API_BASE_URL: http://localhost:8080/api
+        VITE_ENABLE_MSW: "false"
+        SKIP_ENV_VALIDATION: "true"
+    container_name: red_panda_frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - red_panda_network
+
+networks:
+  red_panda_network:
+    driver: bridge
