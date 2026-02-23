@@ -1,4 +1,3 @@
-import { useCallback } from 'react';
 import type { Course } from '@/types/course.type';
 import type { Enrollment, EnrollmentAvailabilityError } from '@/types/enrollments.type';
 import type { CourseHistory } from '@/types/course-history.type';
@@ -105,35 +104,30 @@ export function useCheckEnrollmentEligibility(): UseCheckEnrollmentEligibilityRe
   const { data: courseHistoryResponse, isLoading: isCourseHistoryLoading } = useCourseHistory();
   const { data: studentResponse } = useStudent();
 
-  const student = studentResponse?.student ?? (studentResponse as { data?: { student?: Student } })?.data?.student;
+  const student =
+    studentResponse?.student ??
+    (studentResponse as { data?: { student?: Student } })?.data?.student;
 
-  const evaluate = useCallback(
-    (course: Course) => {
-      const enrollments =
-        enrollmentsResponse?.enrollments ??
-        (enrollmentsResponse as { data?: { enrollments?: Enrollment[] } })?.data?.enrollments ??
-        [];
-      const courseHistory =
-        courseHistoryResponse?.courseHistory ??
-        (courseHistoryResponse as { data?: { courseHistory?: CourseHistory[] } })?.data
-          ?.courseHistory ??
-        [];
+  const evaluate = (course: Course) => {
+    const enrollments =
+      enrollmentsResponse?.enrollments ??
+      (enrollmentsResponse as { data?: { enrollments?: Enrollment[] } })?.data?.enrollments ??
+      [];
 
-      return evaluateEnrollmentEligibility({
-        course,
-        enrollments,
-        courseHistory,
-        student,
-        isCourseHistoryLoading,
-      });
-    },
-    [
-      courseHistoryResponse?.courseHistory,
-      enrollmentsResponse?.enrollments,
-      isCourseHistoryLoading,
+    const courseHistory =
+      courseHistoryResponse?.courseHistory ??
+      (courseHistoryResponse as { data?: { courseHistory?: CourseHistory[] } })?.data
+        ?.courseHistory ??
+      [];
+
+    return evaluateEnrollmentEligibility({
+      course,
+      enrollments,
+      courseHistory,
       student,
-    ],
-  );
+      isCourseHistoryLoading,
+    });
+  };
 
   return {
     evaluate,
