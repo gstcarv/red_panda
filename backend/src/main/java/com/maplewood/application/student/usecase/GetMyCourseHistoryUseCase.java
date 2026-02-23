@@ -9,8 +9,6 @@ import com.maplewood.domain.course.model.Course;
 import com.maplewood.domain.course.port.CourseRepositoryPort;
 import com.maplewood.domain.coursehistory.model.CourseHistory;
 import com.maplewood.domain.coursehistory.port.CourseHistoryRepositoryPort;
-import com.maplewood.domain.enrollment.model.Enrollment;
-import com.maplewood.domain.enrollment.port.EnrollmentRepositoryPort;
 import com.maplewood.domain.semester.exception.SemesterNotFoundException;
 import com.maplewood.domain.semester.model.Semester;
 import com.maplewood.domain.semester.port.SemesterRepositoryPort;
@@ -30,17 +28,14 @@ public class GetMyCourseHistoryUseCase {
     private final CourseHistoryRepositoryPort courseHistoryRepositoryPort;
     private final CourseRepositoryPort courseRepositoryPort;
     private final SemesterRepositoryPort semesterRepositoryPort;
-    private final EnrollmentRepositoryPort enrollmentRepositoryPort;
 
     public GetMyCourseHistoryUseCase(
             CourseHistoryRepositoryPort courseHistoryRepositoryPort,
             CourseRepositoryPort courseRepositoryPort,
-            SemesterRepositoryPort semesterRepositoryPort,
-            EnrollmentRepositoryPort enrollmentRepositoryPort) {
+            SemesterRepositoryPort semesterRepositoryPort) {
         this.courseHistoryRepositoryPort = courseHistoryRepositoryPort;
         this.courseRepositoryPort = courseRepositoryPort;
         this.semesterRepositoryPort = semesterRepositoryPort;
-        this.enrollmentRepositoryPort = enrollmentRepositoryPort;
     }
 
     @Transactional(readOnly = true)
@@ -71,21 +66,8 @@ public class GetMyCourseHistoryUseCase {
                         this::fetchSemesterSummary
                 ));
 
-        Map<CourseSemesterKey, Enrollment> enrollmentByCourseSemester = historyRows.stream()
-                .map(CourseHistory::getSemesterId)
-                .filter(Objects::nonNull)
-                .distinct()
-                .map(semesterId -> enrollmentRepositoryPort.findByStudentIdAndSemesterId(studentId, semesterId))
-                .flatMap(List::stream)
-                .filter(enrollment -> enrollment.getCourseId() != null && enrollment.getSemesterId() != null)
-                .collect(Collectors.toMap(
-                        enrollment -> new CourseSemesterKey(enrollment.getCourseId(), enrollment.getSemesterId()),
-                        enrollment -> enrollment,
-                        (existing, ignored) -> existing
-                ));
-
         List<CourseHistoryDTO> items = historyRows.stream()
-                .map(row -> toCourseHistoryDTO(row, coursesById, semesterById, enrollmentByCourseSemester))
+                .map(row -> toCourseHistoryDTO(row, coursesById, semesterById))
                 .toList();
 
         return new CourseHistoryResponseDTO(items);
@@ -94,8 +76,7 @@ public class GetMyCourseHistoryUseCase {
     private CourseHistoryDTO toCourseHistoryDTO(
             CourseHistory row,
             Map<Integer, Course> coursesById,
-            Map<Integer, SemesterSummaryDTO> semestersById,
-            Map<CourseSemesterKey, Enrollment> enrollmentByCourseSemester) {
+            Map<Integer, SemesterSummaryDTO> semestersById) {
         Course course = coursesById.get(row.getCourseId());
         if (course == null) {
             throw new CourseNotFoundException(row.getCourseId());
@@ -106,12 +87,9 @@ public class GetMyCourseHistoryUseCase {
             throw new SemesterNotFoundException(row.getSemesterId());
         }
 
-        Enrollment enrollment = enrollmentByCourseSemester.get(
-                new CourseSemesterKey(row.getCourseId(), row.getSemesterId())
-        );
-        EnrollmentSummaryDTO enrollmentSummary = enrollment == null
+        EnrollmentSummaryDTO enrollmentSummary = row.getCourseSectionId() == null
                 ? null
-                : new EnrollmentSummaryDTO(enrollment.getSectionId());
+                : new EnrollmentSummaryDTO(row.getCourseSectionId());
 
         return new CourseHistoryDTO(
                 row.getId(),
@@ -133,8 +111,5 @@ public class GetMyCourseHistoryUseCase {
                 semester.getYear(),
                 semester.getOrderInYear()
         );
-    }
-
-    private record CourseSemesterKey(Integer courseId, Integer semesterId) {
     }
 }

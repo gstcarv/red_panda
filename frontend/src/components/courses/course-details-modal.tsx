@@ -70,25 +70,49 @@ export function CourseDetailsModal({
   // Use cached course if available, otherwise use current data
   // This prevents flicker during close animation
   const course = cachedCourse || courseData;
-  const { status: computedStatus, enrolledSections } = useCheckCourseStatus(course, semesterId);
+  const {
+    status: computedStatus,
+    enrolledSections,
+    foundCourseHistory,
+  } = useCheckCourseStatus(course, semesterId);
   const status = courseStatus ?? computedStatus;
   const hasCompletedStatus = status === 'failed' || status === 'passed';
 
   const isEnrolled = status === 'enrolled';
 
-  // Show enrolled sections if enrolled, otherwise show all available sections
-  const displayedSections =
-    isEnrolled && course ? enrolledSections : (course?.availableSections ?? []);
+  const getDisplayedSections = () => {
+    if (status && foundCourseHistory) {
+      return course?.availableSections.filter(
+        (s) => s.id === foundCourseHistory.enrollment?.sectionId,
+      );
+    }
+
+    if (isEnrolled) {
+      return enrolledSections;
+    }
+
+    return course?.availableSections;
+  };
+
+  const getSectionTitle = (): string => {
+    if (hasCompletedStatus) {
+      return 'Section enrolled in this semester';
+    }
+
+    if (isEnrolled) {
+      return 'Enrolled Section';
+    }
+
+    return 'Available Sections';
+  };
+
   const semesterBadgeLabel =
     course?.semester != null ? `${course.semester.name} ${course.semester.year}` : null;
+
   const modalTitle = 'Course Details';
-  const sectionsTitle = hasCompletedStatus
-    ? 'Section enrolled in this semester'
-    : status === undefined
-      ? isEnrolled
-        ? 'Enrolled Section'
-        : 'Available Sections'
-      : 'Enrolled Section';
+
+  const sectionsTitle = getSectionTitle();
+  const displayedSections = getDisplayedSections() || [];
 
   const content = (
     <div className="space-y-4">

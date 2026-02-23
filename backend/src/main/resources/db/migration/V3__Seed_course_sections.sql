@@ -1,29 +1,37 @@
--- Migration V3: Seed course sections for all courses in the active semester
+-- Migration V3: Seed course sections for all courses in matching semesters
 -- Strategy: Create 2-3 sections for core courses, 1-2 for elective courses
 
 PRAGMA foreign_keys = ON;
 
--- Helper CTE to get active semester
-WITH active_semester AS (
-    SELECT id as semester_id FROM semesters WHERE is_active = TRUE LIMIT 1
-),
--- Helper CTE to get courses with their details
-courses_with_details AS (
+-- Helper CTE to map courses to all matching semesters (Fall/Spring order)
+WITH course_semester_pairs AS (
     SELECT 
+        s.id as semester_id,
         c.id as course_id,
         c.code,
         c.course_type,
         c.specialization_id,
         c.hours_per_week,
-        c.semester_order,
+        c.semester_order
+    FROM courses c
+    JOIN semesters s ON s.order_in_year = c.semester_order
+),
+-- Helper CTE to get course-semester rows with section counts
+courses_with_details AS (
+    SELECT 
+        csp.semester_id,
+        csp.course_id,
+        csp.code,
+        csp.course_type,
+        csp.specialization_id,
+        csp.hours_per_week,
+        csp.semester_order,
         -- Determine number of sections: core=2-3, elective=1-2
         CASE 
-            WHEN c.course_type = 'core' THEN 2 + (ABS(RANDOM()) % 2)  -- 2 or 3
+            WHEN csp.course_type = 'core' THEN 2 + (ABS(RANDOM()) % 2)  -- 2 or 3
             ELSE 1 + (ABS(RANDOM()) % 2)  -- 1 or 2
         END as num_sections
-    FROM courses c
-    CROSS JOIN active_semester
-    WHERE c.semester_order = (SELECT order_in_year FROM semesters WHERE id = (SELECT semester_id FROM active_semester))
+    FROM course_semester_pairs csp
 ),
 -- Helper CTE to get teachers by specialization
 teachers_by_spec AS (
@@ -47,7 +55,7 @@ classrooms_by_spec AS (
 section_assignments AS (
     SELECT 
         cwd.course_id,
-        (SELECT semester_id FROM active_semester) as semester_id,
+        cwd.semester_id,
         -- Rotate through teachers of matching specialization
         (SELECT teacher_id FROM teachers_by_spec 
          WHERE specialization_id = cwd.specialization_id 

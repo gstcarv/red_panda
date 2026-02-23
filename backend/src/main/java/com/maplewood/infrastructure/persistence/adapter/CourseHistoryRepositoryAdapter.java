@@ -46,6 +46,7 @@ public class CourseHistoryRepositoryAdapter implements CourseHistoryRepositoryPo
                 entity.getId(),
                 entity.getStudentId(),
                 entity.getCourseId(),
+                entity.getCourseSectionId(),
                 entity.getSemesterId(),
                 entity.getStatus(),
                 entity.getCreatedAt()

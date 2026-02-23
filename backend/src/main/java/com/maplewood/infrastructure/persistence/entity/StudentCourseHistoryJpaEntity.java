@@ -29,6 +29,9 @@ public class StudentCourseHistoryJpaEntity {
     @Column(name = "course_id", nullable = false, columnDefinition = "INTEGER")
     private Integer courseId;
 
+    @Column(name = "course_section_id", nullable = false, columnDefinition = "INTEGER")
+    private Integer courseSectionId;
+
     @Column(name = "semester_id", nullable = false, columnDefinition = "INTEGER")
     private Integer semesterId;
 

@@ -12,6 +12,7 @@ public class CourseHistory {
     private Integer id;
     private Integer studentId;
     private Integer courseId;
+    private Integer courseSectionId;
     private Integer semesterId;
     private String status;
     private Instant createdAt;

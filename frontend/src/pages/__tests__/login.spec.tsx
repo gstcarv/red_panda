@@ -149,12 +149,10 @@ describe('Login page', () => {
 
     const options = vi.mocked(useLogin).mock.calls[0]?.[0];
     const successResponse = {
-      data: {
-        token: 'token-1',
-        expiresIn: 1000,
-        email: 'student@school.edu',
-        userId: 1,
-      },
+      token: 'token-1',
+      expiresIn: 1000,
+      email: 'student@school.edu',
+      userId: 1,
     };
 
     options?.onSuccess?.(
@@ -170,7 +168,7 @@ describe('Login page', () => {
       undefined as never,
     );
 
-    expect(setAuthMock).toHaveBeenCalledWith(successResponse.data);
+    expect(setAuthMock).toHaveBeenCalledWith(successResponse);
 
     expect(navigateMock).toHaveBeenCalledWith('/', { replace: true });
 
