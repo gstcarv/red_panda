@@ -1,10 +1,6 @@
-import { getStudentProfile } from '@/api/students-api';
 import { useQuery } from '@tanstack/react-query';
-import { studentsCache } from '@/helpers/cache/students-cache';
+import { getStudentProfileQuery } from '@/queries/students/query';
 
 export function useStudent() {
-  return useQuery({
-    queryKey: studentsCache.buildKey(),
-    queryFn: getStudentProfile,
-  });
+  return useQuery(getStudentProfileQuery);
 }

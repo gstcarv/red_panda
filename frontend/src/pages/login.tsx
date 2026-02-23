@@ -29,7 +29,7 @@ export function Login() {
 
   const { mutate, isPending } = useLogin({
     onSuccess: (response) => {
-      setAuth(response.data);
+      setAuth(response);
       navigate('/', { replace: true });
     },
     onError: (error) => {

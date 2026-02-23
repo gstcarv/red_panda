@@ -1,16 +1,6 @@
-import { useMutation, type UseMutationOptions } from '@tanstack/react-query';
-import { login, type LoginRequest } from '@/api/auth-api';
-
-type LoginMutationData = Awaited<ReturnType<typeof login>>;
-
-type UseLoginOptions = Omit<
-  UseMutationOptions<LoginMutationData, unknown, LoginRequest>,
-  'mutationFn'
->;
+import { useMutation } from '@tanstack/react-query';
+import { loginMutationOptions, type UseLoginOptions } from '@/queries/auth/query';
 
 export function useLogin(options?: UseLoginOptions) {
-  return useMutation({
-    ...options,
-    mutationFn: login,
-  });
+    return useMutation(loginMutationOptions(options));
 }

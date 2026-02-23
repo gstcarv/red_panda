@@ -94,7 +94,7 @@ describe('PrerequisiteLink', () => {
 
   it('renders status indicator when prerequisite course has a student status', () => {
     mockedUseCourseDetailsModal.mockReturnValue({
-      selectedCourseId: undefined,
+      selectedCourseId: null,
       selectedSemesterId: null,
       modalOpen: false,
       handleCourseSelect: mockFn<(courseId: number, semesterId?: number) => void>(),

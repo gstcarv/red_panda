@@ -1,19 +1,15 @@
 import merge from 'lodash.merge';
-import type { QueryClient } from '@tanstack/react-query';
 import type { GetStudentEnrollmentsResponse } from '@/api/students-api';
+import { queryClient } from '@/lib/react-query';
 import type { Enrollment } from '@/types/enrollments.type';
 
-const ENROLLMENTS_QUERY_KEY = ['me', 'enrollments'] as const;
-
-function buildEnrollmentQueryKey() {
-  return ENROLLMENTS_QUERY_KEY;
+export function buildEnrollmentQueryKey() {
+  return ['me', 'enrollments'] as const;
 }
 
 function addEnrollment({
-  queryClient,
   enrollment,
 }: {
-  queryClient: QueryClient;
   enrollment: Enrollment;
 }) {
   queryClient.setQueryData<GetStudentEnrollmentsResponse>(buildEnrollmentQueryKey(), (current) => {
@@ -36,10 +32,8 @@ function addEnrollment({
 }
 
 function removeEnrollmentByCourseId({
-  queryClient,
   courseId,
 }: {
-  queryClient: QueryClient;
   courseId: number;
 }) {
   queryClient.setQueryData<GetStudentEnrollmentsResponse>(buildEnrollmentQueryKey(), (current) => {
@@ -58,14 +52,14 @@ function removeEnrollmentByCourseId({
   });
 }
 
-function invalidate({ queryClient }: { queryClient: QueryClient }) {
+function invalidate() {
   return queryClient.invalidateQueries({
     queryKey: buildEnrollmentQueryKey(),
   });
 }
 
 export const enrollmentsCache = {
-  buildKey: buildEnrollmentQueryKey,
+  buildEnrollmentQueryKey,
   addEnrollment,
   removeEnrollmentByCourseId,
   invalidate,

@@ -1,10 +1,6 @@
-import { getStudentEnrollments } from '@/api/students-api';
 import { useQuery } from '@tanstack/react-query';
-import { enrollmentsCache } from '@/helpers/cache/enrollment-cache';
+import { getStudentEnrollments } from '@/queries/enrollments/query';
 
 export function useEnrollments() {
-  return useQuery({
-    queryKey: enrollmentsCache.buildKey(),
-    queryFn: getStudentEnrollments,
-  });
+    return useQuery(getStudentEnrollments);
 }
