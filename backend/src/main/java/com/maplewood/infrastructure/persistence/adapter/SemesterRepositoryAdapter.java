@@ -2,9 +2,11 @@ package com.maplewood.infrastructure.persistence.adapter;
 
 import com.maplewood.domain.semester.model.Semester;
 import com.maplewood.domain.semester.port.SemesterRepositoryPort;
+import com.maplewood.infrastructure.config.CacheConfig;
 import com.maplewood.infrastructure.persistence.entity.SemesterJpaEntity;
 import com.maplewood.infrastructure.persistence.repository.SemesterRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -30,6 +32,7 @@ public class SemesterRepositoryAdapter implements SemesterRepositoryPort {
     }
 
     @Override
+    @Cacheable(cacheNames = CacheConfig.ACTIVE_SEMESTER_CACHE, key = "'active'")
     public Optional<Semester> findActiveSemester() {
         return semesterRepository.findByIsActiveTrue()
                 .map(this::toDomain);

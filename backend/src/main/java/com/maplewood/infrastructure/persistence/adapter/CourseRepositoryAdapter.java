@@ -4,9 +4,11 @@ import com.maplewood.domain.course.model.Course;
 import com.maplewood.domain.course.model.CourseType;
 import com.maplewood.domain.course.model.SemesterOrder;
 import com.maplewood.domain.course.port.CourseRepositoryPort;
+import com.maplewood.infrastructure.config.CacheConfig;
 import com.maplewood.infrastructure.persistence.entity.CourseJpaEntity;
 import com.maplewood.infrastructure.persistence.repository.CourseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -28,6 +30,7 @@ public class CourseRepositoryAdapter implements CourseRepositoryPort {
     }
 
     @Override
+    @Cacheable(cacheNames = CacheConfig.COURSES_BY_SEMESTER_CACHE, key = "'all-courses'")
     public List<Course> findAll() {
         return courseRepository.findAll()
                 .stream()
