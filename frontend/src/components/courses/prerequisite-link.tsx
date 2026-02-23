@@ -67,7 +67,7 @@ export function PrerequisiteLink({
   const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
     setHasOpenedModal(true);
-    handleCourseSelect(prerequisite.id);
+    handleCourseSelect(prerequisite.id, foundCourseHistory?.semester.id);
   };
 
   return (
