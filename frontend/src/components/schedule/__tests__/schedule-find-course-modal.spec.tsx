@@ -1,7 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { ScheduleFindCourseModal } from '@/components/schedule/schedule-find-course-modal';
-import { useSchedulerSlotCourses } from '@/hooks/schedule/use-scheduler-slot-courses';
 import { useEnrollments } from '@/hooks/enrollments/use-enrollments';
 import { useScheduleFindCourseModal } from '@/hooks/schedule/use-schedule-find-course-modal';
 
@@ -51,9 +50,7 @@ vi.mock('@/components/ui/dialog', () => ({
 }));
 
 const mockedUseScheduleFindCourseModal = vi.mocked(useScheduleFindCourseModal);
-const mockedUseSchedulerSlotCourses = vi.mocked(useSchedulerSlotCourses);
 const mockedUseEnrollments = vi.mocked(useEnrollments);
-const MONDAY_11 = 'monday|11:00';
 
 describe('ScheduleFindCourseModal', () => {
   function setupEnrollmentsMock(courseIds: number[] = []) {

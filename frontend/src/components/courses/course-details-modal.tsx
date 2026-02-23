@@ -115,7 +115,7 @@ export function CourseDetailsModal({
   const displayedSections = getDisplayedSections() || [];
 
   const content = (
-    <div className="space-y-4">
+    <div>
       {isLoading ? (
         <div className="space-y-3">
           <div className="space-y-2">
@@ -256,7 +256,7 @@ export function CourseDetailsModal({
               : 'View course information and available sections'}
           </SheetDescription>
         </SheetHeader>
-        <div className="mt-6">{content}</div>
+        <div className="px-4">{content}</div>
       </SheetContent>
     </Sheet>
   );

@@ -91,7 +91,7 @@ export function CoursesFilter({ value, onChange, className }: CoursesFilterProps
         </div>
 
         <div className="flex flex-col gap-4 border-t border-border pt-4 md:flex-row md:items-end md:gap-4">
-          <div className="grid w-fit gap-3 md:grid-cols-2">
+          <div className="grid md:w-fit gap-3 grid-cols-2">
             <div className="max-w-40 space-y-2">
               <label htmlFor="courses-from-time" className="text-sm font-medium text-foreground">
                 From time
