@@ -1,5 +1,9 @@
 # Red Panda - Quick Run Guide
 
+## 📄 RFC
+
+Architecture and technical decisions are documented in [`RFC.md`](./RFC.md).
+
 Simple guide to run the project locally.
 
 ## 📦 Prerequisites
