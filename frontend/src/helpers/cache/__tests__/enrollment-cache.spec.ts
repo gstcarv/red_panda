@@ -27,7 +27,7 @@ function createEnrollment(id: string, courseId: number, sectionId: number): Enro
       id: 1,
       name: 'Spring',
       year: 2026,
-      order_in_year: 1,
+      orderInYear: 1,
     },
   };
 }

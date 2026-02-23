@@ -40,7 +40,7 @@ export function useDashboard() {
       if (b.semester.year !== a.semester.year) {
         return b.semester.year - a.semester.year;
       }
-      return b.semester.order_in_year - a.semester.order_in_year;
+      return b.semester.orderInYear - a.semester.orderInYear;
     });
   }, [history]);
 

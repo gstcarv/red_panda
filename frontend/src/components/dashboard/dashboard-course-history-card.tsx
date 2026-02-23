@@ -33,9 +33,9 @@ export function DashboardCourseHistoryCard({
     >();
 
     for (const item of history) {
-      const semesterKey = `${item.semester.year}-${item.semester.order_in_year}`;
+      const semesterKey = `${item.semester.year}-${item.semester.orderInYear}`;
       const semesterLabel = `${item.semester.name} ${item.semester.year}`;
-      const semesterOrder = item.semester.year * 10 + item.semester.order_in_year;
+      const semesterOrder = item.semester.year * 10 + item.semester.orderInYear;
 
       const currentGroup = grouped.get(semesterKey);
       if (!currentGroup) {

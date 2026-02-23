@@ -16,6 +16,6 @@ export interface Student {
     id: number;
     name: string;
     year: number;
-    order_in_year: number;
+    orderInYear: number;
   } | null;
 }

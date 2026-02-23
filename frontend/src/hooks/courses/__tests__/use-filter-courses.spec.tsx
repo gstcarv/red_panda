@@ -73,7 +73,7 @@ describe('useFilterCourses', () => {
               id: 1,
               name: 'Fall',
               year: 2024,
-              order_in_year: 1,
+              orderInYear: 1,
             },
             status: 'passed',
           },

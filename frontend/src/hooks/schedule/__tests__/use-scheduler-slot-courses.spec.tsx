@@ -227,7 +227,7 @@ describe('useSchedulerSlotCourses', () => {
               id: 2,
               name: 'Spring',
               year: 2025,
-              order_in_year: 2,
+              orderInYear: 2,
             },
           },
         ],

@@ -12,7 +12,5 @@ public class SemesterSummaryDTO {
     private Integer id;
     private String name;
     private Integer year;
-
-    @JsonProperty("order_in_year")
     private Integer orderInYear;
 }
