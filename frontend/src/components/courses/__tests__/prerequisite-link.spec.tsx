@@ -76,7 +76,7 @@ describe('PrerequisiteLink', () => {
 
     await user.click(screen.getByRole('button', { name: 'MATH101 - Algebra I' }));
 
-    expect(handleCourseSelect).toHaveBeenCalledWith(7);
+    expect(handleCourseSelect).toHaveBeenCalledWith(7, undefined);
     expect(mockedUseCourseDetailsModal).toHaveBeenCalledWith({
       onCourseSelect,
     });

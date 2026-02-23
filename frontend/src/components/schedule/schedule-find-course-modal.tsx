@@ -9,6 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { useActiveSemester } from '@/hooks/semester/use-active-semester';
 import { Skeleton } from '@/components/ui/skeleton';
 import { CourseDetailsModal } from '@/components/courses/course-details-modal';
 import { CourseStudentStatusTag } from '@/components/courses/course-student-status-tag';
@@ -26,6 +27,8 @@ export function ScheduleFindCourseModal({
   slot,
   onOpenChange,
 }: ScheduleFindCourseModalProps) {
+  const activeSemester = useActiveSemester();
+
   const {
     selectedCourseId,
     setSelectedCourseId,
@@ -82,7 +85,7 @@ export function ScheduleFindCourseModal({
                     <p className="text-sm font-mono text-muted-foreground">{course.code}</p>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CourseStudentStatusTag course={course} />
+                    <CourseStudentStatusTag course={course} semesterId={activeSemester?.id} />
                     <Badge variant="outline">
                       {course.availableSections.length} section
                       {course.availableSections.length !== 1 ? 's' : ''}
@@ -98,6 +101,7 @@ export function ScheduleFindCourseModal({
         courseId={selectedCourseId}
         open={selectedCourseId !== null}
         onOpenChange={handleCourseDetailsOpenChange}
+        semesterId={activeSemester?.id}
       />
     </>
   );

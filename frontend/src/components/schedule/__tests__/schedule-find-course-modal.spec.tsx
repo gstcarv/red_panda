@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { ScheduleFindCourseModal } from '@/components/schedule/schedule-find-course-modal';
 import { useSchedulerSlotCourses } from '@/hooks/schedule/use-scheduler-slot-courses';
 import { useEnrollments } from '@/hooks/enrollments/use-enrollments';
+import { useScheduleFindCourseModal } from '@/hooks/schedule/use-schedule-find-course-modal';
 
 vi.mock('@/hooks/enrollments/use-enrollments', () => ({
   useEnrollments: vi.fn(),
@@ -12,6 +13,14 @@ vi.mock('@/hooks/schedule/use-scheduler-slot-courses', () => ({
   useSchedulerSlotCourses: vi.fn(),
   buildSlotKey: (weekDay: string, startTime: string) =>
     `${weekDay.trim().toLowerCase()}|${startTime}`,
+}));
+
+vi.mock('@/hooks/schedule/use-schedule-find-course-modal', () => ({
+  useScheduleFindCourseModal: vi.fn(),
+}));
+
+vi.mock('@/hooks/semester/use-active-semester', () => ({
+  useActiveSemester: vi.fn(() => ({ id: 1 })),
 }));
 
 const courseSectionModalSpy = vi.fn();
@@ -41,6 +50,7 @@ vi.mock('@/components/ui/dialog', () => ({
   DialogTitle: ({ children }: { children: React.ReactNode }) => <h1>{children}</h1>,
 }));
 
+const mockedUseScheduleFindCourseModal = vi.mocked(useScheduleFindCourseModal);
 const mockedUseSchedulerSlotCourses = vi.mocked(useSchedulerSlotCourses);
 const mockedUseEnrollments = vi.mocked(useEnrollments);
 const MONDAY_11 = 'monday|11:00';
@@ -76,11 +86,14 @@ describe('ScheduleFindCourseModal', () => {
   it('shows loading state', () => {
     courseSectionModalSpy.mockClear();
     setupEnrollmentsMock();
-    mockedUseSchedulerSlotCourses.mockReturnValue({
-      coursesBySlot: new Map(),
+    mockedUseScheduleFindCourseModal.mockReturnValue({
+      selectedCourseId: null,
+      setSelectedCourseId: vi.fn(),
+      coursesWithEligibility: [],
       isLoading: true,
       isError: false,
-    } as never);
+      handleCourseDetailsOpenChange: vi.fn(),
+    });
 
     render(
       <ScheduleFindCourseModal
@@ -100,11 +113,14 @@ describe('ScheduleFindCourseModal', () => {
   it('shows empty state when no courses are available', () => {
     courseSectionModalSpy.mockClear();
     setupEnrollmentsMock();
-    mockedUseSchedulerSlotCourses.mockReturnValue({
-      coursesBySlot: new Map([[MONDAY_11, []]]),
+    mockedUseScheduleFindCourseModal.mockReturnValue({
+      selectedCourseId: null,
+      setSelectedCourseId: vi.fn(),
+      coursesWithEligibility: [],
       isLoading: false,
       isError: false,
-    } as never);
+      handleCourseDetailsOpenChange: vi.fn(),
+    });
 
     render(
       <ScheduleFindCourseModal
@@ -126,34 +142,35 @@ describe('ScheduleFindCourseModal', () => {
   it('shows available courses only', () => {
     courseSectionModalSpy.mockClear();
     setupEnrollmentsMock();
-    mockedUseSchedulerSlotCourses.mockReturnValue({
-      coursesBySlot: new Map([
-        [
-          MONDAY_11,
-          [
-            {
-              id: 1,
-              code: 'MATH101',
-              name: 'Algebra I',
-              credits: 3,
-              hoursPerWeek: 4,
-              gradeLevel: { min: 9, max: 10 },
-              availableSections: [
-                {
-                  id: 101,
-                  teacher: { id: 1, name: 'Dr. Smith' },
-                  meetingTimes: [],
-                  capacity: 30,
-                  enrolledCount: 10,
-                },
-              ],
-            },
-          ],
-        ],
-      ]),
+    mockedUseScheduleFindCourseModal.mockReturnValue({
+      selectedCourseId: null,
+      setSelectedCourseId: vi.fn(),
+      coursesWithEligibility: [
+        {
+          course: {
+            id: 1,
+            code: 'MATH101',
+            name: 'Algebra I',
+            credits: 3,
+            hoursPerWeek: 4,
+            gradeLevel: { min: 9, max: 10 },
+            availableSections: [
+              {
+                id: 101,
+                teacher: { id: 1, name: 'Dr. Smith' },
+                meetingTimes: [],
+                capacity: 30,
+                enrolledCount: 10,
+              },
+            ],
+          },
+          isEnrolled: false,
+        },
+      ],
       isLoading: false,
       isError: false,
-    } as never);
+      handleCourseDetailsOpenChange: vi.fn(),
+    });
 
     render(
       <ScheduleFindCourseModal
@@ -176,37 +193,39 @@ describe('ScheduleFindCourseModal', () => {
   it('opens course details modal when clicking a course', () => {
     courseSectionModalSpy.mockClear();
     setupEnrollmentsMock();
-    mockedUseSchedulerSlotCourses.mockReturnValue({
-      coursesBySlot: new Map([
-        [
-          MONDAY_11,
-          [
-            {
-              id: 1,
-              code: 'MATH101',
-              name: 'Algebra I',
-              credits: 3,
-              hoursPerWeek: 4,
-              gradeLevel: { min: 9, max: 10 },
-              availableSections: [
-                {
-                  id: 101,
-                  teacher: { id: 1, name: 'Dr. Smith' },
-                  meetingTimes: [],
-                  capacity: 30,
-                  enrolledCount: 10,
-                },
-              ],
-            },
-          ],
-        ],
-      ]),
+    const setSelectedCourseId = vi.fn();
+    mockedUseScheduleFindCourseModal.mockReturnValue({
+      selectedCourseId: null,
+      setSelectedCourseId,
+      coursesWithEligibility: [
+        {
+          course: {
+            id: 1,
+            code: 'MATH101',
+            name: 'Algebra I',
+            credits: 3,
+            hoursPerWeek: 4,
+            gradeLevel: { min: 9, max: 10 },
+            availableSections: [
+              {
+                id: 101,
+                teacher: { id: 1, name: 'Dr. Smith' },
+                meetingTimes: [],
+                capacity: 30,
+                enrolledCount: 10,
+              },
+            ],
+          },
+          isEnrolled: false,
+        },
+      ],
       isLoading: false,
       isError: false,
-    } as never);
+      handleCourseDetailsOpenChange: vi.fn(),
+    });
 
     const onOpenChange = vi.fn();
-    render(
+    const { rerender } = render(
       <ScheduleFindCourseModal
         open
         slot={{
@@ -220,38 +239,85 @@ describe('ScheduleFindCourseModal', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /algebra i/i }));
 
+    expect(setSelectedCourseId).toHaveBeenCalledWith(1);
     expect(onOpenChange).toHaveBeenCalledWith(false);
+    
+    // Update mock to return selectedCourseId after click
+    mockedUseScheduleFindCourseModal.mockReturnValue({
+      selectedCourseId: 1,
+      setSelectedCourseId,
+      coursesWithEligibility: [
+        {
+          course: {
+            id: 1,
+            code: 'MATH101',
+            name: 'Algebra I',
+            credits: 3,
+            hoursPerWeek: 4,
+            gradeLevel: { min: 9, max: 10 },
+            availableSections: [
+              {
+                id: 101,
+                teacher: { id: 1, name: 'Dr. Smith' },
+                meetingTimes: [],
+                capacity: 30,
+                enrolledCount: 10,
+              },
+            ],
+          },
+          isEnrolled: false,
+        },
+      ],
+      isLoading: false,
+      isError: false,
+      handleCourseDetailsOpenChange: vi.fn(),
+    });
+    
+    // Re-render to show modal
+    rerender(
+      <ScheduleFindCourseModal
+        open
+        slot={{
+          weekDay: 'monday',
+          startTime: '11:00',
+          dateLabel: 'Monday, 11:00 AM',
+        }}
+        onOpenChange={onOpenChange}
+      />,
+    );
+
     expect(screen.getByTestId('course-section-modal')).toHaveTextContent('course:1-open:yes');
   });
 
   it('shows not eligible when prerequisite is not enrolled', () => {
     courseSectionModalSpy.mockClear();
     setupEnrollmentsMock([]);
-    mockedUseSchedulerSlotCourses.mockReturnValue({
-      coursesBySlot: new Map([
-        [
-          MONDAY_11,
-          [
-            {
-              id: 3,
-              code: 'CS201',
-              name: 'Data Structures',
-              credits: 4,
-              hoursPerWeek: 5,
-              prerequisite: {
-                id: 2,
-                code: 'CS101',
-                name: 'Intro to Programming',
-              },
-              gradeLevel: { min: 10, max: 12 },
-              availableSections: [],
+    mockedUseScheduleFindCourseModal.mockReturnValue({
+      selectedCourseId: null,
+      setSelectedCourseId: vi.fn(),
+      coursesWithEligibility: [
+        {
+          course: {
+            id: 3,
+            code: 'CS201',
+            name: 'Data Structures',
+            credits: 4,
+            hoursPerWeek: 5,
+            prerequisite: {
+              id: 2,
+              code: 'CS101',
+              name: 'Intro to Programming',
             },
-          ],
-        ],
-      ]),
+            gradeLevel: { min: 10, max: 12 },
+            availableSections: [],
+          },
+          isEnrolled: false,
+        },
+      ],
       isLoading: false,
       isError: false,
-    } as never);
+      handleCourseDetailsOpenChange: vi.fn(),
+    });
 
     render(
       <ScheduleFindCourseModal
