@@ -15,9 +15,9 @@ public interface StudentCourseHistoryRepository extends JpaRepository<StudentCou
 
     @Query(value = """
             SELECT
-                COALESCE(CAST(SUM(CASE WHEN sch.status = 'passed' THEN c.credits ELSE 0 END) AS INTEGER), 0) AS creditsEarned,
-                IFNULL(ROUND(
-                    SUM(CASE WHEN sch.status = 'passed' THEN c.credits ELSE 0 END) / SUM(c.credits) * 4.0,
+                COALESCE(SUM(CASE WHEN sch.status = 'passed' THEN c.credits ELSE 0 END), 0) AS creditsEarned,
+                COALESCE(ROUND(
+                    SUM(CASE WHEN sch.status = 'passed' THEN c.credits ELSE 0 END) / NULLIF(SUM(c.credits), 0) * 4.0,
                     2
                 ), 0) AS calculatedGpa
             FROM students s

@@ -8,6 +8,7 @@ import com.maplewood.infrastructure.persistence.repository.StudentAcademicMetric
 import com.maplewood.infrastructure.persistence.repository.StudentCourseHistoryRepository;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Component
@@ -36,7 +37,8 @@ public class CourseHistoryRepositoryAdapter implements CourseHistoryRepositoryPo
             return new StudentAcademicMetrics(0, 0.0);
         }
 
-        Integer creditsEarned = metrics.getCreditsEarned() == null ? 0 : metrics.getCreditsEarned();
+        BigDecimal creditsEarnedValue = metrics.getCreditsEarned();
+        Integer creditsEarned = creditsEarnedValue == null ? 0 : creditsEarnedValue.intValue();
         Double gpa = metrics.getCalculatedGpa() == null ? 0.0 : metrics.getCalculatedGpa();
         return new StudentAcademicMetrics(creditsEarned, gpa);
     }

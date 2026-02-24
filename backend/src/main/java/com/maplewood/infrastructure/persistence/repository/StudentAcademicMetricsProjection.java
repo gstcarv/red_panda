@@ -1,7 +1,9 @@
 package com.maplewood.infrastructure.persistence.repository;
 
+import java.math.BigDecimal;
+
 public interface StudentAcademicMetricsProjection {
-    Integer getCreditsEarned();
+    BigDecimal getCreditsEarned();
 
     Double getCalculatedGpa();
 }
