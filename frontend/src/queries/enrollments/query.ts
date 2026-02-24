@@ -1,8 +1,4 @@
-import {
-  mutationOptions,
-  queryOptions,
-  type MutationOptions,
-} from '@tanstack/react-query';
+import { mutationOptions, queryOptions, type MutationOptions } from '@tanstack/react-query';
 import * as studentsApi from '@/api/students-api';
 import { enrollmentsCache } from './cache';
 

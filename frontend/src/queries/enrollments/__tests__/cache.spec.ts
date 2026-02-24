@@ -56,9 +56,8 @@ describe('enrollments cache', () => {
 
     enrollmentsCache.addEnrollment({ enrollment: second });
 
-    const cacheData = queryClient.getQueryData<GetStudentEnrollmentsResponse>(
-      buildEnrollmentQueryKey(),
-    );
+    const cacheData =
+      queryClient.getQueryData<GetStudentEnrollmentsResponse>(buildEnrollmentQueryKey());
 
     expect(cacheData?.enrollments).toHaveLength(2);
     expect(cacheData?.enrollments[1].id).toBe('e-2');
@@ -71,9 +70,8 @@ describe('enrollments cache', () => {
 
     enrollmentsCache.removeEnrollmentByCourseId({ courseId: 10 });
 
-    const cacheData = queryClient.getQueryData<GetStudentEnrollmentsResponse>(
-      buildEnrollmentQueryKey(),
-    );
+    const cacheData =
+      queryClient.getQueryData<GetStudentEnrollmentsResponse>(buildEnrollmentQueryKey());
 
     expect(cacheData?.enrollments).toHaveLength(1);
     expect(cacheData?.enrollments[0].course.id).toBe(11);

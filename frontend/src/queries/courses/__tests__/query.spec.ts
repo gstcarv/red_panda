@@ -9,7 +9,9 @@ import { describe, expect, it, vi } from 'vitest';
 
 describe('courses query options', () => {
   it('builds stable courses query options', async () => {
-    const coursesSpy = vi.spyOn(coursesApi, 'getCourses').mockResolvedValue({ courses: [] } as never);
+    const coursesSpy = vi
+      .spyOn(coursesApi, 'getCourses')
+      .mockResolvedValue({ courses: [] } as never);
 
     expect(getCoursesQuery.queryKey).toEqual(['courses']);
     await getCoursesQuery.queryFn!({} as never);

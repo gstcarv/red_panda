@@ -6,5 +6,5 @@ type EnrollMutationData = Awaited<ReturnType<typeof enroll>>;
 type UseEnrollOptions = Omit<UseMutationOptions<EnrollMutationData, unknown, number>, 'mutationFn'>;
 
 export function useEnroll(selectedCourseId: number | null, options?: UseEnrollOptions) {
-    return useMutation(enrollMutationOptions(selectedCourseId, options));
+  return useMutation(enrollMutationOptions(selectedCourseId, options));
 }

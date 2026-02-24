@@ -9,7 +9,12 @@ import type { SchedulerEvent, SchedulerSlotSelection } from '@/types/scheduler.t
 import { ScheduleFindCourseModal } from './schedule-find-course-modal';
 import { CourseDetailsModal } from '@/components/courses/course-details-modal';
 import { useActiveSemester } from '@/hooks/semester/use-active-semester';
-import { addMinutesToTime, indexToWeekday, parseTimeToMinutes, weekdayToIndex } from '@/helpers/date-helper';
+import {
+  addMinutesToTime,
+  indexToWeekday,
+  parseTimeToMinutes,
+  weekdayToIndex,
+} from '@/helpers/date-helper';
 import { pluralize } from '@/helpers/string-helper';
 
 const CALENDAR_BOTTOM_OFFSET = 40;

@@ -51,12 +51,21 @@ describe('enrollments query options', () => {
   });
 
   it('handles enroll mutation onSuccess side effects', async () => {
-    const addEnrollmentSpy = vi.spyOn(enrollmentsCache, 'addEnrollment').mockImplementation(() => {});
-    const invalidateSpy = vi.spyOn(enrollmentsCache, 'invalidate').mockResolvedValue(undefined as never);
+    const addEnrollmentSpy = vi
+      .spyOn(enrollmentsCache, 'addEnrollment')
+      .mockImplementation(() => {});
+    const invalidateSpy = vi
+      .spyOn(enrollmentsCache, 'invalidate')
+      .mockResolvedValue(undefined as never);
     const onSuccess = vi.fn();
     const options = enrollMutationOptions(10, { onSuccess });
 
-    await options.onSuccess?.({ enrollment: { id: '1' } as never } as never, 20, undefined, {} as never);
+    await options.onSuccess?.(
+      { enrollment: { id: '1' } as never } as never,
+      20,
+      undefined,
+      {} as never,
+    );
 
     expect(addEnrollmentSpy).toHaveBeenCalledTimes(1);
     expect(invalidateSpy).toHaveBeenCalledTimes(1);
@@ -67,7 +76,9 @@ describe('enrollments query options', () => {
     const removeEnrollmentSpy = vi
       .spyOn(enrollmentsCache, 'removeEnrollmentByCourseId')
       .mockImplementation(() => {});
-    const invalidateSpy = vi.spyOn(enrollmentsCache, 'invalidate').mockResolvedValue(undefined as never);
+    const invalidateSpy = vi
+      .spyOn(enrollmentsCache, 'invalidate')
+      .mockResolvedValue(undefined as never);
     const onSuccess = vi.fn();
     const options = unenrollMutationOptions({ onSuccess });
 

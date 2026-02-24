@@ -238,7 +238,7 @@ describe('ScheduleFindCourseModal', () => {
 
     expect(setSelectedCourseId).toHaveBeenCalledWith(1);
     expect(onOpenChange).toHaveBeenCalledWith(false);
-    
+
     // Update mock to return selectedCourseId after click
     mockedUseScheduleFindCourseModal.mockReturnValue({
       selectedCourseId: 1,
@@ -269,7 +269,7 @@ describe('ScheduleFindCourseModal', () => {
       isError: false,
       handleCourseDetailsOpenChange: vi.fn(),
     });
-    
+
     // Re-render to show modal
     rerender(
       <ScheduleFindCourseModal

@@ -33,9 +33,12 @@ function createEnrollment(id: string, courseId: number, sectionId: number): Enro
 }
 
 function seedEnrollmentsCache(enrollments: Enrollment[]) {
-  queryClient.setQueryData<GetStudentEnrollmentsResponse>(enrollmentsCache.buildEnrollmentQueryKey(), {
-    enrollments,
-  });
+  queryClient.setQueryData<GetStudentEnrollmentsResponse>(
+    enrollmentsCache.buildEnrollmentQueryKey(),
+    {
+      enrollments,
+    },
+  );
 }
 
 describe('enrollmentsCache', () => {

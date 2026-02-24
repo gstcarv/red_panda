@@ -7,11 +7,7 @@ export function buildEnrollmentQueryKey() {
   return ['me', 'enrollments'] as const;
 }
 
-function addEnrollment({
-  enrollment,
-}: {
-  enrollment: Enrollment;
-}) {
+function addEnrollment({ enrollment }: { enrollment: Enrollment }) {
   queryClient.setQueryData<GetStudentEnrollmentsResponse>(buildEnrollmentQueryKey(), (current) => {
     if (!current) {
       return current;
@@ -31,11 +27,7 @@ function addEnrollment({
   });
 }
 
-function removeEnrollmentByCourseId({
-  courseId,
-}: {
-  courseId: number;
-}) {
+function removeEnrollmentByCourseId({ courseId }: { courseId: number }) {
   queryClient.setQueryData<GetStudentEnrollmentsResponse>(buildEnrollmentQueryKey(), (current) => {
     if (!current) {
       return current;
