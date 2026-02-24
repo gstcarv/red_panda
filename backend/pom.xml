@@ -21,6 +21,7 @@
         <java.version>17</java.version>
         <lombok.version>1.18.38</lombok.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
+        <flyway.version>11.20.3</flyway.version>
     </properties>
 
     <dependencies>
@@ -131,6 +132,12 @@
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
+            <version>${flyway.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-mysql</artifactId>
+            <version>${flyway.version}</version>
         </dependency>
 
         <!-- Testing -->
