@@ -39,6 +39,7 @@ public class CourseRepositoryAdapter implements CourseRepositoryPort {
     }
 
     @Override
+    @Cacheable(cacheNames = CacheConfig.COURSE_BY_ID_CACHE, key = "#id")
     public Optional<Course> findById(Integer id) {
         return courseRepository.findById(id).map(this::toDomain);
     }

@@ -15,6 +15,7 @@ public class CacheConfig {
 
     public static final String ACTIVE_SEMESTER_CACHE = "activeSemesterCache";
     public static final String TEACHER_BY_ID_CACHE = "teacherByIdCache";
+    public static final String COURSE_BY_ID_CACHE = "courseByIdCache";
     public static final String COURSES_BY_SEMESTER_CACHE = "coursesBySemesterCache";
     public static final String SECTIONS_BY_COURSE_SEMESTER_CACHE = "sectionsByCourseSemesterCache";
     public static final String SECTIONS_BY_COURSES_SEMESTER_CACHE = "sectionsByCoursesSemesterCache";
@@ -34,6 +35,14 @@ public class CacheConfig {
 
         cacheManager.registerCustomCache(
                 TEACHER_BY_ID_CACHE,
+                Caffeine.newBuilder()
+                        .expireAfterWrite(Duration.ofHours(1))
+                        .maximumSize(10_000)
+                        .build()
+        );
+
+        cacheManager.registerCustomCache(
+                COURSE_BY_ID_CACHE,
                 Caffeine.newBuilder()
                         .expireAfterWrite(Duration.ofHours(1))
                         .maximumSize(10_000)
