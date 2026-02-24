@@ -50,7 +50,7 @@ export function Login() {
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-(--page-background) px-4">
-      <Card className="w-full max-w-md">
+      <Card className="w-full max-w-md gap-0">
         <CardHeader>
           <div className="flex items-center justify-between gap-3">
             <CardTitle>Login</CardTitle>

@@ -47,6 +47,22 @@ jobs:
         run: pnpm install --frozen-lockfile
         working-directory: frontend
 
+      - name: Frontend ESLint
+        run: pnpm lint
+        working-directory: frontend
+
+      - name: Frontend Prettier check
+        run: pnpm lint:prettier
+        working-directory: frontend
+
+      - name: Frontend TypeScript check
+        run: pnpm lint:types
+        working-directory: frontend
+
+      - name: Frontend Vitest
+        run: pnpm test --run
+        working-directory: frontend
+
       - name: Build frontend
         run: pnpm build
         working-directory: frontend

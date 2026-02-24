@@ -4,6 +4,13 @@
 
 Architecture and technical decisions are documented in [`RFC.md`](./RFC.md).
 
+## 🌐 Production URLs
+
+| Service | URL |
+| --- | --- |
+| Application | https://redpanda-mu.vercel.app/ |
+| Swagger | https://thorough-consideration-production-a02d.up.railway.app/api/swagger-ui/index.html |
+
 Simple guide to run the project locally.
 
 ## 📦 Prerequisites
