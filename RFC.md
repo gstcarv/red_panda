@@ -81,6 +81,22 @@ The frontend stack:
 
 Using a UI component foundation helps us move faster while keeping accessibility and consistency at a good baseline.
 
+
+## Frontend Architecture
+
+We follow a container-oriented flow where UI components focus on rendering, while hooks and the data layer handle orchestration.
+
+![Frontend data flow diagram](./docs/frontend_data_flow.png)
+
+High-level flow:
+
+1. Page/components call feature hooks
+2. Hooks consume `queries/*/query.ts` definitions
+3. Query functions call `api/*` modules
+4. Cache updates and invalidations are centralized in `queries/*/cache.ts`
+5. Hooks expose stable data and actions back to UI components
+
+
 ## Project Structure
 
 Current structure in `frontend/src`:
@@ -122,9 +138,11 @@ frontend/src/
 
 This keeps cache mutation behavior in one place, avoids scattered invalidation logic inside UI hooks/components, and makes data updates easier to test.
 
-### Frontend cache strategy
+## Frontend Data Layer Flow
 
-In the frontend, cache is managed with React Query (TanStack Query):
+We have 2 concepts of state: client-state and server-state
+
+In the frontend, the server data are centralized with React Query (TanStack Query):
 
 - Query keys are centralized by domain (`queries/*/cache.ts`)
 - Read/write flows use a shared cache source (`queryClient`)
@@ -146,20 +164,6 @@ So the split remains intentional:
 
 - Data layer (`queries` + `api`) for backend-driven data orchestration
 - Zustand for client-owned state (session context, local UI flows, filters, drafts)
-
-## Frontend Data Flow
-
-We follow a container-oriented flow where UI components focus on rendering, while hooks and the data layer handle orchestration.
-
-![Frontend data flow diagram](./docs/frontend_data_flow.png)
-
-High-level flow:
-
-1. Page/components call feature hooks
-2. Hooks consume `queries/*/query.ts` definitions
-3. Query functions call `api/*` modules
-4. Cache updates and invalidations are centralized in `queries/*/cache.ts`
-5. Hooks expose stable data and actions back to UI components
 
 ## Frontend Models (UI/Data Layer)
 
@@ -335,22 +339,14 @@ backend/src/main/java/com/maplewood/
 - `application`: orchestrates use cases (for example `CreateEnrollmentUseCase`, `GetMyProfileUseCase`), receives HTTP input through controllers, maps domain to response DTOs.
 - `infrastructure`: concrete implementations for ports (repository adapters, JWT/token service, persistence mappings, global exception handler, framework config).
 
-### Backend cache strategy
+### Request flow
 
-In the backend, we use Caffeine as an in-memory local cache (Spring Cache abstraction).
+1. Controller receives request (`application/*/controller`)
+2. Use case executes orchestration (`application/*/usecase`)
+3. Use case calls domain ports and domain services
+4. Infrastructure adapters execute persistence/security concerns
+5. Application maps result to DTO and returns HTTP response
 
-- It is fast and simple for the current scale
-- It avoids extra operational complexity
-- It works well for repeated reads such as active semester, teachers, courses, and sections
-
-Why not Redis now:
-
-- Redis is a distributed cache and is usually more valuable in multi-instance/high-scale environments
-- We do not currently need distributed cache coordination
-
-Future direction:
-
-- Redis is still a strong option when we need horizontal scaling, shared cache across instances, or stronger cross-node cache consistency.
 
 ### Added scheduling tables
 
@@ -366,13 +362,6 @@ Relationship summary:
 - One `student_enrollments` row -> one `course_sections` row (`section_id`)
 - `student_enrollments` also references `students`, `courses`, and `semesters`
 
-### Request flow
-
-1. Controller receives request (`application/*/controller`)
-2. Use case executes orchestration (`application/*/usecase`)
-3. Use case calls domain ports and domain services
-4. Infrastructure adapters execute persistence/security concerns
-5. Application maps result to DTO and returns HTTP response
 
 # Data Contracts and Models
 
@@ -443,6 +432,23 @@ public record LoginResponseDTO(
     Integer userId
 ) {}
 ```
+
+### Backend cache strategy
+
+In the backend, we use Caffeine as an in-memory local cache (Spring Cache abstraction).
+
+- It is fast and simple for the current scale
+- It avoids extra operational complexity
+- It works well for repeated reads such as active semester, teachers, courses, and sections
+
+Why not Redis now:
+
+- Redis is a distributed cache and is usually more valuable in multi-instance/high-scale environments
+- We do not currently need distributed cache coordination
+
+Future direction:
+
+- Redis is still a strong option when we need horizontal scaling, shared cache across instances, or stronger cross-node cache consistency.
 
 # API Endpoints
 
