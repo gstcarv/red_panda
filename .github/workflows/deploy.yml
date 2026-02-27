@@ -92,23 +92,44 @@ jobs:
         working-directory: frontend
 
   deploy_backend:
-    name: Deploy Backend to Railway
+    name: Publish Backend Image
     runs-on: ubuntu-latest
     needs: build_backend
     env:
-      RAILWAY_TOKEN: ${{ vars.RAILWAY_TOKEN }}
-      RAILWAY_SERVICE: ${{ vars.RAILWAY_SERVICE }}
+      DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME }}
+      DOCKERHUB_BACKEND_IMAGE: ${{ vars.DOCKERHUB_BACKEND_IMAGE }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN || vars.DOCKERHUB_TOKEN }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install Railway CLI
-        run: npm i -g @railway/cli
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-      - name: Deploy backend Dockerfile
-        working-directory: backend
-        run: railway up --service "$RAILWAY_SERVICE" --detach
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ env.DOCKERHUB_USERNAME }}
+          password: ${{ env.DOCKERHUB_TOKEN }}
+
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.DOCKERHUB_USERNAME }}/${{ env.DOCKERHUB_BACKEND_IMAGE }}
+          tags: |
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=sha
+
+      - name: Build and push backend image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./backend
+          file: ./backend/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
 
   deploy_frontend:
     name: Deploy Frontend to Vercel
